@@ -1,0 +1,31 @@
+---
+const { src, maxWidth = "800px", maxHeight = "60vh" } = Astro.props;
+---
+
+<div class="video-container">
+    <video controls>
+        <source src={src} type="video/mp4" />
+    </video>
+</div>
+
+<style define:vars={{ maxWidth, maxHeight }}>
+    .video-container {
+        width: 100%;
+        max-width: var(--maxWidth);
+        max-height: var(--maxHeight);
+        margin: 2rem auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    video {
+        width: 100%;
+        height: auto;
+        max-height: var(--maxHeight);
+        border-radius: 12px;
+        background: #000;
+        object-fit: contain;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+</style>
