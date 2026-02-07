@@ -48,11 +48,23 @@ import HeaderLink from "./HeaderLink.astro";
 
 		<div class="internal-links">
 			<HeaderLink href="/">Wanderer</HeaderLink>
-			<HeaderLink href="/blog">blog</HeaderLink>
-			<HeaderLink href="/developer">Developer</HeaderLink>
+			<!-- <HeaderLink href="/blog" class="disabled-link" title="Coming Soon" >blog</HeaderLink> -->
+			<HeaderLink
+				href="/developer"
+				class="disabled-link"
+				data-title="Coming Soon"
+				onclick="return false;"
+				>Developer
+			</HeaderLink>
 			<HeaderLink href="/zoon">Zoon</HeaderLink>
-			<!-- <HeaderLink href="/storying">Storying</HeaderLink> -->
-			<HeaderLink href="/melophile">Melophile</HeaderLink>
+			<HeaderLink
+				href="/melophile"
+				data-title="Coming Soon"
+				class="disabled-link"
+				onclick="return false;"
+			>
+				Melophile
+			</HeaderLink>
 		</div>
 
 		<style>
@@ -90,7 +102,7 @@ import HeaderLink from "./HeaderLink.astro";
 				display: flex;
 				justify-content: center;
 				align-items: flex-end;
-				gap: 2em;
+				gap: 0.5em;
 			}
 
 			nav a {
@@ -99,12 +111,34 @@ import HeaderLink from "./HeaderLink.astro";
 			}
 
 			.internal-links a {
-				padding: 0.3em 0.3em;
-				border-bottom: 4px solid transparent;
+				padding: 0.3em 0.2em;
+				font-size: 0.9em;
+				border-bottom: none;
+				position: relative;
 			}
 
-			.internal-links a.active {
-				border-bottom-color: var(--accent);
+			.internal-links a::after {
+				content: "";
+				position: absolute;
+				bottom: 0;
+				left: 50%;
+				transform: translateX(-50%);
+				width: 0;
+				height: 3px;
+				background-color: transparent;
+				transition: width 0.3s ease;
+			}
+
+			.internal-links a.active::after {
+				width: 100%;
+				max-width: 30px;
+				background-color: var(--accent);
+			}
+
+			.internal-links a:hover::after {
+				width: 100%;
+				max-width: 30px;
+				background-color: var(--accent);
 			}
 
 			.social-links,
@@ -127,6 +161,34 @@ import HeaderLink from "./HeaderLink.astro";
 
 			.social-link:hover {
 				transform: translateY(-2px);
+			}
+
+			.disabled-link {
+				color: #999;
+				cursor: default;
+				opacity: 0.6;
+				text-decoration: none;
+			}
+			.disabled-link:hover::before {
+				content: attr(data-title);
+				position: absolute;
+				bottom: -80%;
+				left: 50%;
+				transform: translateX(-50%);
+				background: #333;
+				color: #fff;
+				padding: 4px 8px;
+				border-radius: 4px;
+				font-size: 12px;
+				white-space: nowrap;
+				z-index: 10;
+			}
+
+			.disabled-link:hover {
+				opacity: 0.8;
+			}
+			.disabled-link:hover::after {
+				display: none;
 			}
 
 			@media (max-width: 720px) {
