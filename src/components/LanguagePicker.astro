@@ -1,0 +1,42 @@
+---
+import { getLangFromUrl, getLocalizedPathname } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const path = Astro.url.pathname;
+
+const koUrl = getLocalizedPathname(path, "ko");
+const enUrl = getLocalizedPathname(path, "en");
+---
+
+<div class="lang-switcher">
+    <a href={koUrl} class={lang === "ko" ? "active" : ""}>KOR</a>
+    <span class="divider">|</span>
+    <a href={enUrl} class={lang === "en" ? "active" : ""}>ENG</a>
+</div>
+
+<style>
+    .lang-switcher {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9em;
+        font-weight: 500;
+    }
+    .lang-switcher a {
+        color: var(--black);
+        text-decoration: none;
+        opacity: 0.5;
+        transition: opacity 0.2s ease;
+    }
+    .lang-switcher a:hover {
+        opacity: 0.8;
+    }
+    .lang-switcher a.active {
+        opacity: 1;
+        color: var(--accent);
+    }
+    .divider {
+        color: var(--gray-light);
+        opacity: 0.5;
+    }
+</style>

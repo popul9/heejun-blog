@@ -1,0 +1,139 @@
+---
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import { SITE_TITLE } from "../../consts";
+import wandererHero1 from "../../assets/dialogue1.webp";
+import wandererHero2 from "../../assets/dialogue2.webp";
+---
+
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <BaseHead title={SITE_TITLE} description="안녕, 의식 있는 방랑자여" />
+        <style>
+            main {
+                width: 100%;
+                max-width: 720px;
+                margin: 0 auto;
+                padding: 2em 1em;
+                box-sizing: border-box;
+                overflow-x: hidden;
+            }
+            .hero-gallery {
+                display: flex;
+                gap: 1rem;
+                margin-bottom: 2.5rem;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .hero-gallery .img-wrapper {
+                flex: 1 1 0;
+                min-width: 0;
+                max-width: 50%;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .hero-gallery .img-wrapper:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            }
+            .hero-gallery .img-wrapper img {
+                width: 100%;
+                height: auto;
+                display: block;
+                border-radius: 12px;
+            }
+            h1 {
+                margin-bottom: 0.5em;
+            }
+            .poem {
+                line-height: 1.8;
+                font-size: 1.05em;
+                color: rgb(var(--gray-dark));
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                max-width: 100%;
+            }
+            .poem p {
+                margin-bottom: 1.2em;
+            }
+            .signature {
+                margin-top: 2em;
+                font-style: italic;
+                color: rgb(var(--gray));
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                max-width: 100%;
+            }
+            /* Desktop: side by side */
+            @media (min-width: 721px) {
+                .hero-gallery .img-wrapper {
+                    scroll-snap-align: unset;
+                }
+            }
+            /* Mobile: horizontal scroll gallery */
+            @media (max-width: 720px) {
+                .hero-gallery {
+                    overflow-x: auto;
+                    scroll-snap-type: x mandatory;
+                    -webkit-overflow-scrolling: touch;
+                    gap: 0.75rem;
+                    padding-bottom: 0.5rem;
+                }
+                .hero-gallery .img-wrapper {
+                    flex: 0 0 85%;
+                    max-width: 85%;
+                    scroll-snap-align: center;
+                }
+                .poem {
+                    font-size: 0.95em;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <Header />
+        <main>
+            <div class="hero-gallery">
+                <div class="img-wrapper">
+                    <img
+                        src={wandererHero1.src}
+                        alt="이우환 Dialogue - 클로즈업"
+                    />
+                </div>
+                <div class="img-wrapper">
+                    <img
+                        src={wandererHero2.src}
+                        alt="이우환 Dialogue - 전시 전경"
+                    />
+                </div>
+            </div>
+
+            <h1>시스템</h1>
+            <div class="poem">
+                <p>
+                    작은, 수많은 붓질.<br />
+                    한 줄 한 줄, 한 획 한 획.<br />
+                    서로를 연결하여 하나의 흐름을 만든다.
+                </p>
+                <p>
+                    색의 흐름은 일관성을 통해 방향성을 만들어낸다.<br />
+                    위에서 아래로, 하나의 메서드, 하나의 클래스, 그리고 하나의 시스템이
+                    나란히.
+                </p>
+                <p>
+                    이것은 하나의 예측 가능한 통합이자 시스템이 되고,<br />
+                    하나의 큰 붓질, 하나의 흐름이 된다.
+                </p>
+            </div>
+            <p class="signature">
+                - 멜버른 빅토리아 국립미술관에서 이우환의 <em>Dialogue</em>에
+                매료된 IT 너드 😆
+            </p>
+        </main>
+        <Footer />
+    </body>
+</html>

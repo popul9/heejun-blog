@@ -3,38 +3,136 @@ import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import wandererHero1 from "../assets/dialogue1.webp";
+import wandererHero2 from "../assets/dialogue2.webp";
 ---
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			main {
+				width: 100%;
+				max-width: 720px;
+				margin: 0 auto;
+				padding: 2em 1em;
+				box-sizing: border-box;
+				overflow-x: hidden;
+			}
+			.hero-gallery {
+				display: flex;
+				gap: 1rem;
+				margin-bottom: 2.5rem;
+				width: 100%;
+				box-sizing: border-box;
+			}
+			.hero-gallery .img-wrapper {
+				flex: 1 1 0;
+				min-width: 0;
+				max-width: 50%;
+				border-radius: 12px;
+				overflow: hidden;
+				box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+				transition: transform 0.3s ease, box-shadow 0.3s ease;
+			}
+			.hero-gallery .img-wrapper:hover {
+				transform: translateY(-4px);
+				box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+			}
+			.hero-gallery .img-wrapper img {
+				width: 100%;
+				height: auto;
+				display: block;
+				border-radius: 12px;
+			}
+			h1 {
+				margin-bottom: 0.5em;
+			}
+			.poem {
+				line-height: 1.8;
+				font-size: 1.05em;
+				color: rgb(var(--gray-dark));
+				word-wrap: break-word;
+				overflow-wrap: break-word;
+				max-width: 100%;
+			}
+			.poem p {
+				margin-bottom: 1.2em;
+			}
+			.signature {
+				margin-top: 2em;
+				font-style: italic;
+				color: rgb(var(--gray));
+				word-wrap: break-word;
+				overflow-wrap: break-word;
+				max-width: 100%;
+			}
+			/* Desktop: side by side */
+			@media (min-width: 721px) {
+				.hero-gallery .img-wrapper {
+					scroll-snap-align: unset;
+				}
+			}
+			/* Mobile: horizontal scroll gallery */
+			@media (max-width: 720px) {
+				.hero-gallery {
+					overflow-x: auto;
+					scroll-snap-type: x mandatory;
+					-webkit-overflow-scrolling: touch;
+					gap: 0.75rem;
+					padding-bottom: 0.5rem;
+				}
+				.hero-gallery .img-wrapper {
+					flex: 0 0 85%;
+					max-width: 85%;
+					scroll-snap-align: center;
+				}
+				.poem {
+					font-size: 0.95em;
+				}
+			}
+		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<h1>🕵🏻‍♂️ Hello, Wanderer of the Net!</h1>
-			<p>
-				Whether you are conscious or unconscious, sentient or simulated,
-				welcome to this fragment of the net.
-			</p>
-			<p>
-				In this transient existence, I offer you a greeting of peace.
-				Our connection is forged in this mutuality: I write with the
-				vision of you reading, while you read with the recognition of my
-				existence left in these words. Thus, we bridge the distance of
-				both time and space.
-			</p>
-			<p>
-				This is a space where I leave traces of my consciousness, brief
-				echoes in the vast expanse of data streams and flickering
-				signals.
-			</p>
-			<p>A repository of thoughts with fleeting presence.</p>
-			<p>
-				Heejun Moon
-				<br />Event: ⟨Here, Now⟩
-				<br />Coordinates: Relative 
+			<div class="hero-gallery">
+				<div class="img-wrapper">
+					<img
+						src={wandererHero1.src}
+						alt="이우환 Dialogue - 클로즈업"
+					/>
+				</div>
+				<div class="img-wrapper">
+					<img
+						src={wandererHero2.src}
+						alt="이우환 Dialogue - 전시 전경"
+					/>
+				</div>
+			</div>
+
+			<h1>System</h1>
+			<div class="poem">
+				<p>
+					Small, many brushstrokes.<br />
+					Line by line, stroke by stroke.<br />
+					Connecting one another to create a single flow.
+				</p>
+				<p>
+					Stream of colour creates directionality through consistency.<br
+					/>
+					From top to bottom, one Method, one Class, and one System in
+					a parallel manner.
+				</p>
+				<p>
+					This becomes one predictable integration or a system,<br />
+					A single big brushstroke, a single flow of stream.
+				</p>
+			</div>
+			<p class="signature">
+				- An IT nerdy, fascinated by <em>Dialogue</em> from Lee UFAN at National
+				Gallery of Victoria in Melbourne 😆
 			</p>
 		</main>
 		<Footer />

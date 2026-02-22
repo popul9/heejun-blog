@@ -6,13 +6,17 @@ import Footer from "../../components/Footer.astro";
 import FormattedDate from "../../components/FormattedDate.astro";
 import Header from "../../components/Header.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import { useTranslations } from "../../i18n/utils";
 
-const posts = (await getCollection("zoon")).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const allPosts = await getCollection("roam");
+const posts = allPosts
+	.filter((post) => post.id.endsWith("/en") || !post.id.includes("/"))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const t = useTranslations("en");
 ---
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
@@ -97,26 +101,29 @@ const posts = (await getCollection("zoon")).sort(
 			<section>
 				<ul>
 					{
-						posts.map((post) => (
-							<li>
-								<a href={`/zoon/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image
-											width={720}
-											height={360}
-											src={post.data.heroImage}
-											alt=""
-										/>
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate
-											date={post.data.pubDate}
-										/>
-									</p>
-								</a>
-							</li>
-						))
+						posts.map((post) => {
+							const basePath = post.id.replace(/\/en$/, "");
+							return (
+								<li>
+									<a href={`/roam/${basePath}/`}>
+										{post.data.heroImage && (
+											<Image
+												width={720}
+												height={360}
+												src={post.data.heroImage}
+												alt=""
+											/>
+										)}
+										<h4 class="title">{post.data.title}</h4>
+										<p class="date">
+											<FormattedDate
+												date={post.data.pubDate}
+											/>
+										</p>
+									</a>
+								</li>
+							);
+						})
 					}
 				</ul>
 			</section>

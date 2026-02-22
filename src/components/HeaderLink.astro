@@ -1,12 +1,33 @@
 ---
-import type { HTMLAttributes } from 'astro/types';
+import type { HTMLAttributes } from "astro/types";
 
-type Props = HTMLAttributes<'a'>;
+type Props = HTMLAttributes<"a">;
 
 const { href, class: className, ...props } = Astro.props;
-const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
-const subpath = pathname.match(/[^\/]+/g);
-const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
+const pathname = Astro.url.pathname;
+const urlParts = pathname.split("/").filter(Boolean);
+const firstSegment = urlParts[0];
+
+if (firstSegment === "ko" || firstSegment === "en") {
+	urlParts.shift();
+}
+
+const activePathname = "/" + urlParts.join("/");
+const subpath = urlParts[0] || "";
+
+// Strip lang prefix from href for comparison too
+let hrefParts = String(href ?? "")
+	.split("/")
+	.filter(Boolean);
+if (hrefParts[0] === "ko" || hrefParts[0] === "en") {
+	hrefParts.shift();
+}
+const normalizedHref = "/" + hrefParts.join("/");
+
+const isActive =
+	normalizedHref === activePathname ||
+	normalizedHref === activePathname + "/" ||
+	normalizedHref === "/" + subpath;
 ---
 
 <a href={href} class:list={[className, { active: isActive }]} {...props}>

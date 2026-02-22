@@ -13,8 +13,8 @@ const blog = defineCollection({
 		}),
 });
 
-const zoon = defineCollection({
-	loader: glob({ base: './src/content/zoon', pattern: '**/*.{md,mdx}' }),
+const roam = defineCollection({
+	loader: glob({ base: './src/content/roam', pattern: '**/*.{md,mdx}' }),
 	schema: ({ image }) =>
 		z.object({
 			title: z.string(),
@@ -25,4 +25,4 @@ const zoon = defineCollection({
 		}),
 });
 
-export const collections = { blog, zoon };
+export const collections = { blog, roam };
