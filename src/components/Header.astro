@@ -60,14 +60,9 @@ const localizedFoodie = getLocalizedPathname("/foodie", lang);
 
 		<div class="internal-links">
 			<HeaderLink href={localizedHome}>{t("nav.wanderer")}</HeaderLink>
-			<!-- <HeaderLink href="/blog" class="disabled-link" title="Coming Soon" >blog</HeaderLink> -->
-			<HeaderLink
-				href={localizedDeveloper}
-				class="disabled-link"
-				data-title="Coming Soon"
-				onclick="return false;"
-				>{t("nav.developer")}
-			</HeaderLink>
+			<HeaderLink href={localizedDeveloper}
+				>{t("nav.developer")}</HeaderLink
+			>
 			<HeaderLink href={localizedRoam}>{t("nav.roam")}</HeaderLink>
 			<HeaderLink
 				href={localizedMelophile}
@@ -77,14 +72,7 @@ const localizedFoodie = getLocalizedPathname("/foodie", lang);
 			>
 				{t("nav.melophile")}
 			</HeaderLink>
-			<HeaderLink
-				href={localizedFoodie}
-				data-title="Coming Soon"
-				class="disabled-link"
-				onclick="return false;"
-			>
-				{t("nav.foodie")}
-			</HeaderLink>
+			<HeaderLink href={localizedFoodie}>{t("nav.foodie")}</HeaderLink>
 		</div>
 
 		<style>
