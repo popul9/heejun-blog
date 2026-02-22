@@ -15,7 +15,7 @@ export function useTranslations(lang: Locale) {
         const dict: Record<string, Record<Locale, string>> = {
             'site.title': { ko: "희준의 넷", en: "Heejun's Net" },
             'site.subtitle': { ko: '당신에게, 나는', en: 'Who Am I To You?' },
-            'nav.wanderer': { ko: '떠돌이', en: 'Wanderer' },
+            'nav.wonderer': { ko: '궁금러', en: 'wonderer' },
             'nav.roam': { ko: '방랑자', en: 'Roamer' },
             'nav.developer': { ko: '개발자', en: 'Developer' },
             'nav.melophile': { ko: '음덕', en: 'Melophile' },

@@ -105,7 +105,9 @@ const t = useTranslations("ko");
                             const basePath = post.id.replace(/\/ko$/, "");
                             return (
                                 <li>
-                                    <a href={`/ko/developer/${basePath}/`}>
+                                    <a
+                                        href={`/ko/developer/${basePath.toLowerCase()}/`}
+                                    >
                                         {post.data.heroImage && (
                                             <Image
                                                 width={720}

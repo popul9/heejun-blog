@@ -1,0 +1,26 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import BlogPost from "../../layouts/BlogPost.astro";
+
+export async function getStaticPaths() {
+    const posts = await getCollection("foodie");
+    const enPosts = posts.filter(
+        (post) => post.id.endsWith("/en") || !post.id.includes("/")
+    );
+    return enPosts.map((post) => {
+        const basePath = post.id.replace(/\/en$/, "");
+        return {
+            params: { slug: basePath.toLowerCase() },
+            props: post,
+        };
+    });
+}
+type Props = CollectionEntry<"foodie">;
+
+const post = Astro.props;
+const { Content } = await render(post);
+---
+
+<BlogPost {...post.data}>
+    <Content />
+</BlogPost>

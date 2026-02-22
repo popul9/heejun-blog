@@ -6,10 +6,14 @@ import Footer from "../../components/Footer.astro";
 import FormattedDate from "../../components/FormattedDate.astro";
 import Header from "../../components/Header.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import { useTranslations } from "../../i18n/utils";
 
-const posts = (await getCollection("developer")).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const allPosts = await getCollection("developer");
+const posts = allPosts
+	.filter((post) => post.id.endsWith("/en") || !post.id.includes("/"))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const t = useTranslations("en");
 ---
 
 <!DOCTYPE html>
@@ -92,26 +96,31 @@ const posts = (await getCollection("developer")).sort(
 			<section>
 				<ul>
 					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image
-											width={720}
-											height={360}
-											src={post.data.heroImage}
-											alt=""
-										/>
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate
-											date={post.data.pubDate}
-										/>
-									</p>
-								</a>
-							</li>
-						))
+						posts.map((post) => {
+							const basePath = post.id.replace(/\/en$/, "");
+							return (
+								<li>
+									<a
+										href={`/developer/${basePath.toLowerCase()}/`}
+									>
+										{post.data.heroImage && (
+											<Image
+												width={720}
+												height={360}
+												src={post.data.heroImage}
+												alt=""
+											/>
+										)}
+										<h4 class="title">{post.data.title}</h4>
+										<p class="date">
+											<FormattedDate
+												date={post.data.pubDate}
+											/>
+										</p>
+									</a>
+								</li>
+							);
+						})
 					}
 				</ul>
 			</section>

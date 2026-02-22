@@ -105,7 +105,9 @@ const t = useTranslations("ko");
                             const basePath = post.id.replace(/\/ko$/, "");
                             return (
                                 <li>
-                                    <a href={`/ko/foodie/${basePath}/`}>
+                                    <a
+                                        href={`/ko/foodie/${basePath.toLowerCase()}/`}
+                                    >
                                         {post.data.heroImage && (
                                             <Image
                                                 width={720}
