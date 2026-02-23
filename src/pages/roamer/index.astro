@@ -8,7 +8,7 @@ import Header from "../../components/Header.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 import { useTranslations } from "../../i18n/utils";
 
-const allPosts = await getCollection("roam");
+const allPosts = await getCollection("roamer");
 const posts = allPosts
 	.filter((post) => post.id.endsWith("/en") || !post.id.includes("/"))
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
@@ -105,7 +105,7 @@ const t = useTranslations("en");
 							const basePath = post.id.replace(/\/en$/, "");
 							return (
 								<li>
-									<a href={`/roam/${basePath}/`}>
+									<a href={`/roamer/${basePath}/`}>
 										{post.data.heroImage && (
 											<Image
 												width={720}

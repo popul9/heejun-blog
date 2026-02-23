@@ -4,7 +4,6 @@ import { getLangFromUrl, getLocalizedPathname } from "../i18n/utils";
 const lang = getLangFromUrl(Astro.url);
 const path = Astro.url.pathname;
 
-// Since there are only two languages, link directly to the other one
 const targetLang = lang === "ko" ? "en" : "ko";
 const targetUrl = getLocalizedPathname(path, targetLang);
 const targetLabel = targetLang === "ko" ? "한글" : "ENG";
@@ -14,7 +13,53 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
     href={targetUrl}
     class="floating-lang-toggle"
     aria-label={`Switch to ${targetLang === "ko" ? "Korean" : "English"}`}
+    id="liquid-glass-toggle"
 >
+    <!--
+        SVG lives INSIDE the element → its coordinate space is local,
+        so backdrop-filter: url(#lg-filter) aligns perfectly with no offset.
+    -->
+    <svg
+        class="lg-filter-svg"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+    >
+        <defs>
+            <filter
+                id="lg-filter"
+                x="0"
+                y="0"
+                width="100%"
+                height="100%"
+                color-interpolation-filters="sRGB"
+                filterUnits="userSpaceOnUse"
+            >
+                <feImage
+                    id="lg-disp-img"
+                    result="disp_map"
+                    preserveAspectRatio="none"></feImage>
+                <feDisplacementMap
+                    in="SourceGraphic"
+                    in2="disp_map"
+                    scale="22"
+                    xChannelSelector="R"
+                    yChannelSelector="G"
+                    result="refracted"></feDisplacementMap>
+                <feImage
+                    id="lg-spec-img"
+                    result="spec_map"
+                    preserveAspectRatio="none"></feImage>
+                <feComposite
+                    in="spec_map"
+                    in2="refracted"
+                    operator="in"
+                    result="spec_clipped"></feComposite>
+                <feBlend in="refracted" in2="spec_clipped" mode="screen"
+                ></feBlend>
+            </filter>
+        </defs>
+    </svg>
+
     <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
@@ -58,27 +103,56 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         gap: 0.4rem;
         padding: 0.55rem 0.9rem;
         border-radius: 999px;
-        background: #222939 !important;
-        color: #ffffff !important;
+
+        background: rgba(200, 200, 210, 0.45) !important;
+        color: #1a1a2e !important;
         text-decoration: none !important;
         font-size: 0.85rem;
         font-weight: 600;
         letter-spacing: 0.02em;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25),
-            0 1px 3px rgba(0, 0, 0, 0.15);
+
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15), 0 1px 4px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
         cursor: pointer;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
         box-sizing: border-box;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+        backdrop-filter: blur(20px) saturate(1.8) brightness(1.1);
+        -webkit-backdrop-filter: blur(20px) saturate(1.8) brightness(1.1);
+    }
+
+    /* Chrome only: use SVG liquid glass filter as backdrop-filter */
+    @supports (backdrop-filter: url(#x)) {
+        .floating-lang-toggle {
+            background: rgba(255, 255, 255, 0.05) !important;
+            backdrop-filter: url(#lg-filter) blur(0.5px);
+            -webkit-backdrop-filter: url(#lg-filter) blur(0.5px);
+        }
     }
 
     .floating-lang-toggle:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.32),
+            0 4px 12px rgba(0, 0, 0, 0.18),
+            inset 0 1px 0 rgba(255, 255, 255, 0.42);
     }
 
     .floating-lang-toggle:active {
         transform: translateY(0) scale(0.97);
+    }
+
+    /* Invisible SVG that exists only to host the filter in local coordinate space */
+    .floating-lang-toggle .lg-filter-svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: visible;
+        opacity: 0;
     }
 
     .floating-lang-toggle .globe-icon {
@@ -86,6 +160,8 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         height: 20px;
         flex-shrink: 0;
         display: block;
+        position: relative;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
     }
 
     .floating-lang-toggle .toggle-label {
@@ -93,6 +169,8 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         color: #ffffff;
         font-size: 0.85rem;
         font-weight: 600;
+        position: relative;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     }
 
     @media (max-width: 720px) {
@@ -100,16 +178,206 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
             bottom: 1.25rem;
             right: 1.25rem;
             padding: 0.5rem 0.75rem;
-            font-size: 0.8rem;
         }
-
         .floating-lang-toggle .globe-icon {
             width: 17px;
             height: 17px;
         }
-
         .floating-lang-toggle .toggle-label {
             font-size: 0.8rem;
         }
     }
 </style>
+
+<script>
+    const IOR = 2.5; // Index of refraction (glass)
+    const BEZEL = 0.6; // Fraction of radius that is curved bezel (vs flat interior)
+    const THICK = 0.75; // Relative glass thickness (controls bend strength)
+
+    // Squircle surface profile — Apple's preferred soft-edge shape
+    function squircle(x: number): number {
+        return Math.pow(1 - Math.pow(1 - x, 4), 0.25);
+    }
+
+    // Snell–Descartes: given surface normal (nx,ny), return refraction displacement
+    function snellDisp(nx: number, ny: number): { x: number; y: number } {
+        const len = Math.hypot(nx, ny);
+        if (len < 1e-6) return { x: 0, y: 0 };
+        const nnx = nx / len;
+        const nny = ny / len;
+        const ratio = 1.0 / IOR;
+        const dot = nny;
+        const k = 1 - ratio * ratio * (1 - dot * dot);
+        if (k < 0) return { x: 0, y: 0 };
+        return {
+            x: ratio * 0 - (ratio * dot - Math.sqrt(k)) * nnx,
+            y: ratio * 1.0 - (ratio * dot - Math.sqrt(k)) * nny - 1.0,
+        };
+    }
+
+    // Displacement magnitude at a normalized distance from the edge (0=edge, 1=center)
+    function getDispMag(normDist: number): number {
+        if (normDist >= BEZEL) return 0; // flat interior
+        const x = normDist / BEZEL;
+        const delta = 0.001;
+        const h1 = squircle(Math.max(0, x - delta)) * THICK;
+        const h2 = squircle(Math.min(1, x + delta)) * THICK;
+        const dh = (h2 - h1) / (2 * delta);
+        return Math.hypot(...Object.values(snellDisp(-dh, 1)));
+    }
+
+    // ─── Displacement map ─────────────────────────────────────────────────────
+    function buildDisplacementMap(w: number, h: number): string {
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d")!;
+        const img = ctx.createImageData(w, h);
+        const data = img.data;
+
+        // Pre-compute max for normalisation
+        let maxMag = 1e-6;
+        for (let i = 0; i <= 255; i++)
+            maxMag = Math.max(maxMag, getDispMag(i / 255));
+
+        const ry = h / 2; // capsule half-height = radius
+
+        for (let py = 0; py < h; py++) {
+            for (let px = 0; px < w; px++) {
+                const idx = (py * w + px) * 4;
+
+                // Closest point on capsule axis segment
+                const cx = Math.max(ry, Math.min(w - ry, px));
+                const dx = px - cx;
+                const dy = py - ry;
+                const dist = Math.hypot(dx, dy);
+
+                if (dist >= ry) {
+                    // Outside capsule: neutral (no displacement)
+                    data[idx] = 128;
+                    data[idx + 1] = 128;
+                    data[idx + 2] = 128;
+                    data[idx + 3] = 255;
+                    continue;
+                }
+
+                // Normalised distance: 0 at capsule edge, 1 at capsule axis
+                const normDist = (ry - dist) / ry;
+                const mag = getDispMag(normDist) / maxMag;
+
+                // Direction: toward capsule axis (inward = away from surface normal)
+                const angle = dist > 0.5 ? Math.atan2(dy, dx) + Math.PI : 0;
+
+                data[idx] = Math.round(128 + Math.cos(angle) * mag * 127);
+                data[idx + 1] = Math.round(128 + Math.sin(angle) * mag * 127);
+                data[idx + 2] = 128;
+                data[idx + 3] = 255;
+            }
+        }
+
+        ctx.putImageData(img, 0, 0);
+        return canvas.toDataURL();
+    }
+
+    // ─── Specular highlight map ───────────────────────────────────────────────
+    function buildSpecularMap(w: number, h: number): string {
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d")!;
+        const ry = h / 2;
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.save();
+
+        // Clip rendering to capsule boundary
+        ctx.beginPath();
+        ctx.roundRect(0, 0, w, h, ry);
+        ctx.clip();
+
+        // Primary highlight: top-left radial blob
+        const g1 = ctx.createRadialGradient(
+            w * 0.22,
+            h * 0.08,
+            0,
+            w * 0.35,
+            h * 0.42,
+            w * 0.48
+        );
+        g1.addColorStop(0, "rgba(255,255,255,0.60)");
+        g1.addColorStop(0.22, "rgba(255,255,255,0.22)");
+        g1.addColorStop(0.55, "rgba(255,255,255,0.04)");
+        g1.addColorStop(1, "rgba(255,255,255,0.00)");
+        ctx.fillStyle = g1;
+        ctx.fillRect(0, 0, w, h);
+
+        // Secondary: right-side edge rim
+        const g2 = ctx.createRadialGradient(
+            w * 0.9,
+            h * 0.22,
+            0,
+            w * 0.84,
+            h * 0.5,
+            h * 0.65
+        );
+        g2.addColorStop(0, "rgba(255,255,255,0.32)");
+        g2.addColorStop(0.5, "rgba(255,255,255,0.06)");
+        g2.addColorStop(1, "rgba(255,255,255,0.00)");
+        ctx.fillStyle = g2;
+        ctx.fillRect(0, 0, w, h);
+
+        // Thin bright top strip
+        const g3 = ctx.createLinearGradient(0, 0, 0, h * 0.22);
+        g3.addColorStop(0, "rgba(255,255,255,0.50)");
+        g3.addColorStop(1, "rgba(255,255,255,0.00)");
+        ctx.fillStyle = g3;
+        ctx.fillRect(0, 0, w, h * 0.22);
+
+        ctx.restore();
+        return canvas.toDataURL();
+    }
+
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    function applyLiquidGlass() {
+        const el = document.getElementById("liquid-glass-toggle");
+        if (!el) return;
+
+        const rect = el.getBoundingClientRect();
+        const w = Math.round(rect.width);
+        const h = Math.round(rect.height);
+        if (!w || !h) return;
+
+        const dispImg = el.querySelector<SVGImageElement>("#lg-disp-img");
+        const specImg = el.querySelector<SVGImageElement>("#lg-spec-img");
+        const filter = el.querySelector<SVGFilterElement>("#lg-filter");
+        if (!dispImg || !specImg || !filter) return;
+
+        // Match filter bounds exactly to element size
+        filter.setAttribute("width", String(w));
+        filter.setAttribute("height", String(h));
+
+        for (const img of [dispImg, specImg]) {
+            img.setAttribute("x", "0");
+            img.setAttribute("y", "0");
+            img.setAttribute("width", String(w));
+            img.setAttribute("height", String(h));
+        }
+
+        dispImg.setAttribute("href", buildDisplacementMap(w, h));
+        specImg.setAttribute("href", buildSpecularMap(w, h));
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () =>
+            requestAnimationFrame(applyLiquidGlass)
+        );
+    } else {
+        requestAnimationFrame(applyLiquidGlass);
+    }
+
+    window.addEventListener(
+        "resize",
+        () => requestAnimationFrame(applyLiquidGlass),
+        { passive: true }
+    );
+</script>

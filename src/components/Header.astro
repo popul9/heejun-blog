@@ -10,7 +10,7 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const localizedHome = getLocalizedPathname("/", lang);
 const localizedDeveloper = getLocalizedPathname("/developer", lang);
-const localizedRoam = getLocalizedPathname("/roam", lang);
+const localizedroamer = getLocalizedPathname("/roamer", lang);
 const localizedMelophile = getLocalizedPathname("/melophile", lang);
 const localizedFoodie = getLocalizedPathname("/foodie", lang);
 ---
@@ -63,7 +63,7 @@ const localizedFoodie = getLocalizedPathname("/foodie", lang);
 			<HeaderLink href={localizedDeveloper}
 				>{t("nav.developer")}</HeaderLink
 			>
-			<HeaderLink href={localizedRoam}>{t("nav.roam")}</HeaderLink>
+			<HeaderLink href={localizedroamer}>{t("nav.roamer")}</HeaderLink>
 			<HeaderLink
 				href={localizedMelophile}
 				data-title="Coming Soon"

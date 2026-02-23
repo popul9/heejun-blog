@@ -3,7 +3,7 @@ import { type CollectionEntry, getCollection, render } from "astro:content";
 import BlogPost from "../../layouts/BlogPost.astro";
 
 export async function getStaticPaths() {
-	const posts = await getCollection("roam");
+	const posts = await getCollection("roamer");
 	const enPosts = posts.filter(
 		(post) => post.id.endsWith("/en") || !post.id.includes("/")
 	);
@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 		};
 	});
 }
-type Props = CollectionEntry<"roam">;
+type Props = CollectionEntry<"roamer">;
 
 const post = Astro.props;
 const { Content } = await render(post);
