@@ -15,10 +15,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
     aria-label={`Switch to ${targetLang === "ko" ? "Korean" : "English"}`}
     id="liquid-glass-toggle"
 >
-    <!--
-        SVG lives INSIDE the element → its coordinate space is local,
-        so backdrop-filter: url(#lg-filter) aligns perfectly with no offset.
-    -->
     <svg
         class="lg-filter-svg"
         xmlns="http://www.w3.org/2000/svg"
@@ -36,12 +32,12 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
             >
                 <feImage
                     id="lg-disp-img"
-                    result="disp_map"
+                    result="DISPLACEMENT_MAP"
                     preserveAspectRatio="none"></feImage>
                 <feDisplacementMap
                     in="SourceGraphic"
-                    in2="disp_map"
-                    scale="22"
+                    in2="DISPLACEMENT_MAP"
+                    scale="28"
                     xChannelSelector="R"
                     yChannelSelector="G"
                     result="refracted"></feDisplacementMap>
@@ -60,36 +56,41 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         </defs>
     </svg>
 
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        class="globe-icon"
-    >
-        <circle
-            cx="12"
-            cy="12"
-            r="10"
-            fill="none"
-            stroke="#ffffff"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"></circle>
-        <path
-            d="M2 12h20"
-            fill="none"
-            stroke="#ffffff"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
-        <path
-            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
-            fill="none"
-            stroke="#ffffff"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
-    </svg>
-    <span class="toggle-label">{targetLabel}</span>
+    <span class="lg-content">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            class="globe-icon"
+        >
+            <circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="#ffffff"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"></circle>
+            <path
+                d="M2 12h20"
+                fill="none"
+                stroke="#ffffff"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            <path
+                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                fill="none"
+                stroke="#ffffff"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+        </svg>
+        <span class="toggle-label">{targetLabel}</span>
+    </span>
+
+    <span class="lg-border lg-border--screen"></span>
+    <span class="lg-border lg-border--overlay"></span>
 </a>
 
 <style is:global>
@@ -98,39 +99,45 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         bottom: 2rem;
         right: 2rem;
         z-index: 9999;
-        display: flex !important;
+        display: inline-flex !important;
         align-items: center;
-        gap: 0.4rem;
-        padding: 0.55rem 0.9rem;
         border-radius: 999px;
 
-        background: rgba(200, 200, 210, 0.45) !important;
-        color: #1a1a2e !important;
         text-decoration: none !important;
-        font-size: 0.85rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15), 0 1px 4px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.9);
         cursor: pointer;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
         box-sizing: border-box;
+
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15), 0 1px 4px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
         transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-        backdrop-filter: blur(20px) saturate(1.8) brightness(1.1);
-        -webkit-backdrop-filter: blur(20px) saturate(1.8) brightness(1.1);
+        /* ── Safari / Firefox 폴백: 강한 frosted glass ──
+           backdrop-filter: url() 미지원 브라우저에서 사용
+           blur 강도↑ + saturate + contrast로 진짜 유리 느낌 */
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        background: rgba(210, 215, 225, 0.72) !important;
+        backdrop-filter: blur(10px) saturate(1.4) brightness(1.12)
+            contrast(1.08);
+        -webkit-backdrop-filter: blur(10px) saturate(1.4) brightness(1.12)
+            contrast(1.08);
     }
 
-    /* Chrome only: use SVG liquid glass filter as backdrop-filter */
     @supports (backdrop-filter: url(#x)) {
-        .floating-lang-toggle {
+        .floating-lang-toggle:not(.safari-fallback) {
             background: rgba(255, 255, 255, 0.05) !important;
             backdrop-filter: url(#lg-filter) blur(0.5px);
             -webkit-backdrop-filter: url(#lg-filter) blur(0.5px);
         }
+    }
+    .safari-fallback {
+        background: rgba(210, 215, 225, 0.3) !important;
+        backdrop-filter: blur(10px) saturate(1.4) brightness(1.12)
+            contrast(1.08) !important;
+        -webkit-backdrop-filter: blur(10px) saturate(1.4) brightness(1.12)
+            contrast(1.08) !important;
     }
 
     .floating-lang-toggle:hover {
@@ -144,7 +151,46 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         transform: translateY(0) scale(0.97);
     }
 
-    /* Invisible SVG that exists only to host the filter in local coordinate space */
+    .floating-lang-toggle::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: 1;
+        background: linear-gradient(
+                175deg,
+                rgba(255, 255, 255, 0.55) 0%,
+                rgba(255, 255, 255, 0.18) 30%,
+                rgba(255, 255, 255, 0.04) 60%,
+                rgba(255, 255, 255, 0) 100%
+            ),
+            radial-gradient(
+                ellipse 60% 50% at 20% 10%,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0) 100%
+            );
+    }
+
+    .floating-lang-toggle::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.45;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+        background-size: 160px 160px;
+        mix-blend-mode: overlay;
+    }
+    @supports (backdrop-filter: url(#x)) {
+        .floating-lang-toggle::before,
+        .floating-lang-toggle::after {
+            opacity: 0;
+        }
+    }
+
     .floating-lang-toggle .lg-filter-svg {
         position: absolute;
         inset: 0;
@@ -155,12 +201,52 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         opacity: 0;
     }
 
+    .floating-lang-toggle .lg-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.55rem 0.9rem;
+    }
+
+    .floating-lang-toggle .lg-border {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: 3;
+        padding: 1.5px;
+        -webkit-mask: linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.5) inset,
+            0 1px 3px rgba(255, 255, 255, 0.25) inset,
+            0 1px 4px rgba(0, 0, 0, 0.35);
+        background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.28) 40%,
+            rgba(255, 255, 255, 0.55) 68%,
+            rgba(255, 255, 255, 0) 100%
+        );
+    }
+
+    .floating-lang-toggle .lg-border--screen {
+        mix-blend-mode: screen;
+        opacity: 0.2;
+    }
+
+    .floating-lang-toggle .lg-border--overlay {
+        mix-blend-mode: overlay;
+    }
+
     .floating-lang-toggle .globe-icon {
         width: 20px;
         height: 20px;
         flex-shrink: 0;
         display: block;
-        position: relative;
         filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
     }
 
@@ -169,20 +255,26 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         color: #ffffff;
         font-size: 0.85rem;
         font-weight: 600;
-        position: relative;
+        letter-spacing: 0.02em;
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     }
 
+    /* ─── 모바일 ──────────────────────────────────────────────────── */
     @media (max-width: 720px) {
         .floating-lang-toggle {
             bottom: 1.25rem;
             right: 1.25rem;
+        }
+
+        .floating-lang-toggle .lg-content {
             padding: 0.5rem 0.75rem;
         }
+
         .floating-lang-toggle .globe-icon {
             width: 17px;
             height: 17px;
         }
+
         .floating-lang-toggle .toggle-label {
             font-size: 0.8rem;
         }
@@ -190,92 +282,97 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
 </style>
 
 <script>
-    const IOR = 2.5; // Index of refraction (glass)
-    const BEZEL = 0.6; // Fraction of radius that is curved bezel (vs flat interior)
-    const THICK = 0.75; // Relative glass thickness (controls bend strength)
-
-    // Squircle surface profile — Apple's preferred soft-edge shape
-    function squircle(x: number): number {
-        return Math.pow(1 - Math.pow(1 - x, 4), 0.25);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    if (isSafari) {
+        document
+            .getElementById("liquid-glass-toggle")
+            ?.classList.add("safari-fallback");
     }
 
-    // Snell–Descartes: given surface normal (nx,ny), return refraction displacement
-    function snellDisp(nx: number, ny: number): { x: number; y: number } {
-        const len = Math.hypot(nx, ny);
-        if (len < 1e-6) return { x: 0, y: 0 };
-        const nnx = nx / len;
-        const nny = ny / len;
-        const ratio = 1.0 / IOR;
-        const dot = nny;
-        const k = 1 - ratio * ratio * (1 - dot * dot);
-        if (k < 0) return { x: 0, y: 0 };
+    function smoothStep(a: number, b: number, t: number): number {
+        t = Math.max(0, Math.min(1, (t - a) / (b - a)));
+        return t * t * (3 - 2 * t);
+    }
+
+    function vecLen(x: number, y: number): number {
+        return Math.sqrt(x * x + y * y);
+    }
+
+    function roundedRectSDF(
+        x: number,
+        y: number,
+        halfW: number,
+        halfH: number,
+        radius: number
+    ): number {
+        const qx = Math.abs(x) - halfW + radius;
+        const qy = Math.abs(y) - halfH + radius;
+        return (
+            Math.min(Math.max(qx, qy), 0) +
+            vecLen(Math.max(qx, 0), Math.max(qy, 0)) -
+            radius
+        );
+    }
+
+    function liquidGlassFragment(
+        uvx: number,
+        uvy: number
+    ): { x: number; y: number } {
+        const ix = uvx - 0.5;
+        const iy = uvy - 0.5;
+        const dist = roundedRectSDF(ix, iy, 0.3, 0.15, 0.55);
+        const displacement = smoothStep(0.75, 0, dist - 0.12);
+        const scaled = smoothStep(0, 1, displacement);
         return {
-            x: ratio * 0 - (ratio * dot - Math.sqrt(k)) * nnx,
-            y: ratio * 1.0 - (ratio * dot - Math.sqrt(k)) * nny - 1.0,
+            x: ix * scaled + 0.5,
+            y: iy * scaled + 0.5,
         };
     }
 
-    // Displacement magnitude at a normalized distance from the edge (0=edge, 1=center)
-    function getDispMag(normDist: number): number {
-        if (normDist >= BEZEL) return 0; // flat interior
-        const x = normDist / BEZEL;
-        const delta = 0.001;
-        const h1 = squircle(Math.max(0, x - delta)) * THICK;
-        const h2 = squircle(Math.min(1, x + delta)) * THICK;
-        const dh = (h2 - h1) / (2 * delta);
-        return Math.hypot(...Object.values(snellDisp(-dh, 1)));
-    }
-
-    // ─── Displacement map ─────────────────────────────────────────────────────
     function buildDisplacementMap(w: number, h: number): string {
         const canvas = document.createElement("canvas");
         canvas.width = w;
         canvas.height = h;
         const ctx = canvas.getContext("2d")!;
-        const img = ctx.createImageData(w, h);
-        const data = img.data;
+        const imageData = ctx.createImageData(w, h);
+        const data = imageData.data;
 
-        // Pre-compute max for normalisation
-        let maxMag = 1e-6;
-        for (let i = 0; i <= 255; i++)
-            maxMag = Math.max(maxMag, getDispMag(i / 255));
+        let maxScale = 1e-6;
+        const rawValues: number[] = [];
 
-        const ry = h / 2; // capsule half-height = radius
-
-        for (let py = 0; py < h; py++) {
-            for (let px = 0; px < w; px++) {
-                const idx = (py * w + px) * 4;
-
-                // Closest point on capsule axis segment
-                const cx = Math.max(ry, Math.min(w - ry, px));
-                const dx = px - cx;
-                const dy = py - ry;
-                const dist = Math.hypot(dx, dy);
-
-                if (dist >= ry) {
-                    // Outside capsule: neutral (no displacement)
-                    data[idx] = 128;
-                    data[idx + 1] = 128;
-                    data[idx + 2] = 128;
-                    data[idx + 3] = 255;
-                    continue;
-                }
-
-                // Normalised distance: 0 at capsule edge, 1 at capsule axis
-                const normDist = (ry - dist) / ry;
-                const mag = getDispMag(normDist) / maxMag;
-
-                // Direction: toward capsule axis (inward = away from surface normal)
-                const angle = dist > 0.5 ? Math.atan2(dy, dx) + Math.PI : 0;
-
-                data[idx] = Math.round(128 + Math.cos(angle) * mag * 127);
-                data[idx + 1] = Math.round(128 + Math.sin(angle) * mag * 127);
-                data[idx + 2] = 128;
-                data[idx + 3] = 255;
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const pos = liquidGlassFragment(x / w, y / h);
+                const dx = pos.x * w - x;
+                const dy = pos.y * h - y;
+                maxScale = Math.max(maxScale, Math.abs(dx), Math.abs(dy));
+                rawValues.push(dx, dy);
             }
         }
 
-        ctx.putImageData(img, 0, 0);
+        maxScale = Math.max(maxScale, 1);
+
+        let idx = 0;
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const dx = rawValues[idx++];
+                const dy = rawValues[idx++];
+
+                const edgeDist = Math.min(x, y, w - x - 1, h - y - 1);
+                const fade = Math.min(1, edgeDist / 2);
+
+                const r = (dx * fade) / maxScale + 0.5;
+                const g = (dy * fade) / maxScale + 0.5;
+
+                const pi = (y * w + x) * 4;
+                data[pi] = Math.max(0, Math.min(255, r * 255)); // R: X displacement
+                data[pi + 1] = Math.max(0, Math.min(255, g * 255)); // G: Y displacement
+                data[pi + 2] = 128; // B: neutral
+                data[pi + 3] = 255;
+            }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
         return canvas.toDataURL();
     }
 
@@ -290,12 +387,10 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         ctx.clearRect(0, 0, w, h);
         ctx.save();
 
-        // Clip rendering to capsule boundary
         ctx.beginPath();
         ctx.roundRect(0, 0, w, h, ry);
         ctx.clip();
 
-        // Primary highlight: top-left radial blob
         const g1 = ctx.createRadialGradient(
             w * 0.22,
             h * 0.08,
@@ -311,7 +406,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         ctx.fillStyle = g1;
         ctx.fillRect(0, 0, w, h);
 
-        // Secondary: right-side edge rim
         const g2 = ctx.createRadialGradient(
             w * 0.9,
             h * 0.22,
@@ -326,7 +420,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         ctx.fillStyle = g2;
         ctx.fillRect(0, 0, w, h);
 
-        // Thin bright top strip
         const g3 = ctx.createLinearGradient(0, 0, 0, h * 0.22);
         g3.addColorStop(0, "rgba(255,255,255,0.50)");
         g3.addColorStop(1, "rgba(255,255,255,0.00)");
@@ -352,7 +445,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         const filter = el.querySelector<SVGFilterElement>("#lg-filter");
         if (!dispImg || !specImg || !filter) return;
 
-        // Match filter bounds exactly to element size
         filter.setAttribute("width", String(w));
         filter.setAttribute("height", String(h));
 
