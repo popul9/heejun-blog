@@ -1,43 +1,25 @@
 ---
 import { getLangFromUrl, getLocalizedPathname } from "../i18n/utils";
 
-// Detect the current language from the URL (e.g., /ko/about → "ko")
 const lang = getLangFromUrl(Astro.url);
 const path = Astro.url.pathname;
 
-// Flip to the opposite language for the toggle target
-const targetLang = lang === "ko" ? "en" : "ko";
-// Convert the current path to the equivalent path in the target language
-const targetUrl = getLocalizedPathname(path, targetLang);
-// Label shown on the button ("한글" or "ENG")
-const targetLabel = targetLang === "ko" ? "한글" : "ENG";
+const languages: { code: "ko" | "en"; label: string }[] = [
+    { code: "ko", label: "한국어" },
+    { code: "en", label: "English" },
+];
+
+const currentLangLabel =
+    languages.find((l) => l.code === lang)?.label || "Language";
 ---
 
-<a
-    href={targetUrl}
-    class="floating-lang-toggle"
-    aria-label={`Switch to ${targetLang === "ko" ? "Korean" : "English"}`}
-    id="liquid-glass-toggle"
->
-    <!--
-        Hidden SVG that hosts the SVG filter definition.
-        The filter is referenced by the button's backdrop-filter CSS property.
-        It is invisible (opacity: 0) but must be in the DOM for the filter to work.
-    -->
+<div class="floating-lang-toggle" id="liquid-glass-toggle">
     <svg
         class="lg-filter-svg"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
     >
         <defs>
-            <!--
-                The liquid glass filter pipeline:
-                1. feImage (displacement map) — encodes how far each pixel should shift
-                2. feDisplacementMap — applies the shift to the source graphic (refraction effect)
-                3. feImage (specular map) — a pre-rendered highlight/glare image
-                4. feComposite — clips the specular map to the refracted shape
-                5. feBlend (screen) — adds the specular highlight on top of the refracted result
-            -->
             <filter
                 id="lg-filter"
                 x="0"
@@ -47,17 +29,10 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
                 color-interpolation-filters="sRGB"
                 filterUnits="userSpaceOnUse"
             >
-                <!-- Step 1: Load the displacement map image (built at runtime via canvas) -->
                 <feImage
                     id="lg-disp-img"
                     result="DISPLACEMENT_MAP"
                     preserveAspectRatio="none"></feImage>
-
-                <!--
-                    Step 2: Distort the source graphic using the displacement map.
-                    R channel → horizontal (X) shift, G channel → vertical (Y) shift.
-                    scale="28" controls the maximum pixel displacement (refraction strength).
-                -->
                 <feDisplacementMap
                     in="SourceGraphic"
                     in2="DISPLACEMENT_MAP"
@@ -65,101 +40,111 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
                     xChannelSelector="R"
                     yChannelSelector="G"
                     result="refracted"></feDisplacementMap>
-
-                <!-- Step 3: Load the specular highlight image (built at runtime via canvas) -->
                 <feImage
                     id="lg-spec-img"
                     result="spec_map"
                     preserveAspectRatio="none"></feImage>
-
-                <!-- Step 4: Clip the specular highlight to the refracted button shape -->
                 <feComposite
                     in="spec_map"
                     in2="refracted"
                     operator="in"
                     result="spec_clipped"></feComposite>
-
-                <!-- Step 5: Blend the highlight over the refracted background using screen mode -->
                 <feBlend in="refracted" in2="spec_clipped" mode="screen"
                 ></feBlend>
             </filter>
         </defs>
     </svg>
 
-    <!-- Visible button content: globe icon + language label -->
-    <span class="lg-content">
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            class="globe-icon"
+    <div class="lg-content-wrapper">
+        <button
+            class="lang-toggle-btn"
+            aria-expanded="false"
+            aria-label="Toggle language menu"
+            id="lang-toggle-btn"
         >
-            <!-- Outer circle of the globe -->
-            <circle
-                cx="12"
-                cy="12"
-                r="10"
-                fill="none"
-                stroke="#ffffff"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"></circle>
-            <!-- Horizontal equator line -->
-            <path
-                d="M2 12h20"
-                fill="none"
-                stroke="#ffffff"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-            <!-- Vertical meridian / longitude curve -->
-            <path
-                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
-                fill="none"
-                stroke="#ffffff"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-        </svg>
-        <span class="toggle-label">{targetLabel}</span>
-    </span>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                class="globe-icon"
+            >
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    fill="none"
+                    stroke="#ffffff"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></circle>
+                <path
+                    d="M2 12h20"
+                    fill="none"
+                    stroke="#ffffff"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></path>
+                <path
+                    d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                    fill="none"
+                    stroke="#ffffff"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></path>
+            </svg>
+            <span class="toggle-label">{currentLangLabel}</span>
+            <svg class="chevron-icon" viewBox="0 0 24 24">
+                <path
+                    d="M6 9l6 6 6-6"
+                    fill="none"
+                    stroke="#ffffff"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></path>
+            </svg>
+        </button>
 
-    <!--
-        Decorative border layers that simulate the shiny rim of glass.
-        Two copies with different blend modes (screen + overlay) are stacked
-        to produce a more realistic, luminous edge.
-    -->
+        <div class="lang-menu" id="lang-menu">
+            {
+                languages.map((l) => (
+                    <a
+                        href={getLocalizedPathname(path, l.code)}
+                        class={`lang-option ${lang === l.code ? "active" : ""}`}
+                    >
+                        {l.label}
+                    </a>
+                ))
+            }
+        </div>
+    </div>
+
     <span class="lg-border lg-border--screen"></span>
     <span class="lg-border lg-border--overlay"></span>
-</a>
+</div>
 
 <style is:global>
-    /* ─── Base button layout ───────────────────────────────────────────────── */
     .floating-lang-toggle {
         position: fixed;
         bottom: 2rem;
         right: 2rem;
         z-index: 9999;
-        display: inline-flex !important;
-        align-items: center;
-        border-radius: 999px; /* fully rounded pill shape */
+        display: flex !important;
+        flex-direction: column;
+        border-radius: 24px;
 
         text-decoration: none !important;
         cursor: pointer;
         user-select: none;
-        -webkit-tap-highlight-color: transparent; /* remove mobile tap flash */
+        -webkit-tap-highlight-color: transparent;
         box-sizing: border-box;
 
-        /* Outer shadow: depth + subtle inner highlight to lift the button */
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15), 0 1px 4px rgba(0, 0, 0, 0.1),
             inset 0 1px 0 rgba(255, 255, 255, 0.9);
 
         transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-        /*
-            Fallback for browsers that don't support backdrop-filter: url()
-            (Safari, Firefox): use a stronger frosted-glass style instead.
-            Higher blur + saturate + contrast approximates the liquid glass look.
-        */
+        /* ── Safari / Firefox 폴백: 강한 frosted glass ──
+           backdrop-filter: url() 미지원 브라우저에서 사용
+           blur 강도↑ + saturate + contrast로 진짜 유리 느낌 */
         border: 1px solid rgba(255, 255, 255, 0.75);
         background: rgba(210, 215, 225, 0.72) !important;
         backdrop-filter: blur(10px) saturate(1.4) brightness(1.12)
@@ -168,11 +153,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
             contrast(1.08);
     }
 
-    /*
-        Progressive enhancement: if the browser supports SVG-based backdrop-filter
-        (currently Chrome only), switch to the liquid glass SVG filter.
-        The near-transparent background lets the distorted backdrop show through.
-    */
     @supports (backdrop-filter: url(#x)) {
         .floating-lang-toggle:not(.safari-fallback) {
             background: rgba(255, 255, 255, 0.05) !important;
@@ -180,8 +160,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
             -webkit-backdrop-filter: url(#lg-filter) blur(0.5px);
         }
     }
-
-    /* Safari is detected via JS and gets this class to force the CSS fallback */
     .safari-fallback {
         background: rgba(210, 215, 225, 0.3) !important;
         backdrop-filter: blur(10px) saturate(1.4) brightness(1.12)
@@ -190,7 +168,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
             contrast(1.08) !important;
     }
 
-    /* Hover: lift and slightly enlarge */
     .floating-lang-toggle:hover {
         transform: translateY(-2px) scale(1.03);
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.32),
@@ -198,17 +175,10 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
             inset 0 1px 0 rgba(255, 255, 255, 0.42);
     }
 
-    /* Press: push down slightly */
     .floating-lang-toggle:active {
-        transform: translateY(0) scale(0.97);
+        /* Removed to prevent jumpy scaling when interacting with inner menu */
     }
 
-    /*
-        ::before — glass surface glare (top-left specular reflection).
-        A linear gradient from bright top to transparent bottom,
-        plus a radial highlight in the top-left corner.
-        Only visible in the CSS fallback path (opacity → 0 when SVG filter is active).
-    */
     .floating-lang-toggle::before {
         content: "";
         position: absolute;
@@ -230,12 +200,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
             );
     }
 
-    /*
-        ::after — fine noise texture overlay.
-        An inline SVG with feTurbulence generates a grain pattern,
-        blended in overlay mode to add the micro-texture of real glass.
-        Also only visible in the CSS fallback path.
-    */
     .floating-lang-toggle::after {
         content: "";
         position: absolute;
@@ -248,8 +212,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         background-size: 160px 160px;
         mix-blend-mode: overlay;
     }
-
-    /* Hide CSS-only decorations when the SVG filter path is active */
     @supports (backdrop-filter: url(#x)) {
         .floating-lang-toggle::before,
         .floating-lang-toggle::after {
@@ -257,7 +219,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         }
     }
 
-    /* The hidden SVG sits at position: absolute and covers the button area */
     .floating-lang-toggle .lg-filter-svg {
         position: absolute;
         inset: 0;
@@ -265,24 +226,87 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         height: 100%;
         pointer-events: none;
         overflow: visible;
-        opacity: 0; /* invisible — only the filter definition matters */
+        opacity: 0;
     }
 
-    /* Content wrapper: centers icon + label, sits above all decorative layers */
-    .floating-lang-toggle .lg-content {
+    .floating-lang-toggle .lg-content-wrapper {
         position: relative;
         z-index: 2;
         display: flex;
-        align-items: center;
-        gap: 0.4rem;
+        flex-direction: column;
         padding: 0.55rem 0.9rem;
     }
 
-    /*
-        Decorative border ring: uses a padding + mask trick to draw only the border
-        without affecting layout. Two instances are blended (screen + overlay)
-        to simulate a shiny, luminous glass edge.
-    */
+    .lang-toggle-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        color: inherit;
+        font-family: inherit;
+        outline: none;
+    }
+
+    .chevron-icon {
+        width: 16px;
+        height: 16px;
+        transition: transform 0.3s ease;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+    }
+
+    .floating-lang-toggle.is-expanded .chevron-icon {
+        transform: rotate(180deg);
+    }
+
+    .lang-menu {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+            opacity 0.3s ease, margin 0.3s ease, padding 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        margin-top: 0;
+        padding-top: 0;
+        border-top: 1px solid transparent;
+    }
+
+    .floating-lang-toggle.is-expanded .lang-menu {
+        max-height: 150px;
+        opacity: 1;
+        margin-top: 0.6rem;
+        padding-top: 0.6rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .lang-option {
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        padding-left: 1.8rem;
+        transition: color 0.2s ease, transform 0.2s ease, text-shadow 0.2s ease;
+        display: block;
+        opacity: 0.8;
+    }
+
+    .lang-option:hover {
+        opacity: 1;
+        transform: translateX(4px);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    .lang-option.active {
+        opacity: 1;
+        font-weight: 700;
+    }
+
     .floating-lang-toggle .lg-border {
         position: absolute;
         inset: 0;
@@ -290,7 +314,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         pointer-events: none;
         z-index: 3;
         padding: 1.5px;
-        /* Mask out the interior so only the 1.5px padding border remains visible */
         -webkit-mask: linear-gradient(#000 0 0) content-box,
             linear-gradient(#000 0 0);
         -webkit-mask-composite: xor;
@@ -298,7 +321,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.5) inset,
             0 1px 3px rgba(255, 255, 255, 0.25) inset,
             0 1px 4px rgba(0, 0, 0, 0.35);
-        /* Diagonal gradient from transparent → bright → transparent, like light catching a rim */
         background: linear-gradient(
             135deg,
             rgba(255, 255, 255, 0) 0%,
@@ -308,13 +330,11 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         );
     }
 
-    /* First border layer: screen blend at low opacity — brightens without washing out */
     .floating-lang-toggle .lg-border--screen {
         mix-blend-mode: screen;
         opacity: 0.2;
     }
 
-    /* Second border layer: overlay blend — adds contrast and depth to the rim */
     .floating-lang-toggle .lg-border--overlay {
         mix-blend-mode: overlay;
     }
@@ -336,14 +356,14 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     }
 
-    /* ─── Mobile adjustments ──────────────────────────────────────────────── */
+    /* ─── 모바일 ──────────────────────────────────────────────────── */
     @media (max-width: 720px) {
         .floating-lang-toggle {
             bottom: 1.25rem;
             right: 1.25rem;
         }
 
-        .floating-lang-toggle .lg-content {
+        .floating-lang-toggle .lg-content-wrapper {
             padding: 0.5rem 0.75rem;
         }
 
@@ -359,8 +379,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
 </style>
 
 <script>
-    // Safari supports -webkit-backdrop-filter but NOT backdrop-filter: url(#filter),
-    // so we detect it and add a class that forces the CSS fallback path.
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     if (isSafari) {
         document
@@ -368,34 +386,15 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
             ?.classList.add("safari-fallback");
     }
 
-    // ─── Math helpers ─────────────────────────────────────────────────────────
-
-    /**
-     * Hermite interpolation (smooth S-curve) clamped to [a, b].
-     * Returns 0 when t ≤ a, 1 when t ≥ b, and a smooth curve in between.
-     * Used to make the refraction fade out gradually rather than snap.
-     */
     function smoothStep(a: number, b: number, t: number): number {
         t = Math.max(0, Math.min(1, (t - a) / (b - a)));
         return t * t * (3 - 2 * t);
     }
 
-    /** Euclidean distance from the origin. */
     function vecLen(x: number, y: number): number {
         return Math.sqrt(x * x + y * y);
     }
 
-    /**
-     * Signed Distance Function (SDF) for a rounded rectangle.
-     * Returns a negative value inside the shape, 0 on the boundary,
-     * and a positive value outside — i.e., "distance to the nearest edge".
-     * This lets us drive the refraction strength purely from geometry.
-     *
-     * @param x, y    — point to test, in the coordinate space where the rect is centered at origin
-     * @param halfW   — half the rectangle's width
-     * @param halfH   — half the rectangle's height
-     * @param radius  — corner radius
-     */
     function roundedRectSDF(
         x: number,
         y: number,
@@ -403,10 +402,8 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         halfH: number,
         radius: number
     ): number {
-        // Fold into the first quadrant and subtract the "inner box" (shrunk by radius)
         const qx = Math.abs(x) - halfW + radius;
         const qy = Math.abs(y) - halfH + radius;
-        // Inside the inner box → negative distance; outside → Euclidean distance to the corner arc
         return (
             Math.min(Math.max(qx, qy), 0) +
             vecLen(Math.max(qx, 0), Math.max(qy, 0)) -
@@ -414,52 +411,21 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         );
     }
 
-    /**
-     * Per-pixel refraction function — the "shader" for the liquid glass effect.
-     * For a given UV coordinate (0–1 range), returns where the underlying
-     * background pixel should be sampled from, producing a lens-like warp.
-     *
-     * Pixels near the button's rounded-rect border are pulled inward (lens effect).
-     * Pixels far from the border are left unchanged.
-     */
     function liquidGlassFragment(
         uvx: number,
         uvy: number
     ): { x: number; y: number } {
-        // Shift UV to center-based coordinates (−0.5 to +0.5)
         const ix = uvx - 0.5;
         const iy = uvy - 0.5;
-
-        // Distance from the rounded rectangle boundary (negative = inside)
         const dist = roundedRectSDF(ix, iy, 0.3, 0.15, 0.55);
-
-        // How strongly should this pixel be displaced?
-        // Pixels just outside/on the edge get maximum displacement; far outside get none.
         const displacement = smoothStep(0.75, 0, dist - 0.12);
-
-        // Scale displacement so inner pixels don't move (scaled → 0 at center)
         const scaled = smoothStep(0, 1, displacement);
-
-        // Return the sample position: pull the pixel toward the center proportional to scaled
         return {
             x: ix * scaled + 0.5,
             y: iy * scaled + 0.5,
         };
     }
 
-    // ─── Displacement map builder ─────────────────────────────────────────────
-
-    /**
-     * Builds a W×H image where each pixel's R channel encodes how far to
-     * shift in X and G channel encodes how far to shift in Y.
-     * The SVG feDisplacementMap filter reads this image to warp the backdrop.
-     *
-     * Values are normalized around 128 (neutral = no shift).
-     * R < 128 → shift left;  R > 128 → shift right.
-     * G < 128 → shift up;    G > 128 → shift down.
-     *
-     * Returns a data URL (PNG) that can be set as the filter's feImage href.
-     */
     function buildDisplacementMap(w: number, h: number): string {
         const canvas = document.createElement("canvas");
         canvas.width = w;
@@ -468,44 +434,38 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         const imageData = ctx.createImageData(w, h);
         const data = imageData.data;
 
-        // First pass: compute raw pixel displacements and find the maximum
-        // so we can normalize them into the 0–255 color range.
         let maxScale = 1e-6;
         const rawValues: number[] = [];
 
         for (let y = 0; y < h; y++) {
             for (let x = 0; x < w; x++) {
                 const pos = liquidGlassFragment(x / w, y / h);
-                const dx = pos.x * w - x; // how many pixels to shift in X
-                const dy = pos.y * h - y; // how many pixels to shift in Y
+                const dx = pos.x * w - x;
+                const dy = pos.y * h - y;
                 maxScale = Math.max(maxScale, Math.abs(dx), Math.abs(dy));
                 rawValues.push(dx, dy);
             }
         }
 
-        maxScale = Math.max(maxScale, 1); // avoid divide-by-zero
+        maxScale = Math.max(maxScale, 1);
 
-        // Second pass: write normalized displacements into the image.
         let idx = 0;
         for (let y = 0; y < h; y++) {
             for (let x = 0; x < w; x++) {
                 const dx = rawValues[idx++];
                 const dy = rawValues[idx++];
 
-                // Fade displacement to zero near the very edge of the canvas
-                // so the filter doesn't create hard seams at the button border.
                 const edgeDist = Math.min(x, y, w - x - 1, h - y - 1);
                 const fade = Math.min(1, edgeDist / 2);
 
-                // Map displacement from [-maxScale, +maxScale] → [0, 1] → [0, 255]
                 const r = (dx * fade) / maxScale + 0.5;
                 const g = (dy * fade) / maxScale + 0.5;
 
                 const pi = (y * w + x) * 4;
                 data[pi] = Math.max(0, Math.min(255, r * 255)); // R: X displacement
                 data[pi + 1] = Math.max(0, Math.min(255, g * 255)); // G: Y displacement
-                data[pi + 2] = 128; // B: neutral (unused by the filter)
-                data[pi + 3] = 255; // A: fully opaque
+                data[pi + 2] = 128; // B: neutral
+                data[pi + 3] = 255;
             }
         }
 
@@ -513,41 +473,28 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         return canvas.toDataURL();
     }
 
-    // ─── Specular highlight map builder ──────────────────────────────────────
-
-    /**
-     * Builds a W×H image that represents light reflecting off the glass surface.
-     * Three gradient layers simulate:
-     *   1. A main highlight in the top-left (primary light source)
-     *   2. A secondary highlight in the top-right (fill light / rim)
-     *   3. A thin bright strip along the top edge (fresnel rim glow)
-     *
-     * This image is composited on top of the refracted backdrop in screen mode,
-     * so only bright parts add light — dark areas are transparent.
-     */
+    // ─── Specular highlight map ───────────────────────────────────────────────
     function buildSpecularMap(w: number, h: number): string {
         const canvas = document.createElement("canvas");
         canvas.width = w;
         canvas.height = h;
         const ctx = canvas.getContext("2d")!;
-        const ry = h / 2; // border radius = half height (pill shape)
+        const ry = h / 2;
 
         ctx.clearRect(0, 0, w, h);
         ctx.save();
 
-        // Clip all drawing to the pill shape so highlights don't bleed outside
         ctx.beginPath();
         ctx.roundRect(0, 0, w, h, ry);
         ctx.clip();
 
-        // Layer 1: primary radial highlight (top-left, largest and brightest)
         const g1 = ctx.createRadialGradient(
             w * 0.22,
             h * 0.08,
-            0, // inner circle center (bright point)
+            0,
             w * 0.35,
             h * 0.42,
-            w * 0.48 // outer circle (fades to transparent)
+            w * 0.48
         );
         g1.addColorStop(0, "rgba(255,255,255,0.60)");
         g1.addColorStop(0.22, "rgba(255,255,255,0.22)");
@@ -556,7 +503,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         ctx.fillStyle = g1;
         ctx.fillRect(0, 0, w, h);
 
-        // Layer 2: secondary radial highlight (top-right, softer)
         const g2 = ctx.createRadialGradient(
             w * 0.9,
             h * 0.22,
@@ -571,7 +517,6 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         ctx.fillStyle = g2;
         ctx.fillRect(0, 0, w, h);
 
-        // Layer 3: thin linear highlight along the top edge (Fresnel effect)
         const g3 = ctx.createLinearGradient(0, 0, 0, h * 0.22);
         g3.addColorStop(0, "rgba(255,255,255,0.50)");
         g3.addColorStop(1, "rgba(255,255,255,0.00)");
@@ -582,13 +527,10 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         return canvas.toDataURL();
     }
 
-    // ─── Initialization ───────────────────────────────────────────────────────
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    let cachedW = 0;
+    let cachedH = 0;
 
-    /**
-     * Measures the button, generates both texture maps at the correct pixel size,
-     * and injects them into the SVG filter's feImage elements.
-     * Called once on load and again whenever the window resizes.
-     */
     function applyLiquidGlass() {
         const el = document.getElementById("liquid-glass-toggle");
         if (!el) return;
@@ -596,18 +538,20 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         const rect = el.getBoundingClientRect();
         const w = Math.round(rect.width);
         const h = Math.round(rect.height);
-        if (!w || !h) return; // element not yet laid out
+        if (!w || !h) return;
+
+        if (w === cachedW && h === cachedH) return;
+        cachedW = w;
+        cachedH = h;
 
         const dispImg = el.querySelector<SVGImageElement>("#lg-disp-img");
         const specImg = el.querySelector<SVGImageElement>("#lg-spec-img");
         const filter = el.querySelector<SVGFilterElement>("#lg-filter");
         if (!dispImg || !specImg || !filter) return;
 
-        // Size the filter region to exactly match the button's pixel dimensions
         filter.setAttribute("width", String(w));
         filter.setAttribute("height", String(h));
 
-        // Set both feImage elements to fill the filter region
         for (const img of [dispImg, specImg]) {
             img.setAttribute("x", "0");
             img.setAttribute("y", "0");
@@ -615,12 +559,10 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
             img.setAttribute("height", String(h));
         }
 
-        // Generate and inject the two canvas-based texture maps
         dispImg.setAttribute("href", buildDisplacementMap(w, h));
         specImg.setAttribute("href", buildSpecularMap(w, h));
     }
 
-    // Run after the DOM is ready, deferred one frame so layout is complete
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", () =>
             requestAnimationFrame(applyLiquidGlass)
@@ -629,10 +571,41 @@ const targetLabel = targetLang === "ko" ? "한글" : "ENG";
         requestAnimationFrame(applyLiquidGlass);
     }
 
-    // Re-generate maps if the button size changes (e.g., font scaling, orientation change)
-    window.addEventListener(
-        "resize",
-        () => requestAnimationFrame(applyLiquidGlass),
-        { passive: true }
-    );
+    const container = document.getElementById("liquid-glass-toggle");
+    const btn = document.getElementById("lang-toggle-btn");
+
+    if (btn && container) {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            container.classList.toggle("is-expanded");
+            btn.setAttribute(
+                "aria-expanded",
+                String(container.classList.contains("is-expanded"))
+            );
+        });
+
+        document.addEventListener("click", (e) => {
+            if (
+                container.classList.contains("is-expanded") &&
+                !container.contains(e.target as Node)
+            ) {
+                container.classList.remove("is-expanded");
+                btn.setAttribute("aria-expanded", "false");
+            }
+        });
+    }
+
+    const ResizeObserver = (window as any).ResizeObserver;
+    if (ResizeObserver && container) {
+        const ro = new ResizeObserver(() => {
+            requestAnimationFrame(applyLiquidGlass);
+        });
+        ro.observe(container);
+    } else {
+        window.addEventListener(
+            "resize",
+            () => requestAnimationFrame(applyLiquidGlass),
+            { passive: true }
+        );
+    }
 </script>
