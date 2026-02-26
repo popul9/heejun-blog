@@ -4,9 +4,10 @@ import { getLangFromUrl, getLocalizedPathname } from "../i18n/utils";
 const lang = getLangFromUrl(Astro.url);
 const path = Astro.url.pathname;
 
-const languages: { code: "ko" | "en"; label: string }[] = [
+const languages: { code: "ko" | "en" | "ch"; label: string }[] = [
     { code: "ko", label: "한국어" },
     { code: "en", label: "English" },
+    { code: "ch", label: "中文" },
 ];
 
 const currentLangLabel =

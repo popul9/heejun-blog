@@ -1,0 +1,136 @@
+---
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import wondererHero1 from "../../assets/dialogue1.webp";
+import wondererHero2 from "../../assets/dialogue2.webp";
+---
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+        <style>
+            main {
+                width: 100%;
+                max-width: 720px;
+                margin: 0 auto;
+                padding: 2em 1em;
+                box-sizing: border-box;
+                overflow-x: hidden;
+            }
+            .hero-gallery {
+                display: flex;
+                gap: 1rem;
+                margin-bottom: 2.5rem;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .hero-gallery .img-wrapper {
+                flex: 1 1 0;
+                min-width: 0;
+                max-width: 50%;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .hero-gallery .img-wrapper:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            }
+            .hero-gallery .img-wrapper img {
+                width: 100%;
+                height: auto;
+                display: block;
+                border-radius: 12px;
+            }
+            h1 {
+                margin-bottom: 0.5em;
+            }
+            .poem {
+                line-height: 1.8;
+                font-size: 1.05em;
+                color: rgb(var(--gray-dark));
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                max-width: 100%;
+            }
+            .poem p {
+                margin-bottom: 1.2em;
+            }
+            .signature {
+                margin-top: 2em;
+                font-style: italic;
+                color: rgb(var(--gray));
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                max-width: 100%;
+            }
+            /* Desktop: side by side */
+            @media (min-width: 721px) {
+                .hero-gallery .img-wrapper {
+                    scroll-snap-align: unset;
+                }
+            }
+            /* Mobile: horizontal scroll gallery */
+            @media (max-width: 720px) {
+                .hero-gallery {
+                    overflow-x: auto;
+                    scroll-snap-type: x mandatory;
+                    -webkit-overflow-scrolling: touch;
+                    gap: 0.75rem;
+                    padding-bottom: 0.5rem;
+                }
+                .hero-gallery .img-wrapper {
+                    flex: 0 0 85%;
+                    max-width: 85%;
+                    scroll-snap-align: center;
+                }
+                .poem {
+                    font-size: 0.95em;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <Header />
+        <main>
+            <div class="hero-gallery">
+                <div class="img-wrapper">
+                    <img src={wondererHero1.src} alt="李禹焕 Dialogue 特写" />
+                </div>
+                <div class="img-wrapper">
+                    <img
+                        src={wondererHero2.src}
+                        alt="李禹焕 Dialogue 展览全景"
+                    />
+                </div>
+            </div>
+
+            <h1>系统</h1>
+            <div class="poem">
+                <p>
+                    细小而繁复的笔触。<br />
+                    一行一行，一笔一笔。<br />
+                    彼此相连，汇成一道流动。
+                </p>
+                <p>
+                    色彩的流淌以一致性赋予方向。<br />
+                    从上至下，一个方法，一个类，一个系统，并行展开。
+                </p>
+                <p>
+                    这成为一种可预期的整合，一个系统，<br />
+                    一道宏大的笔触，一股连绵的流。
+                </p>
+            </div>
+            <p class="signature">
+                一个 IT 书呆子，在墨尔本维多利亚国家美术馆被李禹焕的 <em
+                    >Dialogue</em
+                > 所迷住 😆
+            </p>
+        </main>
+        <Footer />
+    </body>
+</html>

@@ -1,0 +1,41 @@
+---
+title: 'AnotherHome 警告项目添加功能实现'
+description: 'AnotherHome 警告项目添加功能实现'
+pubDate: 'FEB 22 2026'
+heroImage: './screenshot2.webp'
+---
+
+## AnotherHome，持续~~营业~~开发中..
+令人惊讶的是，我至今仍在推进 AnotherHome 项目。
+虽然英语学习、工作、PY 课程、出去玩，还有迷上 Prince 在学吉他，搞得我晕头转向，但还是在持续改进设计、实现新功能。
+这次新增的是关于 Warning Item 的功能。
+![blog placeholder](./screenshot2.webp)
+
+## 这是什么？
+站在工单管理员的角度，有些事项希望用户在提交工单之前能先确认清楚，或者至少让用户知晓。
+反正 CRUD 功能都已经实现了，就做成让管理员自己输入内容、展示给用户看的功能。
+
+## 为什么要实现？
+说实话，这种内容不会频繁变动，专门开 API、管理数据表、做数据校验，感觉有点多此一举。不常变的内容直接硬编码在前端就好了。
+不过，后端已经写好了，所以我也好奇加这个功能到底要花多少工夫。
+另外，虽然这个功能实际能带来多大效用还不好说，但我觉得通过这个功能，可以给人一种管理员掌握主导权、服务运营稳健可靠的感觉，所以就做了。
+
+## 作弊？
+后端是自己写的，但前端借了不少（很多） Antigravity 的力量。太厉害了。感觉有点像彼得·帕克被蜘蛛咬了之后第一次发现自己有超能力时的感受。
+反正加页面这种事，就是把现有页面结构复制粘贴，不需要我自己动脑，所以毫无压力地交给 Antigravity 了。再说前端反正会被逆向工程，重要逻辑本来就不放里面。
+不管怎样，这是我第一次正式用 AI 助手的体验记录。它对我想要什么了解得出奇地详细。这是什么，谷歌..
+
+## 教程
+在 AnotherHome YouTube 频道上传了视频。声音听起来有点低沉，因为录制是一镜到底拍完的..ㅋ
+
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+  <iframe 
+    src="https://www.youtube.com/embed/nkuJhmtgXhA"
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"
+    frameborder="0"
+    allowfullscreen>
+  </iframe>
+</div>
+有意思的是，这个 Shorts 视频上传一小时就破了 200 播放。这是怎么回事？
+
+直接测试可以<a href="https://http://anotherhome.com.au" target="_blank" rel="noopener noreferrer">点这里</a>

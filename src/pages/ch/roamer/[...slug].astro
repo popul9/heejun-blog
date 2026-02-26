@@ -1,0 +1,26 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import BlogPost from "../../../layouts/BlogPost.astro";
+
+export async function getStaticPaths() {
+    const posts = await getCollection("roamer");
+    const chPosts = posts.filter(
+        (post) => post.id.endsWith("/ch") || !post.id.includes("/")
+    );
+    return chPosts.map((post) => {
+        const basePath = post.id.replace(/\/ch$/, "");
+        return {
+            params: { slug: basePath },
+            props: post,
+        };
+    });
+}
+type Props = CollectionEntry<"roamer">;
+
+const post = Astro.props;
+const { Content } = await render(post);
+---
+
+<BlogPost {...post.data}>
+    <Content />
+</BlogPost>

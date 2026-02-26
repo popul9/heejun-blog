@@ -8,7 +8,7 @@ const pathname = Astro.url.pathname;
 const urlParts = pathname.split("/").filter(Boolean);
 const firstSegment = urlParts[0];
 
-if (firstSegment === "ko" || firstSegment === "en") {
+if (firstSegment === "ko" || firstSegment === "en" || firstSegment === "ch") {
 	urlParts.shift();
 }
 
@@ -19,7 +19,7 @@ const subpath = urlParts[0] || "";
 let hrefParts = String(href ?? "")
 	.split("/")
 	.filter(Boolean);
-if (hrefParts[0] === "ko" || hrefParts[0] === "en") {
+if (hrefParts[0] === "ko" || hrefParts[0] === "en" || hrefParts[0] === "ch") {
 	hrefParts.shift();
 }
 const normalizedHref = "/" + hrefParts.join("/");
