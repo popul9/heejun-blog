@@ -64,13 +64,8 @@ const localizedFoodie = getLocalizedPathname("/foodie", lang);
 				>{t("nav.developer")}
 			</HeaderLink>
 			<HeaderLink href={localizedroamer}>{t("nav.roamer")}</HeaderLink>
-			<HeaderLink
-				href={localizedMelophile}
-				data-title="Coming Soon"
-				class="disabled-link"
-				onclick="return false;"
-			>
-				{t("nav.melophile")}
+			<HeaderLink href={localizedMelophile}
+				>{t("nav.melophile")}
 			</HeaderLink>
 			<HeaderLink href={localizedFoodie}>{t("nav.foodie")}</HeaderLink>
 		</div>

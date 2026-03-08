@@ -1,0 +1,34 @@
+---
+title: '浪费的美学 - 打造液态玻璃语言选择器'
+description: 'Another Home Warning 物品添加功能实现'
+pubDate: 'Mar 08 2026'
+heroImage: './Lang-Picker.webp'
+---
+import Video from '../../../components/Video.astro';
+
+
+## 注入生命的浪费
+我不喜欢液态玻璃设计。所以我还没更新 iOS 26、macOS 26。
+准确来说，我觉得它真的很酷，但为了单纯的美观，让我手机的 GPU 一直在渲染这件事让我不太爽（至少现在是这样）。
+不过，小小的奢侈应该还好吧？以 CSS 为主，高效又轻量的组件，正是我所需要的。
+
+## 为什么做这个？
+这是一个支持韩语、中文、英语的博客。因为我是韩国人，所以用韩语快速写完文章，英语和中文的翻译就交给 Claude 来做。这套流程出奇地自然 😅。
+
+## 成果
+<Video src="/videos/language_picker_chrome.mp4" />
+
+
+## 实现方式
+我 CSS 真的很差。说实话，C++ 或者 Rust 对我来说可能还更简单？（目的不同就是了）不过在这个 AI 大爆发、开源盛行的时代，和 Claude 商量着来，想要的设计照样能实现。<br/>翻了几个开源仓库，收集了一些我喜欢的设计和实现方式作为参考，然后拿去找 AI 聊。
+为了在性能、美观和简洁之间尽量取得平衡，能用 CSS 解决的就尽量用 CSS 解决。
+
+## 局限性
+<Video src="/videos/language_picker_safari.mp4" />
+没办法。Safari 和苹果移动端不支持 `backdrop-filter` 里带 SVG 滤镜 url 的 CSS 写法。AI 说这个方案其实是苹果提出的，但 Chrome 先实现了，挺讽刺的。不过备用的磨砂玻璃效果我还挺满意的 🙂。
+
+
+## GitHub
+我的博客全部开源！感兴趣的话可以参考 FloatingLanguagePicker.astro 文件。说实话，里面一大半都是光折射率的计算公式，挺难的。哈哈
+
+源代码<a href="https://github.com/popul9/heejun-blog/blob/main/src/components/FloatingLanguagePicker.astro" target="_blank" rel="noopener noreferrer">在这里查看</a>

@@ -49,4 +49,16 @@ const developer = defineCollection({
 		}),
 });
 
-export const collections = { blog, roamer, foodie, developer };
+const melophile = defineCollection({
+	loader: glob({ base: './src/content/melophile', pattern: '**/*.{md,mdx}' }),
+	schema: ({ image }) =>
+		z.object({
+			title: z.string(),
+			description: z.string(),
+			pubDate: z.coerce.date(),
+			updatedDate: z.coerce.date().optional(),
+			heroImage: image().optional(),
+		}),
+});
+
+export const collections = { blog, roamer, foodie, developer, melophile };
