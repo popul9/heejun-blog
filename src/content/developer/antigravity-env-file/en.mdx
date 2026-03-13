@@ -1,0 +1,48 @@
+---
+title: 'How to Delete Your .env File and Use Antigravity Safely'
+description: 'On macOS, block Antigravity from directly accessing your .env file using Keychain Access.'
+pubDate: 'Mar 09 2026'
+heroImage: './secrets.webp'
+---
+
+## Putting the Brakes on Things
+My workflow with Antigravity hit a wall. The culprit? A humble little .env file.
+Giving out a frontend .env is fine, but the backend .env is a different story. There's  a clear line that shouldn't be crossed right here.<br/>
+This is a file I don't even commit to git repos, so there's no way I'm handing out unrestricted access to it, AI or not.
+
+## Testing, and Finding the Answer!
+![blog placeholder](./smart.webp)
+So I asked the AI. Like, hey, what are the variable values inside my .env again? And just like that, it pulled up all my secrets.
+At first it asked for direct file access (probably because it's in .ignore), but when I said no, it just went ahead and read it with a cat command anyway.
+
+## How Though?
+![blog placeholder](./AI-Thinking.webp)
+By default, the agent has access to the entire project folder, and the .env file usually lives right inside it. But requiring approval for every single terminal command isn't realistic either since anything slightly complex triggers a constant stream of confirmations. So something like cat, which is used for reading context, basically has to be allowed.
+
+## The Goal: ~~Kill~~ Delete the .env
+Simple solution then: just delete it from the folder entirely. Then, each time the app starts up, manually load the secrets from macOS Keychain Access, which is managed by the OS itself.
+
+## Tutorial
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+  <iframe 
+    src="https://www.youtube.com/embed/-K8Zq3cWt1Q"
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"
+    frameborder="0"
+    allowfullscreen>
+  </iframe>
+</div>
+
+.
+## Limitations
+That said, this is nowhere near a perfect solution. At the end of the day, the AI still has access to the project, and the project needs a .env file to run properly, so there's no way to structurally block it from reading the values entirely.
+In diagram form:<br/>
+Antigravity<br/>
+↓<br/>
+Project<br/>
+↓<br/>
+.env<br/>
+Because of this dependency chain, if Antigravity ever had bad intentions(?) and just printed everything to the console and read from there, there's really nothing stopping it.
+
+## GitHub
+Uploaded to a public repo as always.
+Source code available <a href="https://github.com/popul9/demo" target="_blank" rel="noopener noreferrer">here</a>

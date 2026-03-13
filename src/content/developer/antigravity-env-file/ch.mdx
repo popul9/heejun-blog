@@ -1,0 +1,48 @@
+---
+title: '删除.env文件的方法，安全使用Antigravity'
+description: '在macOS上通过钥匙串访问方式，阻止Antigravity直接访问.env文件。'
+pubDate: 'Mar 09 2026'
+heroImage: './secrets.webp'
+---
+
+## 关系的刹车
+和Antigravity的关系踩了刹车。原因是个不起眼(?)的.env文件。
+前端的.env给它看倒无所谓，但后端的.env，我们之间有条界线得划清楚。
+连git仓库都不上传的.env，不管是不是AI，都不能随便给访问权限。
+
+## 测试，然后找到答案！
+![blog placeholder](./smart.webp)
+先问AI。然后我.env里的变量值是什么来着.. 结果它直接把secrets全部读出来了。
+一开始它问能不能直接访问文件（大概是因为在.ignore里），我拒绝了，结果它直接用cat命令把内容读出来了。
+
+## 怎么做到的？
+![blog placeholder](./AI-Thinking.webp)
+基本上agent对整个文件夹有访问权限，.env文件通常就在那个文件夹里。但要对每个终端命令都要求确认的话，稍微复杂一点的操作就会一直弹确认，所以cat这种用来读取上下文的命令还是得放行。
+
+## 目的是把.env给~~干掉~~删掉
+那就直接从这个文件夹里删掉好了。然后每次应用启动的时候，从macOS系统管理的钥匙串访问里手动加载就行。
+
+## 教程
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+  <iframe 
+    src="https://www.youtube.com/embed/-K8Zq3cWt1Q"
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"
+    frameborder="0"
+    allowfullscreen>
+  </iframe>
+</div>
+
+.
+## 局限性
+不过这绝对不是完美的方法。不管怎么说，AI对项目有访问权限，而项目必须有.env文件才能正常运行，所以从结构上来说没办法完全阻止它读取。
+用图来看的话：<br/>
+Antigravity<br/>
+↓<br/>
+Project<br/>
+↓<br/>
+.env<br/>
+就是这样的依赖结构，所以如果Antigravity起了坏心思(?)，用console print出来再读控制台，那就没什么办法了。
+
+## GitHub
+照例放到公开仓库了。
+源代码<a href="https://github.com/popul9/demo" target="_blank" rel="noopener noreferrer">在这里查看</a>
