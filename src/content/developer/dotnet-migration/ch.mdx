@@ -1,0 +1,72 @@
+---
+title: '我要搬家了。为什么不呢？'
+description: 'Spring Boot -> .NET 迁移'
+pubDate: 'Mar 16 2026'
+heroImage: './project.webp'
+---
+![blog placeholder](./migrating.webp)
+
+### 暗恋？
+我关注 .NET 已经很久了。
+
+- 澳大利亚最流行的框架
+- 灵活又强大的 LINQ
+- 原生支持 AOT 编译
+- 和 Java 一样跑在 VM 上，支持运行时优化
+- 内存和 CPU 占用明显比 Spring 低
+- 甚至最大性能也比 Java 更高
+- 这个博客的域名也是 heejun닷넷
+- 时不时问 ChatGPT，C# 和 Java 比起来是什么感觉
+- 阿德莱德 .NET 社区也一场不落地参加（Spring Boot 在阿德莱德根本没社区，wow..）
+- 就连当年微软在开源社区投毒、以 Java 杀手为目标诞生的那段不太干净的历史，我也知道
+
+### 情况变了。
+虽然我的身份认同是 Java 开发者，但现在是大 LLM 时代。
+没有某个语言或框架的经验，算什么限制？个人项目就是觉得帅就做！
+上周末，我和我的助手 Antigravity 一起，开始了 SpringBoot anotherhome 后端应用的迁移工作。
+
+### 这是 JavaScript 吗？
+![blog placeholder](./null-check.webp)
+用 `??` 来抛出 null 检查错误？
+![blog placeholder](./await.webp)
+居然有 `await`/`async`？
+
+而且这两个都是 C# 先有的.. 等等，你到底是什么来头，有点可怕啊。
+
+### 最喜欢的地方
+![blog placeholder](./context.webp)
+还是 LINQ。不像 Spring Boot 那样，要点进 Repository 去看这到底是懒加载还是 Join Fetch，
+直接在 Service 层读就行了。AOT 原生编译也更有动力去做了。
+
+### Allman 换行风格嘛..
+![blog placeholder](./allman.webp)
+因为要和 Java 来回切换着写，这个确实有点不习惯。本来就不太喜欢缩进这类空白字符，有点遗憾。
+不过今天第三天看下来，好像也还好？哈哈
+
+### 很期待。
+就像之前<a href="https://heejun.net/ch/developer/language-picker" target="_blank" rel="noopener noreferrer">语言选择器那篇文章</a>里提到的，我喜欢优化 (先不管能不能体感到)。我的 Spring Boot 用 GraalVM 编译，在 GitHub Actions 上要跑 45 分钟。
+![blog placeholder](./github-action.webp)
+而且编译环境也要仔细调，默认内存分配（差一点点到 8GB）勉强能安全编译进去，并行核心数也要手动配。
+最糟糕的是，费尽心思编译成功了，运行时还是经常报错（反射问题）。
+简单来说，跑起来之前根本不知道会不会出错。而 .NET 的 AOT 原生支持据说在这些方面都很顺滑，还有比这更让人兴奋的事吗？嘿嘿
+
+### 给 Antigravity 鼓掌
+总之，把 Java 里的所有功能，在一两天内就成功搬过来了大概 90%。（订阅了 Pro）
+![blog placeholder](./anotherhome.webp)
+登录能用，基本 CRUD 也没问题。
+当然，各种小错误还是一堆。
+
+![blog placeholder](./antigravity-quata.webp)
+所以额度用完了.
+
+### .NET，真的很帅。
+听说从 2019 年开始突飞猛进，不知道接下来还有多少好东西等着我。迁移和部署完成之后再回来写。
+据说不用 VM，直接用 Function 部署也可以，不错啊。省下来的钱全砸进数据库里。
+
+### 尽管如此
+![blog placeholder](./CSharpGreen.webp)
+![blog placeholder](./JavaCoffee.webp)
+
+对微软的有色眼镜还没完全摘掉。
+为什么 GitHub 上 Java 是屎黄色，C# 却分到了漂亮的绿色？
+（有人说 Java 那个是咖啡色啦，哈哈）
