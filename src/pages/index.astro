@@ -3,6 +3,7 @@ import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import { LOCALES } from "../i18n/utils";
 import wondererHero1 from "../assets/dialogue1.webp";
 import wondererHero2 from "../assets/dialogue2.webp";
 ---
@@ -10,7 +11,11 @@ import wondererHero2 from "../assets/dialogue2.webp";
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead
+			title={SITE_TITLE}
+			description={SITE_DESCRIPTION}
+			availableLocales={LOCALES}
+		/>
 		<style>
 			main {
 				width: 100%;

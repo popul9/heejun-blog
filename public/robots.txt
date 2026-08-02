@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Naver's crawler
+User-agent: Yeti
+Allow: /
+
+Sitemap: https://heejun.net/sitemap-index.xml

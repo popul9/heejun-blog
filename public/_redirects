@@ -1,0 +1,6 @@
+# Chinese moved from the invalid code "ch" (Switzerland) to the BCP-47 code "zh".
+/ch/*  /zh/:splat  301
+
+# Astro starter demo posts, removed 2026-08.
+/blog/*  /  301
+/blog  /  301

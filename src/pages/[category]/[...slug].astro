@@ -1,0 +1,40 @@
+---
+// Post pages for the default locale: /developer/end-of-job/, /foodie/osoi-brunswick-vic/, ...
+import { getCollection, render } from "astro:content";
+import BlogPost from "../../layouts/BlogPost.astro";
+import {
+    CATEGORIES,
+    DEFAULT_LOCALE,
+    filterPostsByLocale,
+    getLocalesBySlug,
+    getPostSlug,
+} from "../../i18n/utils";
+
+export async function getStaticPaths() {
+    const paths = await Promise.all(
+        CATEGORIES.map(async (category) => {
+            const all = await getCollection(category);
+            const localesBySlug = getLocalesBySlug(all);
+
+            return filterPostsByLocale(all, DEFAULT_LOCALE).map((entry) => {
+                const slug = getPostSlug(entry.id, DEFAULT_LOCALE);
+                return {
+                    params: { category, slug },
+                    props: {
+                        entry,
+                        availableLocales: localesBySlug.get(slug) ?? [DEFAULT_LOCALE],
+                    },
+                };
+            });
+        })
+    );
+    return paths.flat();
+}
+
+const { entry, availableLocales } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<BlogPost {...entry.data} availableLocales={availableLocales}>
+    <Content />
+</BlogPost>

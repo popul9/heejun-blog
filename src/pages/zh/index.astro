@@ -4,17 +4,17 @@ import Footer from "../../components/Footer.astro";
 import Header from "../../components/Header.astro";
 import { LOCALES, useTranslations } from "../../i18n/utils";
 
-const t = useTranslations("ko");
+const t = useTranslations("zh");
 import wondererHero1 from "../../assets/dialogue1.webp";
 import wondererHero2 from "../../assets/dialogue2.webp";
 ---
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="zh">
     <head>
         <BaseHead
             title={t("site.title")}
-            description="안녕, 의식 있는 방랑자"
+            description={t("site.subtitle")}
             availableLocales={LOCALES}
         />
         <style>
@@ -105,39 +105,36 @@ import wondererHero2 from "../../assets/dialogue2.webp";
         <main>
             <div class="hero-gallery">
                 <div class="img-wrapper">
-                    <img
-                        src={wondererHero1.src}
-                        alt="이우환 Dialogue - 클로즈업"
-                    />
+                    <img src={wondererHero1.src} alt="李禹焕 Dialogue 特写" />
                 </div>
                 <div class="img-wrapper">
                     <img
                         src={wondererHero2.src}
-                        alt="이우환 Dialogue - 전시 전경"
+                        alt="李禹焕 Dialogue 展览全景"
                     />
                 </div>
             </div>
 
-            <h1>시스템</h1>
+            <h1>系统</h1>
             <div class="poem">
                 <p>
-                    작은, 수많은 붓질.<br />
-                    한 줄 한 줄, 한 획 한 획.<br />
-                    서로를 연결하여 하나의 흐름을 만든다.
+                    细小而繁复的笔触。<br />
+                    一行一行，一笔一笔。<br />
+                    彼此相连，汇成一道流动。
                 </p>
                 <p>
-                    색의 흐름은 일관성을 통해 방향성을 만들어낸다.<br />
-                    위에서 아래로, 하나의 메서드, 하나의 클래스, 그리고 하나의 시스템이
-                    나란히.
+                    色彩的流淌以一致性赋予方向。<br />
+                    从上至下，一个方法，一个类，一个系统，并行展开。
                 </p>
                 <p>
-                    이것은 하나의 예측 가능한 통합이자 시스템이 되고,<br />
-                    하나의 큰 붓질, 하나의 흐름이 된다.
+                    这成为一种可预期的整合，一个系统，<br />
+                    一道宏大的笔触，一股连绵的流。
                 </p>
             </div>
             <p class="signature">
-                - 멜버른 빅토리아 국립미술관에서 이우환의 <em>Dialogue</em>에
-                매료된 IT 너드 😆
+                一个 IT 书呆子，在墨尔本维多利亚国家美术馆被李禹焕的 <em
+                    >Dialogue</em
+                > 所迷住 😆
             </p>
         </main>
         <Footer />

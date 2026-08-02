@@ -5,16 +5,35 @@ import '../styles/global.css';
 import type { ImageMetadata } from 'astro';
 import FallbackImage from '../assets/blog-placeholder-1.jpg';
 import { SITE_TITLE } from '../consts';
+import {
+	DEFAULT_LOCALE,
+	getLangFromUrl,
+	getLocalizedPathname,
+	type Locale,
+} from '../i18n/utils';
 
 interface Props {
 	title: string;
 	description: string;
 	image?: ImageMetadata;
+	/**
+	 * Languages this exact page exists in. Emits hreflang so search engines
+	 * treat the translations as one page instead of duplicate content.
+	 * Omit on pages that exist in only one language (e.g. /about/).
+	 */
+	availableLocales?: readonly Locale[];
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title, description, image = FallbackImage } = Astro.props;
+const { title, description, image = FallbackImage, availableLocales } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const alternates = (availableLocales ?? []).map((locale) => ({
+	locale,
+	href: new URL(getLocalizedPathname(Astro.url.pathname, locale), Astro.site).href,
+}));
+const defaultAlternate = alternates.find((alt) => alt.locale === DEFAULT_LOCALE);
 ---
 
 <!-- Global Metadata -->
@@ -37,6 +56,19 @@ const { title, description, image = FallbackImage } = Astro.props;
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
+
+<!-- Language alternates -->
+{
+	alternates.map((alt) => (
+		<link rel="alternate" hreflang={alt.locale} href={alt.href} />
+	))
+}
+{
+	defaultAlternate && (
+		<link rel="alternate" hreflang="x-default" href={defaultAlternate.href} />
+	)
+}
+<meta property="og:locale" content={lang} />
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>

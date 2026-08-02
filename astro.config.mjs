@@ -6,11 +6,12 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://example.com',
+	site: 'https://heejun.net',
 	integrations: [mdx(), sitemap()],
 	i18n: {
 		defaultLocale: 'en',
-		locales: ['en', 'ko'],
+		// Keep in sync with LOCALES in src/i18n/utils.ts
+		locales: ['en', 'ko', 'zh'],
 		routing: {
 			prefixDefaultLocale: false,
 		},

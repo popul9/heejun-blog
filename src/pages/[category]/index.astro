@@ -1,0 +1,40 @@
+---
+// Category listing for the default locale, served unprefixed: /developer/, /foodie/, ...
+import { getCollection } from "astro:content";
+import PostList from "../../layouts/PostList.astro";
+import {
+    CATEGORIES,
+    DEFAULT_LOCALE,
+    filterPostsByLocale,
+    getPostSlug,
+    type Category,
+} from "../../i18n/utils";
+
+export async function getStaticPaths() {
+    return Promise.all(
+        CATEGORIES.map(async (category) => {
+            const entries = filterPostsByLocale(
+                await getCollection(category),
+                DEFAULT_LOCALE
+            ).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+            return {
+                params: { category },
+                props: {
+                    posts: entries.map((entry) => ({
+                        href: `/${category}/${getPostSlug(entry.id, DEFAULT_LOCALE)}/`,
+                        title: entry.data.title,
+                        pubDate: entry.data.pubDate,
+                        heroImage: entry.data.heroImage,
+                    })),
+                },
+            };
+        })
+    );
+}
+
+const { category } = Astro.params;
+const { posts } = Astro.props;
+---
+
+<PostList lang={DEFAULT_LOCALE} category={category as Category} posts={posts} />

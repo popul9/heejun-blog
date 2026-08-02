@@ -1,14 +1,17 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import { LOCALES } from "../i18n/utils";
 
 type Props = HTMLAttributes<"a">;
+
+const isLocale = (segment: string) =>
+	(LOCALES as readonly string[]).includes(segment);
 
 const { href, class: className, ...props } = Astro.props;
 const pathname = Astro.url.pathname;
 const urlParts = pathname.split("/").filter(Boolean);
-const firstSegment = urlParts[0];
 
-if (firstSegment === "ko" || firstSegment === "en" || firstSegment === "ch") {
+if (isLocale(urlParts[0])) {
 	urlParts.shift();
 }
 
@@ -19,7 +22,7 @@ const subpath = urlParts[0] || "";
 let hrefParts = String(href ?? "")
 	.split("/")
 	.filter(Boolean);
-if (hrefParts[0] === "ko" || hrefParts[0] === "en" || hrefParts[0] === "ch") {
+if (isLocale(hrefParts[0])) {
 	hrefParts.shift();
 }
 const normalizedHref = "/" + hrefParts.join("/");

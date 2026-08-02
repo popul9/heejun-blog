@@ -1,0 +1,45 @@
+---
+// Category listing for prefixed locales: /ko/developer/, /zh/foodie/, ...
+import { getCollection } from "astro:content";
+import PostList from "../../../layouts/PostList.astro";
+import {
+    CATEGORIES,
+    SECONDARY_LOCALES,
+    filterPostsByLocale,
+    getPostSlug,
+    type Category,
+    type Locale,
+} from "../../../i18n/utils";
+
+export async function getStaticPaths() {
+    const paths = await Promise.all(
+        SECONDARY_LOCALES.flatMap((lang) =>
+            CATEGORIES.map(async (category) => {
+                const entries = filterPostsByLocale(
+                    await getCollection(category),
+                    lang
+                ).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+                return {
+                    params: { lang, category },
+                    props: {
+                        lang,
+                        posts: entries.map((entry) => ({
+                            href: `/${lang}/${category}/${getPostSlug(entry.id, lang)}/`,
+                            title: entry.data.title,
+                            pubDate: entry.data.pubDate,
+                            heroImage: entry.data.heroImage,
+                        })),
+                    },
+                };
+            })
+        )
+    );
+    return paths;
+}
+
+const { category } = Astro.params;
+const { lang, posts } = Astro.props;
+---
+
+<PostList lang={lang as Locale} category={category as Category} posts={posts} />

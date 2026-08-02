@@ -1,17 +1,21 @@
 ---
-import { getLangFromUrl, getLocalizedPathname } from "../i18n/utils";
+import {
+    LOCALES,
+    LOCALE_LABELS,
+    getLangFromUrl,
+    getLocalizedPathname,
+} from "../i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
 const path = Astro.url.pathname;
 
-const languages: { code: "ko" | "en" | "ch"; label: string }[] = [
-    { code: "ko", label: "한국어" },
-    { code: "en", label: "English" },
-    { code: "ch", label: "中文" },
-];
+// Driven by LOCALES so adding a language needs no change here.
+const languages = LOCALES.map((code) => ({
+    code,
+    label: LOCALE_LABELS[code],
+}));
 
-const currentLangLabel =
-    languages.find((l) => l.code === lang)?.label || "Language";
+const currentLangLabel = LOCALE_LABELS[lang] || "Language";
 ---
 
 <div class="floating-lang-toggle" id="liquid-glass-toggle">

@@ -5,15 +5,52 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import { getLangFromUrl, type Locale } from '../i18n/utils';
 
-type Props = CollectionEntry<'blog'>['data'];
+// Every post collection shares the same schema, so any one of them types this.
+type Props = CollectionEntry<'developer'>['data'] & {
+	/** Languages this post is actually translated into. */
+	availableLocales?: readonly Locale[];
+};
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const {
+	title,
+	description,
+	pubDate,
+	updatedDate,
+	heroImage,
+	availableLocales,
+} = Astro.props;
+// Without this every translated post would declare itself as English.
+const lang = getLangFromUrl(Astro.url);
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const structuredData = {
+	'@context': 'https://schema.org',
+	'@type': 'BlogPosting',
+	headline: title,
+	description,
+	datePublished: pubDate.toISOString(),
+	...(updatedDate && { dateModified: updatedDate.toISOString() }),
+	...(heroImage && { image: new URL(heroImage.src, Astro.site).href }),
+	inLanguage: lang,
+	author: { '@type': 'Person', name: 'Heejun Moon' },
+	mainEntityOfPage: { '@type': 'WebPage', '@id': canonical.href },
+};
 ---
 
-<html lang="en">
+<html lang={lang}>
 	<head>
-		<BaseHead title={title} description={description} image={heroImage} />
+		<BaseHead
+			title={title}
+			description={description}
+			image={heroImage}
+			availableLocales={availableLocales}
+		/>
+		<script
+			type="application/ld+json"
+			set:html={JSON.stringify(structuredData)}
+		/>
 		<style>
 			main {
 				width: calc(100% - 2em);
