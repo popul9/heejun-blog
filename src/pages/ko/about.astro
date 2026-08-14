@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/BlogPost.astro';
+import { LOCALES, useTranslations } from '../../i18n/utils';
+
+const t = useTranslations('ko');
+---
+
+<Layout
+	title={`소개 | ${t('site.title')}`}
+	heading={t('nav.about')}
+	description="이 사이트와 쓰는 사람에 대하여"
+	availableLocales={LOCALES}
+	schemaType="AboutPage"
+>
+	<p>
+		개발의 숲에서 길을 잃고 떠돌기 좋아하고, 궁금한 생각의 스레드를 끝없이 따라가기도 하며,
+		존재에 관한 생각과 음식에 관한 탐미(耽美)에 정신을 못 차립니다. 나란 존재는 뭔가요? 저는
+		존재하나요? 당신에게 저는 누구인가요?
+	</p>
+
+	<h2>여기에 있는 것들</h2>
+	<p>
+		이 블로그는 네 갈래로 나뉩니다. 개발하며 부딪힌 문제를 적는 <a href="/ko/developer/"
+			>개발자</a
+		>, 호주를 돌아다니며 본 것들을 적는 <a href="/ko/roamer/">방랑자</a>, 듣고 또 듣게 되는
+		음악을 적는 <a href="/ko/melophile/">음덕</a>, 그리고 다시 찾게 되는 식당들을 적는 <a
+			href="/ko/foodie/">맛집러</a
+		>.
+	</p>
+
+	<h2>언어에 대하여</h2>
+	<p>
+		모든 글은 한국어로 먼저 쓰고 영어, 중국어, 태국어, 베트남어로 옮깁니다. 페이지 하단의 언어
+		선택기로 오갈 수 있습니다.
+	</p>
+
+	<h2>다른 곳에서</h2>
+	<p>
+		<a href="https://github.com/popul9" target="_blank" rel="noopener noreferrer">GitHub</a>
+		{' · '}
+		<a
+			href="https://www.linkedin.com/in/heejun-moon-dev/"
+			target="_blank"
+			rel="noopener noreferrer">LinkedIn</a
+		>
+	</p>
+</Layout>

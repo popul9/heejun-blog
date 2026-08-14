@@ -1,11 +1,21 @@
 ---
 import FloatingLanguagePicker from "./FloatingLanguagePicker.astro";
+import {
+	getLangFromUrl,
+	getLocalizedPathname,
+	useTranslations,
+} from "../i18n/utils";
+
 const today = new Date();
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const localizedAbout = getLocalizedPathname("/about", lang);
 ---
 
 <FloatingLanguagePicker />
 <footer>
-	&copy; {today.getFullYear()} Heejun Moon. All rights reserved.
+	&copy; {today.getFullYear()} Heejun Moon. All rights reserved. ·{" "}
+	<a href={localizedAbout} class="about-link">{t("nav.about")}</a>
 	<div class="social-links">
 		<a
 			href="https://www.linkedin.com/in/heejun-moon-dev/"
@@ -51,6 +61,13 @@ const today = new Date();
 	.social-links a {
 		text-decoration: none;
 		color: rgb(var(--gray));
+	}
+	.about-link {
+		color: rgb(var(--gray));
+		text-decoration: underline;
+	}
+	.about-link:hover {
+		color: var(--accent);
 	}
 	/* 추가할 부분 */
 

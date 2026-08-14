@@ -1,0 +1,34 @@
+---
+title: 'Vẻ đẹp của sự lãng phí, làm bộ chọn ngôn ngữ kiểu Liquid Glass'
+description: 'Triển khai tính năng thêm Warning Item của Another Home'
+pubDate: 'Mar 08 2026'
+heroImage: './Lang-Picker.webp'
+---
+import Video from '../../../components/Video.astro';
+
+
+## Sự lãng phí thổi hồn vào mọi thứ
+Tôi không thích thiết kế Liquid Glass. Nên tới giờ vẫn chưa cập nhật lên iOS 26 hay macOS 26.
+Nói chính xác hơn thì tôi thấy nó đẹp thật, nhưng việc thiết bị di động của tôi phải render bằng GPU liên tục chỉ vì tính thẩm mỹ đơn thuần thì tôi không ưng (ít nhất là tới lúc này).
+Dù vậy, xa xỉ một chút thì cũng đâu có sao? Một component nhỏ, hiệu quả, chủ yếu dựa vào CSS, đó đúng là thứ tôi cần.
+
+## Tại sao?
+Đây là blog hỗ trợ tiếng Hàn, tiếng Trung và tiếng Anh. Vì tôi là người Hàn nên tôi viết bài bằng tiếng Hàn cho nhanh, còn phần dịch sang tiếng Anh và tiếng Trung thì giao cho Claude. Chuyện này diễn ra hết sức tự nhiên 😅.
+
+## Thành quả
+<Video src="/videos/language_picker_chrome.mp4" />
+
+
+## Cách triển khai
+Tôi thật sự rất dở CSS. Nói thật, chẳng phải C++ hay Rust còn dễ hơn sao? (dù mục đích khác nhau) Nhưng thời của AI và mã nguồn mở, tôi trao đổi với Claude để dựng ra thiết kế mình muốn. <br/>Tôi lục qua vài repository mở, gom lại những mẫu thiết kế và cách triển khai ưng ý rồi mang tới hỏi AI.
+Tôi cố hết sức để cân bằng giữa hiệu năng, tính thẩm mỹ và sự đơn giản. Nói gọn lại là tận dụng CSS tối đa.
+
+## Giới hạn
+<Video src="/videos/language_picker_safari.mp4" />
+Cái này thì đành chịu thôi. Safari với thiết bị di động của Apple không hỗ trợ cấu hình CSS đặt url vào backdrop-filter: để làm SVG filter. AI bảo đây vốn là ý tưởng do Apple đề xuất, nhưng Chrome mới là bên triển khai trước. Dù vậy bản frosted glass thay thế thì tôi vẫn thích 🙂.
+
+
+## GitHub
+Blog của tôi mở mã nguồn hết! Nếu tò mò thì xem file FloatingLanguagePicker.astro. Nói thật là hơn một nửa trong đó là công thức tính chiết suất ánh sáng nên khó lắm. haha
+
+Mã nguồn <a href="https://github.com/popul9/heejun-blog/blob/main/src/components/FloatingLanguagePicker.astro" target="_blank" rel="noopener noreferrer">xem ở đây</a>

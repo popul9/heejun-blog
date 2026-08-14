@@ -1,0 +1,48 @@
+---
+title: 'Cách xóa file .env và dùng Antigravity một cách an toàn'
+description: 'Trên macOS, dùng Keychain Access để chặn Antigravity truy cập trực tiếp vào file .env.'
+pubDate: 'Mar 09 2026'
+heroImage: './secrets.webp'
+---
+
+## Cái phanh trong mối quan hệ
+Mối quan hệ giữa tôi và Antigravity bị đạp phanh. Nguyên nhân là cái file .env cỏn con (thật không?).
+Với dự án frontend thì AI có đọc lung tung file .env cũng chẳng sao, nhưng .env của backend thì.. ranh giới giữa tôi với nó nằm ngay ở chỗ đó.<br/>
+File .env mà ngay cả lên repository Git tôi còn không đẩy lên, thì chẳng có chuyện cho quyền truy cập thoải mái, AI hay gì đi nữa.
+
+## Thử nghiệm, và đáp án!
+![blog placeholder](./smart.webp)
+Trước hết tôi hỏi AI. Kiểu, mà giá trị các biến trong .env của tôi là gì ấy nhỉ.. Thế là nó lôi luôn đống secret ra.
+Ban đầu nó xin quyền truy cập trực tiếp vào file (chắc do file nằm trong .ignore), tôi từ chối thì nó dùng luôn lệnh cat để đọc ra.
+
+## Bằng cách nào?
+![blog placeholder](./AI-Thinking.webp)
+Về cơ bản agent có quyền truy cập cả thư mục, và file .env thường thì nằm trong chính thư mục đó. Mà bắt xin phép cho mọi lệnh terminal thì cũng không xong, vì chỉ cần lệnh phức tạp lên một chút là nó hỏi liên tục, nên những lệnh đơn giản như cat dùng để đọc context thì vẫn phải cho phép.
+
+## Mục tiêu là ~~giết~~ xóa .env
+Vậy thì cứ xóa hẳn nó khỏi thư mục này là được. Rồi mỗi lần ứng dụng khởi động thì tự tay nạp các giá trị đó từ Keychain Access do hệ điều hành macOS quản lý.
+
+## Hướng dẫn
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+  <iframe 
+    src="https://www.youtube.com/embed/-K8Zq3cWt1Q"
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"
+    frameborder="0"
+    allowfullscreen>
+  </iframe>
+</div>
+
+.
+## Giới hạn
+Có điều đây tuyệt đối không phải cách hoàn hảo. Dù sao AI vẫn có quyền trên dự án, và dự án thì phải có file .env mới chạy bình thường được, nên về mặt cấu trúc không thể chặn hoàn toàn việc nó đọc.
+Nhìn theo sơ đồ thì: <br/>
+Antigravity<br/>
+↓<br/>
+Project<br/>
+↓<br/>
+.env <br/>
+Cấu trúc phụ thuộc là như vậy, nên nếu Antigravity nổi lòng tà (thật không?) rồi print ra console để đọc console thì chẳng có cách nào ngăn được.
+
+## GitHub
+Cái này tôi cũng đẩy lên repo mở.
+Mã nguồn <a href="https://github.com/popul9/demo" target="_blank" rel="noopener noreferrer">xem ở đây</a>

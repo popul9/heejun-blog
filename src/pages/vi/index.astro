@@ -1,0 +1,146 @@
+---
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import { LOCALES, useTranslations } from "../../i18n/utils";
+
+const t = useTranslations("vi");
+import wondererHero1 from "../../assets/dialogue1.webp";
+import wondererHero2 from "../../assets/dialogue2.webp";
+---
+
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <BaseHead
+            title={t("site.title")}
+            description="Xin chào, kẻ lang thang biết trăn trở"
+            availableLocales={LOCALES}
+        />
+        <style>
+            main {
+                width: 100%;
+                max-width: 720px;
+                margin: 0 auto;
+                padding: 2em 1em;
+                box-sizing: border-box;
+                overflow-x: hidden;
+            }
+            .hero-gallery {
+                display: flex;
+                gap: 1rem;
+                margin-bottom: 2.5rem;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .hero-gallery .img-wrapper {
+                flex: 1 1 0;
+                min-width: 0;
+                max-width: 50%;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .hero-gallery .img-wrapper:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            }
+            .hero-gallery .img-wrapper img {
+                width: 100%;
+                height: auto;
+                display: block;
+                border-radius: 12px;
+            }
+            h1 {
+                margin-bottom: 0.5em;
+            }
+            .poem {
+                line-height: 1.8;
+                font-size: 1.05em;
+                color: rgb(var(--gray-dark));
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                max-width: 100%;
+            }
+            .poem p {
+                margin-bottom: 1.2em;
+            }
+            .signature {
+                margin-top: 2em;
+                font-style: italic;
+                color: rgb(var(--gray));
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                max-width: 100%;
+            }
+            /* Desktop: side by side */
+            @media (min-width: 721px) {
+                .hero-gallery .img-wrapper {
+                    scroll-snap-align: unset;
+                }
+            }
+            /* Mobile: horizontal scroll gallery */
+            @media (max-width: 720px) {
+                .hero-gallery {
+                    overflow-x: auto;
+                    scroll-snap-type: x mandatory;
+                    -webkit-overflow-scrolling: touch;
+                    gap: 0.75rem;
+                    padding-bottom: 0.5rem;
+                }
+                .hero-gallery .img-wrapper {
+                    flex: 0 0 85%;
+                    max-width: 85%;
+                    scroll-snap-align: center;
+                }
+                .poem {
+                    font-size: 0.95em;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <Header />
+        <main>
+            <div class="hero-gallery">
+                <div class="img-wrapper">
+                    <img
+                        src={wondererHero1.src}
+                        alt="Lee Ufan Dialogue cận cảnh"
+                    />
+                </div>
+                <div class="img-wrapper">
+                    <img
+                        src={wondererHero2.src}
+                        alt="Lee Ufan Dialogue toàn cảnh triển lãm"
+                    />
+                </div>
+            </div>
+
+            <h1>Hệ thống</h1>
+            <div class="poem">
+                <p>
+                    Những nét cọ nhỏ, nhiều vô số.<br />
+                    Từng dòng một, từng nét một.<br />
+                    Nối vào nhau để làm nên một dòng chảy duy nhất.
+                </p>
+                <p>
+                    Dòng chảy của màu tạo ra phương hướng bằng sự nhất quán.<br />
+                    Từ trên xuống dưới, một Method, một Class, và một System, song
+                    song cùng nhau.
+                </p>
+                <p>
+                    Cái đó trở thành một sự tích hợp đoán trước được, một hệ thống,<br
+                    />
+                    thành một nét cọ lớn duy nhất, một dòng chảy duy nhất.
+                </p>
+            </div>
+            <p class="signature">
+                - Một gã mọt công nghệ bị <em>Dialogue</em> của Lee Ufan ở Phòng trưng
+                bày Quốc gia Victoria tại Melbourne làm cho mê mẩn 😆
+            </p>
+        </main>
+        <Footer />
+    </body>
+</html>

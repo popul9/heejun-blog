@@ -11,7 +11,7 @@ export default defineConfig({
 	i18n: {
 		defaultLocale: 'en',
 		// Keep in sync with LOCALES in src/i18n/utils.ts
-		locales: ['en', 'ko', 'zh'],
+		locales: ['en', 'ko', 'zh', 'th', 'vi'],
 		routing: {
 			prefixDefaultLocale: false,
 		},

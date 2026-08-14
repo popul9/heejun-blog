@@ -5,12 +5,20 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-import { getLangFromUrl, type Locale } from '../i18n/utils';
+import { SOCIAL_LINKS } from '../consts';
+import { getLangFromUrl, getLocalizedPathname, type Locale } from '../i18n/utils';
 
 // Every post collection shares the same schema, so any one of them types this.
-type Props = CollectionEntry<'developer'>['data'] & {
-	/** Languages this post is actually translated into. */
+// Standing pages (About) reuse the layout but have no publication date.
+type Props = Omit<CollectionEntry<'developer'>['data'], 'pubDate'> & {
+	pubDate?: Date;
+	/** Languages this page is actually translated into. */
 	availableLocales?: readonly Locale[];
+	/** An About page is not a blog post, so it needs a different schema. */
+	schemaType?: 'BlogPosting' | 'AboutPage';
+	/** Visible <h1>. Defaults to `title`; standing pages override it because
+	 *  their <title> also carries the site name, which an h1 should not. */
+	heading?: string;
 };
 
 const {
@@ -20,23 +28,45 @@ const {
 	updatedDate,
 	heroImage,
 	availableLocales,
+	schemaType = 'BlogPosting',
+	heading = Astro.props.title,
 } = Astro.props;
 // Without this every translated post would declare itself as English.
 const lang = getLangFromUrl(Astro.url);
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const structuredData = {
-	'@context': 'https://schema.org',
-	'@type': 'BlogPosting',
-	headline: title,
-	description,
-	datePublished: pubDate.toISOString(),
-	...(updatedDate && { dateModified: updatedDate.toISOString() }),
-	...(heroImage && { image: new URL(heroImage.src, Astro.site).href }),
-	inLanguage: lang,
-	author: { '@type': 'Person', name: 'Heejun Moon' },
-	mainEntityOfPage: { '@type': 'WebPage', '@id': canonical.href },
+// The About page is this person's canonical page, so point `url` at it in the
+// reader's own language and list the profiles that are the same person.
+const author = {
+	'@type': 'Person',
+	name: 'Heejun Moon',
+	url: new URL(getLocalizedPathname('/about', lang), Astro.site).href,
+	sameAs: SOCIAL_LINKS,
 };
+
+const structuredData =
+	schemaType === 'AboutPage'
+		? {
+				'@context': 'https://schema.org',
+				'@type': 'AboutPage',
+				name: title,
+				description,
+				inLanguage: lang,
+				mainEntity: author,
+				url: canonical.href,
+			}
+		: {
+				'@context': 'https://schema.org',
+				'@type': 'BlogPosting',
+				headline: title,
+				description,
+				...(pubDate && { datePublished: pubDate.toISOString() }),
+				...(updatedDate && { dateModified: updatedDate.toISOString() }),
+				...(heroImage && { image: new URL(heroImage.src, Astro.site).href }),
+				inLanguage: lang,
+				author,
+				mainEntityOfPage: { '@type': 'WebPage', '@id': canonical.href },
+			};
 ---
 
 <html lang={lang}>
@@ -101,22 +131,24 @@ const structuredData = {
 		<Header />
 		<main>
 			<article>
-				<div class="hero-image">
-					{
-						heroImage && (
+				{
+					/* Standing pages ship without a hero. Rendering the wrapper
+					   anyway would leave a 16/9 hole above the first line. */
+					heroImage && (
+						<div class="hero-image">
 							<Image
 								width={1020}
 								height={510}
 								src={heroImage}
 								alt=""
 							/>
-						)
-					}
-				</div>
+						</div>
+					)
+				}
 				<div class="prose">
 					<div class="title">
 						<div class="date">
-							<FormattedDate date={pubDate} />
+							{pubDate && <FormattedDate date={pubDate} />}
 							{
 								updatedDate && (
 									<div class="last-updated-on">
@@ -126,7 +158,7 @@ const structuredData = {
 								)
 							}
 						</div>
-						<h1>{title}</h1>
+						<h1>{heading}</h1>
 						<hr />
 					</div>
 					<slot />

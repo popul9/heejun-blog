@@ -1,0 +1,45 @@
+---
+import Layout from '../../layouts/BlogPost.astro';
+import { LOCALES, useTranslations } from '../../i18n/utils';
+
+const t = useTranslations('th');
+---
+
+<Layout
+	title={`เกี่ยวกับ | ${t('site.title')}`}
+	heading={t('nav.about')}
+	description="เกี่ยวกับเว็บไซต์นี้และคนที่เขียน"
+	availableLocales={LOCALES}
+	schemaType="AboutPage"
+>
+	<p>
+		ผมชอบหลงทางและเดินเตร็ดเตร่อยู่ในป่าของการพัฒนา ชอบไล่ตามเส้นด้ายของความคิดที่สงสัยไปอย่างไม่มีที่สิ้นสุด
+		และตั้งสติไม่อยู่กับความคิดเรื่องการมีอยู่และความหลงใหลในความงามของอาหาร
+		ผมคือสิ่งใดกันแน่? ผมมีอยู่จริงหรือ? สำหรับคุณ ผมคือใคร?
+	</p>
+
+	<h2>มีอะไรอยู่ที่นี่</h2>
+	<p>
+		บล็อกนี้แบ่งออกเป็นสี่ส่วน ได้แก่ <a href="/th/developer/">นักพัฒนา</a> ที่บันทึกปัญหาที่เจอระหว่างพัฒนา,
+		<a href="/th/roamer/">นักพเนจร</a> ที่บันทึกสิ่งที่ได้เห็นจากการเดินทางทั่วออสเตรเลีย,
+		<a href="/th/melophile/">คนบ้าเพลง</a> ที่บันทึกเพลงที่ฟังแล้วฟังอีก, และ
+		<a href="/th/foodie/">นักหาของอร่อย</a> ที่บันทึกร้านในแอดิเลดและเมลเบิร์นที่อยากกลับไปอีก
+	</p>
+
+	<h2>เกี่ยวกับภาษา</h2>
+	<p>
+		ทุกบทความเขียนเป็นภาษาเกาหลีก่อน แล้วจึงแปลเป็นภาษาอังกฤษ จีน ไทย และเวียดนาม
+		สลับภาษาได้จากตัวเลือกภาษาที่ด้านล่างของทุกหน้า
+	</p>
+
+	<h2>ที่อื่น ๆ</h2>
+	<p>
+		<a href="https://github.com/popul9" target="_blank" rel="noopener noreferrer">GitHub</a>
+		{' · '}
+		<a
+			href="https://www.linkedin.com/in/heejun-moon-dev/"
+			target="_blank"
+			rel="noopener noreferrer">LinkedIn</a
+		>
+	</p>
+</Layout>

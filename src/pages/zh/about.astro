@@ -1,0 +1,42 @@
+---
+import Layout from '../../layouts/BlogPost.astro';
+import { LOCALES, useTranslations } from '../../i18n/utils';
+
+const t = useTranslations('zh');
+---
+
+<Layout
+	title={`关于 | ${t('site.title')}`}
+	heading={t('nav.about')}
+	description="关于本站与写作者"
+	availableLocales={LOCALES}
+	schemaType="AboutPage"
+>
+	<p>
+		我喜欢在开发的森林里迷路游荡，也会顺着好奇的思绪之线无尽地追下去，还会为关于存在的思索和对食物之美的沉溺而神魂颠倒。我这个存在究竟是什么？我存在吗？于你，我是谁？
+	</p>
+
+	<h2>这里有什么</h2>
+	<p>
+		本博客分为四个部分：记录开发中遇到的问题的 <a href="/zh/developer/">开发者</a>，记录在澳大利亚各处
+		见闻的 <a href="/zh/roamer/">漫游者</a>，记录百听不厌的音乐的 <a href="/zh/melophile/"
+			>乐痴</a
+		>，以及记录值得再去的餐厅的 <a href="/zh/foodie/">觅食者</a>。
+	</p>
+
+	<h2>关于语言</h2>
+	<p>
+		所有文章都先用韩语写成，再翻译为英语、中文、泰语和越南语。可以通过页面底部的语言切换器在各语言之间切换。
+	</p>
+
+	<h2>其他平台</h2>
+	<p>
+		<a href="https://github.com/popul9" target="_blank" rel="noopener noreferrer">GitHub</a>
+		{' · '}
+		<a
+			href="https://www.linkedin.com/in/heejun-moon-dev/"
+			target="_blank"
+			rel="noopener noreferrer">LinkedIn</a
+		>
+	</p>
+</Layout>

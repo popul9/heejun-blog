@@ -9,7 +9,7 @@
 
 export const DEFAULT_LOCALE = 'en';
 /** Order here is the order shown in the language picker. */
-export const LOCALES = ['ko', 'en', 'zh'] as const;
+export const LOCALES = ['ko', 'en', 'zh', 'th', 'vi'] as const;
 export type Locale = typeof LOCALES[number];
 
 /** Native name of each language, shown in the language picker. */
@@ -17,6 +17,8 @@ export const LOCALE_LABELS: Record<Locale, string> = {
     ko: '한국어',
     en: 'English',
     zh: '中文',
+    th: 'ไทย',
+    vi: 'Tiếng Việt',
 };
 
 /** Locales that live under a URL prefix. The default locale sits at the root. */
@@ -35,13 +37,26 @@ export function getLangFromUrl(url: URL): Locale {
 export function useTranslations(lang: Locale) {
     return function t(key: string) {
         const dict: Record<string, Partial<Record<Locale, string>>> = {
-            'site.title': { ko: "희준의 넷", en: "Heejun's Net", zh: "文熙畯的网" },
-            'site.subtitle': { ko: '당신에게, 나는', en: 'Who Am I To You?', zh: '于你，我是谁' },
-            'nav.wonderer': { ko: '궁금러', en: 'Wonderer', zh: '好奇者' },
-            'nav.roamer': { ko: '방랑자', en: 'Roamer', zh: '漫游者' },
-            'nav.developer': { ko: '개발자', en: 'Developer', zh: '开发者' },
-            'nav.melophile': { ko: '음덕', en: 'Melophile', zh: '乐痴' },
-            'nav.foodie': { ko: '맛집러', en: 'Foodie', zh: '觅食者' },
+            'site.title': {
+                ko: "희준의 넷",
+                en: "Heejun's Net",
+                zh: "文熙畯的网",
+                th: "เน็ตของฮีจุน",
+                vi: "Net của Heejun",
+            },
+            'site.subtitle': {
+                ko: '당신에게, 나는',
+                en: 'Who Am I To You?',
+                zh: '于你，我是谁',
+                th: 'สำหรับคุณ ผมคือใคร',
+                vi: 'Với bạn, tôi là ai',
+            },
+            'nav.wonderer': { ko: '궁금러', en: 'Wonderer', zh: '好奇者', th: 'นักสงสัย', vi: 'Kẻ tò mò' },
+            'nav.roamer': { ko: '방랑자', en: 'Roamer', zh: '漫游者', th: 'นักพเนจร', vi: 'Kẻ lang thang' },
+            'nav.developer': { ko: '개발자', en: 'Developer', zh: '开发者', th: 'นักพัฒนา', vi: 'Lập trình viên' },
+            'nav.melophile': { ko: '음덕', en: 'Melophile', zh: '乐痴', th: 'คนบ้าเพลง', vi: 'Kẻ mê nhạc' },
+            'nav.foodie': { ko: '맛집러', en: 'Foodie', zh: '觅食者', th: 'นักหาของอร่อย', vi: 'Kẻ săn quán ngon' },
+            'nav.about': { ko: '소개', en: 'About', zh: '关于', th: 'เกี่ยวกับ', vi: 'Giới thiệu' },
 
             // Category listing pages. Without these every listing page shares
             // one title, which search engines read as duplicate pages.
@@ -49,21 +64,29 @@ export function useTranslations(lang: Locale) {
                 ko: '개발하며 부딪힌 문제와 해결 과정, 그리고 도구에 대한 기록',
                 en: 'Problems I hit while building things, how I solved them, and the tools I use',
                 zh: '开发中遇到的问题、解决过程，以及关于工具的记录',
+                th: 'บันทึกปัญหาที่เจอระหว่างพัฒนา วิธีที่แก้ และเครื่องมือที่ใช้',
+                vi: 'Ghi chép về những vấn đề gặp phải khi lập trình, cách giải quyết và công cụ',
             },
             'desc.roamer': {
                 ko: '호주를 중심으로 돌아다니며 보고 느낀 것들',
                 en: 'Places I have wandered through, mostly around Australia',
                 zh: '以澳大利亚为中心，四处走走看看的记录',
+                th: 'สิ่งที่ได้เห็นและรู้สึกจากการเดินทาง โดยมีออสเตรเลียเป็นศูนย์กลาง',
+                vi: 'Những gì tôi thấy và cảm nhận trên đường đi, chủ yếu quanh nước Úc',
             },
             'desc.melophile': {
                 ko: '듣고 또 듣게 되는 음악과 그 이유에 대하여',
                 en: 'Music I keep coming back to, and why',
                 zh: '关于百听不厌的音乐，以及理由',
+                th: 'เพลงที่ฟังแล้วฟังอีก และเหตุผลเบื้องหลัง',
+                vi: 'Về những bản nhạc nghe đi nghe lại, và lý do',
             },
             'desc.foodie': {
                 ko: '애들레이드와 멜버른에서 다시 찾게 되는 곳들',
                 en: 'Places in Adelaide and Melbourne worth going back to',
                 zh: '在阿德莱德和墨尔本值得再去的地方',
+                th: 'ร้านในแอดิเลดและเมลเบิร์นที่อยากกลับไปอีก',
+                vi: 'Những nơi ở Adelaide và Melbourne đáng để quay lại',
             },
         };
         // Fall back to the default locale so a partially translated language

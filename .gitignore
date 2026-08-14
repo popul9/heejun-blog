@@ -22,3 +22,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# claude code settings
+.claude/
+
+# working notes, not part of the site
+docs/

@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/BlogPost.astro';
+import { LOCALES, useTranslations } from '../../i18n/utils';
+
+const t = useTranslations('vi');
+---
+
+<Layout
+	title={`Giới thiệu | ${t('site.title')}`}
+	heading={t('nav.about')}
+	description="Về trang web này và người viết"
+	availableLocales={LOCALES}
+	schemaType="AboutPage"
+>
+	<p>
+		Tôi thích lạc lối và lang thang trong khu rừng của lập trình, thích lần theo sợi chỉ của
+		những suy nghĩ tò mò đến vô tận, và mất hết cả hồn vía vì những suy tư về sự tồn tại cùng
+		niềm say mê cái đẹp của đồ ăn. Tôi là một tồn tại gì đây? Tôi có tồn tại không? Với bạn, tôi
+		là ai?
+	</p>
+
+	<h2>Ở đây có gì</h2>
+	<p>
+		Blog này chia thành bốn phần: <a href="/vi/developer/">Lập trình viên</a> ghi lại những vấn
+		đề gặp phải khi lập trình, <a href="/vi/roamer/">Kẻ lang thang</a> ghi lại những gì thấy được
+		trên đường đi quanh nước Úc, <a href="/vi/melophile/">Kẻ mê nhạc</a> ghi lại những bản nhạc
+		nghe đi nghe lại, và <a href="/vi/foodie/">Kẻ săn quán ngon</a> ghi lại những nơi ở Adelaide
+		và Melbourne đáng để quay lại.
+	</p>
+
+	<h2>Về ngôn ngữ</h2>
+	<p>
+		Mọi bài viết đều được viết bằng tiếng Hàn trước, rồi dịch sang tiếng Anh, tiếng Trung, tiếng
+		Thái và tiếng Việt. Dùng bộ chọn ngôn ngữ ở cuối mỗi trang để chuyển qua lại.
+	</p>
+
+	<h2>Ở những nơi khác</h2>
+	<p>
+		<a href="https://github.com/popul9" target="_blank" rel="noopener noreferrer">GitHub</a>
+		{' · '}
+		<a
+			href="https://www.linkedin.com/in/heejun-moon-dev/"
+			target="_blank"
+			rel="noopener noreferrer">LinkedIn</a
+		>
+	</p>
+</Layout>
