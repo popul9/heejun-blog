@@ -16,7 +16,7 @@ I built a management system around a cleaning roster, and the conditions were so
 So I brought in the best model I have access to, Opus 5, walked it through my train of thought, and it laid out every issue I'd need to solve, one by one, fluently and confidently. How could I say no?<br/>
 I spent three whole days just trying to follow this academic lecture 😓. To be precise, over those three days I worked through it hands-on, bumping into things along the way, and finished implementing the architecture it proposed.<br/>
 But once I actually understood it, I hated the overhead of having to accommodate this much architecture in my system just to implement a single request to an AI API.<br/>
-So I spent another three days stripping out everything I didn't need. In the end I burned a huge amount of tokens generating the code, and just as many tokens erasing it again (and worst of all, time — which is worth more than gold!!).
+So I spent another three days stripping out everything I didn't need. In the end I burned a huge amount of tokens generating the code, and just as many tokens erasing it again (and worst of all, my precious time!!).
 
 Even after all that, my model of choice stayed Opus more often than not. If I've got the budget, why would I bother with Sonnet?
 
@@ -26,7 +26,7 @@ No, sometimes I flat out told it to stop showing off and explaining things like 
 
 ## Is This Really What I Wanted?
 Complicated problems exist in the world, sure. But whether they need a complicated architecture is a separate question.<br/>
-I'm a simple person. If I write messy code, I can always come back and clean it up later — but architecture doesn't work that way. Once you shove a complicated structure in at the architecture level, everything built on top of it inherits that complexity.
+I'm a simple person. If I write messy code, I can always come back and clean it up later, but architecture doesn't work that way. Once you shove a complicated structure in at the architecture level, everything built on top of it inherits that complexity.
 
 To be specific, the feature was: send an API call to AI from the .NET backend, and have the user confirm the result. But it needed to accommodate all sorts of technical machinery.<br/>
 How to recover if the server fails, how to persist state in the DB, how to auto-trigger an event on completion.. and so on. In short, it was trying to build a feature that magically handled everything for you with one click.<br/>
@@ -113,7 +113,7 @@ Going forward, I'm leaning toward implementing this kind of async handling on th
 </svg>
 </div>
 
-*On the left, Opus's proposal — backend orchestration that quietly handles everything behind the user's back. On the right, what I actually went with — transparent, synchronous handling built on a frontend hook. Worse is better.*
+*On the left, Opus's proposal: backend orchestration that quietly handles everything behind the user's back. On the right, what I actually went with: transparent, synchronous handling built on a frontend hook. Worse is better.*
 
 So whenever I review the code, whatever the issue turns out to be, I want to be able to quickly diagnose it and grasp what's going on myself when I need to.<br/>
 In short, that means doing architecture design with Sonnet. Debugging, though, I still do with Opus (this wild horse has insane deductive powers when it's off exploring edge cases. It's honestly a little scary 😬).
@@ -158,7 +158,7 @@ From the admin's side, everyone who skipped cleaning shows up flagged, week by w
 
 ### 4. Inline Notes (Control + .)
 ![blog placeholder](./staff-notes-panel.webp)
-I also built internal notes, so any admin user can hit Control + . and instantly check comments tied to whatever data is currently in their working area. It's a very flexible setup — you can pull up any related notes fast via nodes (as a developer, I had a lot of fun building the storage for these dynamic links), but from the user's perspective, having to manage notes yourself seems to be overhead. So for now, further feature work on it is on hold.<br/>
+I also built internal notes, so any admin user can hit Control + . and instantly check comments tied to whatever data is currently in their working area. It's a very flexible setup: you can pull up any related notes fast via nodes (as a developer, I had a lot of fun building the storage for these dynamic links), but from the user's perspective, having to manage notes yourself seems to be overhead. So for now, further feature work on it is on hold.<br/>
 I'm thinking of eventually building an AI assistant into this area, but I'm setting that aside for now. It's probably because it's not the kind of feature that magically just works on its own.
 
 And I'll keep posting small features as I build them out :)
