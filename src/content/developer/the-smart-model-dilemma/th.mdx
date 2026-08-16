@@ -1,0 +1,164 @@
+---
+title: 'เมื่อโมเดลฉลาดเกินไปก็เป็นปัญหา'
+description: 'เรื่องปวดหัว (แต่สนุก) กับการเลือกใช้โมเดลสุดฉลาด (Opus vs Sonnet) พร้อมฟีเจอร์ใหม่ที่เพิ่งทำ'
+pubDate: 'Aug 16 2026'
+heroImage: './model-picker.webp'
+---
+
+import rosterSourceImage from './roster-source-image.webp';
+import aiReadButton from './ai-read-button.webp';
+
+ทุกครั้งที่ไล่ตามไอเดียใหม่ๆ ในการพัฒนา มัวแต่จดจ่อกับการ implement จนไม่มีเวลามาแชร์เลย 😅.<br/>
+ช่วงนี้เรื่องปวดหัว (แบบสนุกๆ) ที่เกี่ยวกับ AI ของผมคือ ดีเลมมาเรื่องโมเดลสุดฉลาดนี่แหละ
+
+## Cleaning Roster กับสามวันที่อยู่กับ Opus
+ผมทำระบบจัดการที่อิงจาก cleaning roster ขึ้นมา ซึ่งเงื่อนไขมันซับซ้อนมาก โจทย์จริงๆ เลยอยู่ที่ว่าจะ implement ยังไงให้ง่ายที่สุด<br/>
+เลยเรียกโมเดลที่ดีที่สุดที่ผมเข้าถึงได้ อย่าง Opus 5 มาอธิบายแนวคิดให้ฟัง แล้วมันก็อธิบายทุกประเด็นที่ต้องแก้ทีละอย่างอย่างคล่องแคล่วและมั่นใจสุดๆ แบบนี้จะไม่ให้เชื่อได้ยังไง<br/>
+ผมใช้เวลาสามวันเต็มๆ แค่ทำความเข้าใจคำอธิบายเชิงวิชาการนี้ 😓 พูดให้ชัดคือ ระหว่างสามวันนั้นผมลงมือทำจริง ชนปัญหาไปเรื่อยๆ จนเข้าใจสถาปัตยกรรมที่มันเสนอ และ implement เสร็จ<br/>
+แต่พอเข้าใจแล้วก็รู้สึกไม่ชอบเลย ที่ต้อง accommodate สถาปัตยกรรมมากมายขนาดนี้ในระบบของผม แค่เพื่อทำฟีเจอร์ยิง request ไปที่ AI API ตัวเดียว<br/>
+เลยใช้เวลาอีกสามวันเพื่อ strip ทุกอย่างที่ไม่จำเป็นออก สุดท้ายก็เผา token ไปเยอะมากตอนสร้างโค้ด แล้วก็เผาอีกเยอะตอนลบมันทิ้ง (ที่สำคัญที่สุดคือเวลา ที่มีค่ายิ่งกว่าทองคำ!!)
+
+ถึงอย่างนั้น โมเดลที่ผมเลือกใช้ก็ยังเป็น Opus อยู่ดี มี budget แล้วจะใช้ Sonnet ไปทำไม?
+
+## แต่ว่า…
+ตลอดหนึ่งอาทิตย์ ผมล้มเหลวในการควบคุมม้าป่าตัวนี้ที่ชื่อ Opus ทุกคำสั่งที่ส่งไป ผมได้แต่ขอร้องให้มันอธิบายง่ายๆ หน่อย<br/>
+ไม่สิ บางทีก็บอกตรงๆ ไปเลยว่าอย่ามาโชว์ออฟทำเป็นอธิบายแบบรู้ไปหมดทุกเรื่อง แต่ยังไงก็ตาม มันก็ซับซ้อนอยู่ดี มันก็ยังขุดลึกลงไปในปัญหาอยู่ดี
+
+## นี่คือสิ่งที่ผมต้องการจริงๆ เหรอ?
+ปัญหาซับซ้อนมีอยู่จริงในโลกนี้ แต่มันต้องการสถาปัตยกรรมที่ซับซ้อนด้วยหรือเปล่า เป็นอีกเรื่องหนึ่ง<br/>
+ผมเป็นคนที่ชอบความเรียบง่าย ถ้าผมเขียนโค้ดยุ่งๆ ไว้ ทีหลังก็ยังกลับมาแก้ให้ง่ายขึ้นได้ แต่สถาปัตยกรรมไม่เหมือนกัน ถ้าดันโครงสร้างที่ซับซ้อนเข้าไปตั้งแต่ระดับสถาปัตยกรรมก่อน ทุกอย่างที่ implement ต่อจากนั้นก็จะซับซ้อนตามไปด้วย
+
+พูดให้ชัดคือ ฟีเจอร์นี้คือการยิง API call ไปหา AI จาก .NET backend แล้วให้ user คอนเฟิร์มผลลัพธ์ แต่ต้อง accommodate กลไกทางเทคนิคสารพัดเข้าไปด้วย<br/>
+เช่น ถ้า server fail จะ recover ยังไง จะเก็บ state ใน DB ยังไง เสร็จแล้วจะ trigger event อัตโนมัติยังไง.. ฯลฯ พูดง่ายๆ คือพยายามสร้างฟีเจอร์ที่กดปุ่มเดียวแล้วทุกอย่างจัดการให้หมดแบบมหัศจรรย์เกินไป<br/>
+(อีกแง่หนึ่งคือ พยายามจะทำให้ทุกอย่างอัตโนมัติจนสุดท้ายกลายเป็นระบบที่ user เองก็ไม่รู้ว่าตอนนี้เกิดอะไรขึ้น)
+
+แต่ผมเป็นสาย worse is better ชอบงานที่ internal implementation โปร่งใสมากกว่า เพราะต้องส่งสัญญาณที่ชัดเจนให้ user รู้ว่าตอนนี้เกิดอะไรขึ้น<br/>
+เลยตัดสินใจว่าจะจัดการ async ผ่าน hook ฝั่ง frontend แทน (ถึงจะรีเฟรชแล้วหายก็ตาม) แต่แบบนี้ backend ยังคงเรียบง่ายแบบเดิม ใช้ REST API แบบ sync ตามปกติ แถมยังอธิบายให้ user เข้าใจได้ชัดเจนว่ามันทำงานยังไง<br/>
+แล้วก็ตั้งใจว่าจะ implement การจัดการแบบ async นี้ที่ frontend ให้ได้มากที่สุดเท่าที่จะทำได้ เพื่อให้สร้างได้เร็วขึ้น
+
+<div style="margin: 1.5em 0;">
+<svg viewBox="0 0 700 460" style="width:100%;height:auto;display:block;font-family:Atkinson, sans-serif;">
+  <defs>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0L10,5L0,10z" fill="#2337FF" />
+    </marker>
+  </defs>
+
+  <rect x="10" y="40" width="300" height="390" rx="16" fill="#E5E9F0" stroke="#D7DCE6" stroke-width="1.5" />
+  <text x="160" y="68" text-anchor="middle" font-size="15" font-weight="700" fill="#0F1219">ข้อเสนอของ Opus (3 วัน)</text>
+  <text x="160" y="88" text-anchor="middle" font-size="11" fill="#60739F">อัตโนมัติทั้งหมด: เรียก AI → ยืนยัน</text>
+
+  <g stroke="#B7BFD6" stroke-width="1.3">
+    <line x1="160" y1="140" x2="251" y2="193" />
+    <line x1="251" y1="193" x2="251" y2="298" />
+    <line x1="251" y1="298" x2="160" y2="350" />
+    <line x1="160" y1="350" x2="69" y2="298" />
+    <line x1="69" y1="298" x2="69" y2="193" />
+    <line x1="69" y1="193" x2="160" y2="140" />
+    <line x1="160" y1="245" x2="160" y2="140" />
+    <line x1="160" y1="245" x2="251" y2="193" />
+    <line x1="160" y1="245" x2="251" y2="298" />
+    <line x1="160" y1="245" x2="160" y2="350" />
+    <line x1="160" y1="245" x2="69" y2="298" />
+    <line x1="160" y1="245" x2="69" y2="193" />
+  </g>
+
+  <g font-size="11" fill="#0F1219" text-anchor="middle">
+    <rect x="112" y="123" width="96" height="34" rx="7" fill="#FFFFFF" stroke="#8A93AD" stroke-width="1.2" />
+    <text x="160" y="144">ตัวรับ Webhook</text>
+
+    <rect x="203" y="176" width="96" height="34" rx="7" fill="#FFFFFF" stroke="#8A93AD" stroke-width="1.2" />
+    <text x="251" y="197">Event Bus</text>
+
+    <rect x="203" y="281" width="96" height="34" rx="7" fill="#FFFFFF" stroke="#8A93AD" stroke-width="1.2" />
+    <text x="251" y="302">ตัวจัดการ Retry</text>
+
+    <rect x="112" y="333" width="96" height="34" rx="7" fill="#FFFFFF" stroke="#8A93AD" stroke-width="1.2" />
+    <text x="160" y="354">State Machine (DB)</text>
+
+    <rect x="21" y="281" width="96" height="34" rx="7" fill="#FFFFFF" stroke="#8A93AD" stroke-width="1.2" />
+    <text x="69" y="302">เรียก AI API</text>
+
+    <rect x="21" y="176" width="96" height="34" rx="7" fill="#FFFFFF" stroke="#8A93AD" stroke-width="1.2" />
+    <text x="69" y="197">ทริกเกอร์เมื่อเสร็จ</text>
+
+    <rect x="110" y="228" width="100" height="34" rx="7" fill="#DCE1F5" stroke="#2337FF" stroke-width="1.4" />
+    <text x="160" y="249">Orchestrator</text>
+  </g>
+
+  <text x="160" y="410" text-anchor="middle" font-size="10.5" fill="#60739F" font-style="italic">มุมมองผู้ใช้: ไม่รู้ว่าเกิดอะไรขึ้น</text>
+
+  <line x1="316" y1="245" x2="384" y2="245" stroke="#2337FF" stroke-width="2.5" marker-end="url(#arrowBlue)" />
+  <text x="350" y="228" text-anchor="middle" font-size="11" font-weight="700" fill="#0F1219">ใช้เวลา 3 วัน strip ออก</text>
+  <text x="350" y="270" text-anchor="middle" font-size="10" fill="#60739F">เผา token ทั้งเวลาก็เสีย</text>
+
+  <rect x="390" y="40" width="300" height="390" rx="16" fill="#E5E9F0" stroke="#D7DCE6" stroke-width="1.5" />
+  <text x="540" y="68" text-anchor="middle" font-size="15" font-weight="700" fill="#0F1219">Frontend Hook + REST แบบ Sync</text>
+  <text x="540" y="88" text-anchor="middle" font-size="11" fill="#60739F">ผู้ใช้รู้สถานะตลอดเวลา</text>
+
+  <line x1="540" y1="170" x2="540" y2="210" stroke="#2337FF" stroke-width="2" marker-end="url(#arrowBlue)" />
+  <line x1="540" y1="250" x2="540" y2="290" stroke="#2337FF" stroke-width="2" marker-end="url(#arrowBlue)" />
+
+  <rect x="475" y="130" width="130" height="40" rx="8" fill="#FFFFFF" stroke="#2337FF" stroke-width="1.6" />
+  <text x="540" y="154" text-anchor="middle" font-size="12" fill="#0F1219">Frontend Hook</text>
+
+  <rect x="475" y="210" width="130" height="40" rx="8" fill="#FFFFFF" stroke="#2337FF" stroke-width="1.6" />
+  <text x="540" y="234" text-anchor="middle" font-size="12" fill="#0F1219">REST API (Sync)</text>
+
+  <rect x="475" y="290" width="130" height="40" rx="8" fill="#FFFFFF" stroke="#2337FF" stroke-width="1.6" />
+  <text x="540" y="310" text-anchor="middle" font-size="11" fill="#0F1219">คำตอบจาก AI</text>
+  <text x="540" y="323" text-anchor="middle" font-size="11" fill="#0F1219">→ ขึ้นจอทันที</text>
+
+  <text x="540" y="380" text-anchor="middle" font-size="10.5" fill="#60739F" font-style="italic">รีเฟรชแล้วหาย แต่แบบนี้ดีกว่า</text>
+</svg>
+</div>
+
+*ฝั่งซ้ายคือข้อเสนอของ Opus ที่จัดการทุกอย่างให้อัตโนมัติแบบผู้ใช้ไม่รู้ตัว ส่วนฝั่งขวาคือสิ่งที่เลือกใช้จริง — การประมวลผลแบบ sync ที่โปร่งใสผ่าน frontend hook — worse is better*
+
+ดังนั้น ไม่ว่าจะรีวิวโค้ดตอนไหน ผมอยากให้ตัวเองวินิจฉัยจุดที่มีปัญหาได้เร็ว และเข้าใจมันได้เร็วเมื่อจำเป็น<br/>
+พูดง่ายๆ คือใช้ Sonnet ในการออกแบบสถาปัตยกรรม แต่ debug ยังใช้ Opus อยู่ (ม้าป่าตัวนี้พอมาเจอ edge case มันมีพลังในการสืบสวนที่บ้าคลั่งมาก น่ากลัวจริงๆ 😬)
+
+พูดง่ายๆ คือ อย่างน้อยในเรื่อง system design ผมเริ่มจงใจเลือกใช้โมเดลที่โง่ลงมานิดหน่อย และถ้าทฤษฎีนี้ฟังดูน่าสนใจ ผมแนะนำคลิปด้านล่างนี้เลย ที่อธิบายว่าการตัดฟีเจอร์ "ฉลาด" ทิ้งไปโดยตรงยังไง ถึงสร้างระบบเครื่องบินเจ็ตที่ไม่มีความล้มเหลวได้ :)
+
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+  <iframe 
+    src="https://www.youtube.com/embed/Gv4sDL9Ljww"
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"
+    frameborder="0"
+    allowfullscreen>
+  </iframe>
+</div>
+
+<br/><br/>
+
+
+## แล้วสรุปทำอะไรไปบ้าง?
+มาแนะนำฟีเจอร์ที่ทำมาช่วงนี้กันครับ :)
+
+### 1. ฟีเจอร์ Cleaning Roster
+![blog placeholder](./roster-grid.webp)
+แบ่งเป็นสองเลเยอร์ คือคนที่มีคิวเวรทำความสะอาดของอาทิตย์นั้น กับคนที่ทำความสะอาดจริงๆ จะถูกแสดงไว้ทุกอาทิตย์ ทุกบ้าน ถึงเทนแนนต์จะสลับคิวกันเอง ตารางก็ยังแสดงผลถูกต้องแบบธรรมชาติ :)
+
+![blog placeholder](./tenant-cleaning-journal.webp)
+นี่คือหน้าจอที่ฝั่งเทนแนนต์เห็น มีทั้งคิวเวรของอาทิตย์นั้น คู่มือทำความสะอาด และอัปโหลดรูปอยู่ในหน้าเดียวกันหมด
+
+### 2. ฟีเจอร์อ่าน Cleaning Roster อัตโนมัติ
+ตอนนี้ cleaning roster เป็นแบบรูปภาพ ต้นฉบับหน้าตาเป็นตารางแบบนี้
+
+<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;margin:16px 0;">
+  <img src={rosterSourceImage.src} alt="blog placeholder" style="flex:1 1 260px;max-width:100%;" />
+  <img src={aiReadButton.src} alt="blog placeholder" style="flex:1 1 260px;max-width:100%;align-self:center;" />
+</div>
+แค่กดปุ่มนี้ปุ่มเดียว มันก็จะอ่านค่าใส่ในเซลล์ให้อัตโนมัติเลย เป็นกลยุทธ์แบบ image parsing -> เก็บข้อมูลแบบมีโครงสร้าง ซึ่ง LLM ทำได้ดีมากๆ
+![blog placeholder](./ai-read-result.webp)
+
+### 3. ใครยังไม่ได้ทำความสะอาด?
+![blog placeholder](./cleaning-compliance-overview.webp)
+ฝั่งแอดมินก็จะเห็นคนที่ยังไม่ได้ทำความสะอาดถูกแสดงรวมเป็นรายอาทิตย์ในที่เดียวเลย :) ดึงเป็นอีเมลออกมาได้ด้วย
+
+### 4. Inline Notes (Control + .)
+![blog placeholder](./staff-notes-panel.webp)
+แล้วก็ทำระบบโน้ตภายในขึ้นมา ให้แอดมินกด Control + . แล้วเช็กคอมเมนต์ที่เกี่ยวกับข้อมูลในพื้นที่ทำงานตอนนั้นได้เลย เป็นการ implement ที่ flexible มาก สามารถดึงโน้ตที่เกี่ยวข้องกันมาได้เร็วผ่านการใช้ node (ในฐานะนักพัฒนา ผมสนุกกับการทำให้ระบบเก็บความเชื่อมโยงแบบไดนามิกนี้ได้มาก) แต่จากมุมมองของ user การต้องจัดการโน้ตเองดูจะเป็นภาระเพิ่มขึ้นมา เลยพักการพัฒนาฟีเจอร์เพิ่มเติมไว้ก่อน<br/>
+คิดว่าทีหลังอาจจะลองทำให้ AI มารับบทบาท assistant ในส่วนนี้ แต่ตอนนี้ขอข้ามไปก่อน คงเพราะมันไม่ใช่ฟีเจอร์ที่ทำงานให้เองแบบมหัศจรรย์
+
+แล้วก็จะทยอยอัปฟีเจอร์เล็กๆ น้อยๆ ที่ทำเสร็จไปเรื่อยๆ ครับ :)

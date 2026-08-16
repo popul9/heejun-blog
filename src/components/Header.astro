@@ -13,13 +13,16 @@ const localizedDeveloper = getLocalizedPathname("/developer", lang);
 const localizedroamer = getLocalizedPathname("/roamer", lang);
 const localizedMelophile = getLocalizedPathname("/melophile", lang);
 const localizedFoodie = getLocalizedPathname("/foodie", lang);
+const localizedAbout = getLocalizedPathname("/about", lang);
 ---
 
 <header>
 	<nav>
 		<div class="top-row">
 			<h2><a href={localizedHome}>{t("site.title")}</a></h2>
-			<div>{t("site.subtitle")}</div>
+			<a href={localizedAbout} class="subtitle-link">
+				{t("site.subtitle")}
+			</a>
 			<div class="social-links">
 				<a
 					href="https://www.linkedin.com/in/heejun-moon-dev/"
@@ -99,6 +102,17 @@ const localizedFoodie = getLocalizedPathname("/foodie", lang);
 			h2 a,
 			h2 a.active {
 				text-decoration: none;
+			}
+
+			.subtitle-link {
+				color: var(--black);
+				text-decoration: underline;
+				text-decoration-color: rgba(var(--black), 25%);
+				text-underline-offset: 3px;
+			}
+
+			.subtitle-link:hover {
+				text-decoration-color: var(--accent);
 			}
 
 			.internal-links {

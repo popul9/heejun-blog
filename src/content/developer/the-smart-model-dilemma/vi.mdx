@@ -1,0 +1,164 @@
+---
+title: 'Nỗi khổ của mô hình thông minh'
+description: 'Nỗi trăn trở (mà cũng vui) khi dùng các mô hình thông minh (Opus vs Sonnet), và điểm qua vài tính năng mới'
+pubDate: 'Aug 16 2026'
+heroImage: './model-picker.webp'
+---
+
+import rosterSourceImage from './roster-source-image.webp';
+import aiReadButton from './ai-read-button.webp';
+
+Cứ đuổi theo một ý tưởng dev là lại cắm đầu vào implement, chẳng có thời gian mà chia sẻ 😅.<br/>
+Dạo này nỗi trăn trở (mà cũng vui đấy?) liên quan đến AI của tôi chính là cái dilemma với mấy con model thông minh này.
+
+## Cleaning Roster, và ba ngày với Opus
+Tôi xây một hệ thống quản lý dựa trên cleaning roster, điều kiện phức tạp đến mức task thực sự nằm ở chỗ làm sao để implement đơn giản nhất có thể.<br/>
+Thế là tôi mang con model tốt nhất mà mình có quyền dùng, Opus 5, ra giải thích luồng suy nghĩ của mình, và nó giải thích từng vấn đề cần giải quyết một cách trôi chảy, tự tin đến mức chẳng có lý do gì để không tin.<br/>
+Vậy là tôi mất trọn ba ngày chỉ để hiểu bài giảng học thuật này 😓. Nói chính xác hơn, trong ba ngày đó tôi vừa làm vừa va vấp trực tiếp, hiểu được kiến trúc nó đề xuất và hoàn thành việc implement.<br/>
+Nhưng hiểu xong rồi thì tôi lại ghét cái overhead phải accommodate quá nhiều kiến trúc vào hệ thống của mình, chỉ để làm một tính năng gọi request đến AI API.<br/>
+Thế là tôi lại dành thêm ba ngày nữa để strip hết những gì không cần thiết. Kết quả là tốn một đống token để sinh code, rồi lại tốn một đống token để xóa nó đi (và quan trọng nhất là thời gian — quý hơn cả vàng!!).
+
+Dù vậy, model tôi chọn dùng vẫn cứ là Opus. Có budget rồi thì việc gì phải dùng Sonnet?
+
+## Nhưng mà…
+Suốt một tuần, tôi thất bại trong việc thuần hóa con ngựa hoang Opus này. Mỗi câu lệnh, tôi đều van nài nó giải thích đơn giản một chút.<br/>
+Không, đôi khi tôi còn nói thẳng là đừng có ra vẻ thông minh mà giải thích kiểu biết tuốt như vậy. Nhưng dù sao đi nữa, nó vẫn phức tạp. Dù sao đi nữa, nó vẫn đào sâu vào vấn đề.
+
+## Đây có thực sự là thứ tôi muốn không?
+Trên đời tồn tại những vấn đề phức tạp, đúng vậy. Nhưng việc có cần kiến trúc phức tạp hay không lại là chuyện khác.<br/>
+Tôi là người đơn giản. Nếu viết code phức tạp, sau này tôi vẫn có thể quay lại sửa cho đơn giản hơn — nhưng kiến trúc thì khác. Một khi đã nhồi cấu trúc phức tạp vào từ tầng kiến trúc, mọi thứ implement dựa trên đó về sau đều trở nên phức tạp theo.
+
+Nói cụ thể hơn, đây là tính năng gửi API call đến AI từ backend .NET, rồi để user xác nhận kết quả, nhưng lại phải accommodate đủ thứ cơ chế kỹ thuật vào đó.<br/>
+Server fail thì recover thế nào, state lưu trong DB ra sao, hoàn tất thì tự động trigger event thế nào.. vân vân. Nói ngắn gọn là đang cố xây một tính năng mà chỉ cần bấm một cái là mọi thứ tự lo hết, kiểu quá đà.<br/>
+(Nói cách khác, cố làm mọi thứ tự động đến mức cuối cùng biến thành một hệ thống mà chính user cũng không biết chuyện gì đang xảy ra.)
+
+Nhưng tôi thuộc phe worse is better. Tôi thích những implementation mà phần bên trong lộ ra rõ ràng, minh bạch, vì cần truyền tín hiệu rõ ràng cho user biết chuyện gì đang xảy ra ngay lúc đó.<br/>
+Thế nên tôi quyết định xử lý phần async bằng hook ở frontend. (Dù refresh trang là mất, nhưng vậy vẫn ổn.) Cách này giúp backend giữ nguyên sự đơn giản với REST API đồng bộ như cũ, và quan trọng hơn là tôi có thể giải thích rõ ràng cho user biết nó hoạt động thế nào.<br/>
+Và tôi cũng định hướng là sẽ implement kiểu xử lý bất đồng bộ này ở frontend càng nhiều càng tốt, để làm nhanh và thử nghiệm nhanh.
+
+<div style="margin: 1.5em 0;">
+<svg viewBox="0 0 700 460" style="width:100%;height:auto;display:block;font-family:Atkinson, sans-serif;">
+  <defs>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0L10,5L0,10z" fill="#2337FF" />
+    </marker>
+  </defs>
+
+  <rect x="10" y="40" width="300" height="390" rx="16" fill="#E5E9F0" stroke="#D7DCE6" stroke-width="1.5" />
+  <text x="160" y="68" text-anchor="middle" font-size="15" font-weight="700" fill="#0F1219">Đề xuất của Opus (3 ngày)</text>
+  <text x="160" y="88" text-anchor="middle" font-size="11" fill="#60739F">Tự động hóa toàn bộ: gọi AI → xác nhận</text>
+
+  <g stroke="#B7BFD6" stroke-width="1.3">
+    <line x1="160" y1="140" x2="251" y2="193" />
+    <line x1="251" y1="193" x2="251" y2="298" />
+    <line x1="251" y1="298" x2="160" y2="350" />
+    <line x1="160" y1="350" x2="69" y2="298" />
+    <line x1="69" y1="298" x2="69" y2="193" />
+    <line x1="69" y1="193" x2="160" y2="140" />
+    <line x1="160" y1="245" x2="160" y2="140" />
+    <line x1="160" y1="245" x2="251" y2="193" />
+    <line x1="160" y1="245" x2="251" y2="298" />
+    <line x1="160" y1="245" x2="160" y2="350" />
+    <line x1="160" y1="245" x2="69" y2="298" />
+    <line x1="160" y1="245" x2="69" y2="193" />
+  </g>
+
+  <g font-size="11" fill="#0F1219" text-anchor="middle">
+    <rect x="112" y="123" width="96" height="34" rx="7" fill="#FFFFFF" stroke="#8A93AD" stroke-width="1.2" />
+    <text x="160" y="144">Webhook Listener</text>
+
+    <rect x="203" y="176" width="96" height="34" rx="7" fill="#FFFFFF" stroke="#8A93AD" stroke-width="1.2" />
+    <text x="251" y="197">Event Bus</text>
+
+    <rect x="203" y="281" width="96" height="34" rx="7" fill="#FFFFFF" stroke="#8A93AD" stroke-width="1.2" />
+    <text x="251" y="302">Retry Handler</text>
+
+    <rect x="112" y="333" width="96" height="34" rx="7" fill="#FFFFFF" stroke="#8A93AD" stroke-width="1.2" />
+    <text x="160" y="354">State Machine (DB)</text>
+
+    <rect x="21" y="281" width="96" height="34" rx="7" fill="#FFFFFF" stroke="#8A93AD" stroke-width="1.2" />
+    <text x="69" y="302">Gọi AI API</text>
+
+    <rect x="21" y="176" width="96" height="34" rx="7" fill="#FFFFFF" stroke="#8A93AD" stroke-width="1.2" />
+    <text x="69" y="197">Trigger khi hoàn tất</text>
+
+    <rect x="110" y="228" width="100" height="34" rx="7" fill="#DCE1F5" stroke="#2337FF" stroke-width="1.4" />
+    <text x="160" y="249">Orchestrator</text>
+  </g>
+
+  <text x="160" y="410" text-anchor="middle" font-size="10.5" fill="#60739F" font-style="italic">Góc nhìn người dùng: không biết chuyện gì đang xảy ra</text>
+
+  <line x1="316" y1="245" x2="384" y2="245" stroke="#2337FF" stroke-width="2.5" marker-end="url(#arrowBlue)" />
+  <text x="350" y="228" text-anchor="middle" font-size="11" font-weight="700" fill="#0F1219">Mất 3 ngày để strip</text>
+  <text x="350" y="270" text-anchor="middle" font-size="10" fill="#60739F">Đốt token, đốt cả thời gian</text>
+
+  <rect x="390" y="40" width="300" height="390" rx="16" fill="#E5E9F0" stroke="#D7DCE6" stroke-width="1.5" />
+  <text x="540" y="68" text-anchor="middle" font-size="15" font-weight="700" fill="#0F1219">Frontend Hook + REST đồng bộ</text>
+  <text x="540" y="88" text-anchor="middle" font-size="11" fill="#60739F">Người dùng luôn biết trạng thái hiện tại</text>
+
+  <line x1="540" y1="170" x2="540" y2="210" stroke="#2337FF" stroke-width="2" marker-end="url(#arrowBlue)" />
+  <line x1="540" y1="250" x2="540" y2="290" stroke="#2337FF" stroke-width="2" marker-end="url(#arrowBlue)" />
+
+  <rect x="475" y="130" width="130" height="40" rx="8" fill="#FFFFFF" stroke="#2337FF" stroke-width="1.6" />
+  <text x="540" y="154" text-anchor="middle" font-size="12" fill="#0F1219">Frontend Hook</text>
+
+  <rect x="475" y="210" width="130" height="40" rx="8" fill="#FFFFFF" stroke="#2337FF" stroke-width="1.6" />
+  <text x="540" y="234" text-anchor="middle" font-size="12" fill="#0F1219">REST API (đồng bộ)</text>
+
+  <rect x="475" y="290" width="130" height="40" rx="8" fill="#FFFFFF" stroke="#2337FF" stroke-width="1.6" />
+  <text x="540" y="310" text-anchor="middle" font-size="11" fill="#0F1219">Phản hồi từ AI</text>
+  <text x="540" y="323" text-anchor="middle" font-size="11" fill="#0F1219">→ hiện lên màn hình ngay</text>
+
+  <text x="540" y="380" text-anchor="middle" font-size="10.5" fill="#60739F" font-style="italic">Refresh là mất. Nhưng thế lại tốt hơn.</text>
+</svg>
+</div>
+
+*Bên trái là đề xuất của Opus — dàn dựng backend tự xử lý mọi thứ mà người dùng không hề hay biết. Bên phải là cái tôi thực sự chọn — xử lý đồng bộ minh bạch dựa trên frontend hook — worse is better.*
+
+Vậy nên, bất cứ khi nào review code, tôi cũng muốn mình có thể nhanh chóng chẩn đoán chỗ bị lỗi và nắm bắt được ngay khi cần.<br/>
+Nói ngắn gọn là dùng Sonnet để thiết kế kiến trúc. Còn debug thì vẫn dùng Opus (con ngựa hoang này khi đào sâu vào edge case thì có khả năng suy luận điên rồ. Đáng sợ thật 😬).
+
+Nói ngắn gọn, ít nhất là trong việc thiết kế hệ thống, tôi bắt đầu cố tình chọn một model hơi "ngu" hơn một chút. Nhân tiện, nếu bạn thấy lý thuyết này thú vị, tôi rất khuyên xem video dưới đây, giải thích cách trực tiếp loại bỏ những tính năng "thông minh" đã giúp xây dựng hệ thống máy bay phản lực không lỗi như thế nào :)
+
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;">
+  <iframe 
+    src="https://www.youtube.com/embed/Gv4sDL9Ljww"
+    style="position:absolute;top:0;left:0;width:100%;height:100%;"
+    frameborder="0"
+    allowfullscreen>
+  </iframe>
+</div>
+
+<br/><br/>
+
+
+## Vậy rốt cuộc đã làm được gì?
+Xin giới thiệu vài tính năng tôi đã làm trong thời gian qua :)
+
+### 1. Tính năng Cleaning Roster
+![blog placeholder](./roster-grid.webp)
+Chia làm hai lớp: ai trực lịch dọn dẹp tuần đó, và ai thực sự đã dọn dẹp, được ghi nhận theo từng tuần, từng nhà. Kể cả khi các tenant tự đổi lịch trực cho nhau, bảng vẫn tự nhiên phản ánh đúng :)
+
+![blog placeholder](./tenant-cleaning-journal.webp)
+Đây là màn hình mà phía tenant nhìn thấy. Lịch trực tuần đó, hướng dẫn dọn dẹp, và upload ảnh đều nằm gọn trên một trang.
+
+### 2. Tính năng đọc Cleaning Roster tự động
+Hiện tại cleaning roster đang ở dạng hình ảnh. Bản gốc là một bảng trông như thế này.
+
+<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;margin:16px 0;">
+  <img src={rosterSourceImage.src} alt="blog placeholder" style="flex:1 1 260px;max-width:100%;" />
+  <img src={aiReadButton.src} alt="blog placeholder" style="flex:1 1 260px;max-width:100%;align-self:center;" />
+</div>
+Chỉ cần bấm nút này, nó sẽ tự động đọc và điền vào các ô. Đây là chiến lược parse hình ảnh -> lưu dữ liệu có cấu trúc, đúng kiểu việc mà LLM làm rất tốt.
+![blog placeholder](./ai-read-result.webp)
+
+### 3. Ai chưa dọn dẹp?
+![blog placeholder](./cleaning-compliance-overview.webp)
+Từ phía admin, những ai chưa dọn dẹp sẽ hiện hết ra theo từng tuần, gộp lại một chỗ luôn :) Còn xuất được cả danh sách email nữa.
+
+### 4. Ghi chú Inline (Control + .)
+![blog placeholder](./staff-notes-panel.webp)
+Và tôi cũng đã xây tính năng ghi chú nội bộ, để admin chỉ cần bấm Control + . là có thể xem trực tiếp các comment gắn với dữ liệu đang có trong khu vực làm việc lúc đó. Đây là một cách implement rất flexible, có thể kéo nhanh các ghi chú liên quan thông qua node (là một developer, tôi thấy khá thú vị khi xử lý việc lưu trữ các liên kết động này), nhưng đứng từ góc nhìn của user thì việc phải tự quản lý ghi chú có vẻ lại là một overhead. Nên tạm thời tôi để việc phát triển thêm tính năng này sang một bên.<br/>
+Sau này có lẽ tôi sẽ thử để AI đóng vai trò assistant trong khu vực này, nhưng tạm thời bỏ qua đã. Có lẽ vì đây không phải loại tính năng tự chạy một cách kỳ diệu.
+
+Và tôi sẽ tiếp tục đăng dần các tính năng nhỏ khác khi làm xong :)

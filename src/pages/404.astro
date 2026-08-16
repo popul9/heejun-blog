@@ -1,0 +1,111 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { SITE_TITLE } from "../consts";
+import { LOCALES, getLocalizedPathname, useTranslations } from "../i18n/utils";
+
+// Cloudflare Pages serves this one file for every unmatched path, whatever the
+// language prefix was. It cannot know the locale at build time, so ship all of
+// them and let the browser pick from the URL that actually 404'd.
+const messages = Object.fromEntries(
+	LOCALES.map((locale) => {
+		const tr = useTranslations(locale);
+		return [
+			locale,
+			{
+				title: tr("error.404.title"),
+				body: tr("error.404.body"),
+				home: tr("error.404.home"),
+				homeHref: getLocalizedPathname("/", locale),
+			},
+		];
+	}),
+);
+
+const t = useTranslations("en");
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`404 | ${SITE_TITLE}`}
+			description={t("error.404.body")}
+		/>
+		<!-- A missing page has nothing worth indexing. -->
+		<meta name="robots" content="noindex" />
+		<style>
+			main {
+				width: 100%;
+				max-width: 720px;
+				margin: 0 auto;
+				padding: 4em 1em;
+				box-sizing: border-box;
+				text-align: center;
+			}
+			.code {
+				font-size: 4em;
+				font-weight: bold;
+				line-height: 1;
+				margin: 0;
+				color: rgb(var(--gray-light));
+			}
+			h1 {
+				font-size: 1.6em;
+				margin: 0.4em 0 0.6em;
+			}
+			p {
+				color: rgb(var(--gray));
+				margin: 0 0 2em;
+			}
+			.home {
+				display: inline-block;
+				padding: 0.6em 1.4em;
+				border-radius: 8px;
+				background: var(--accent);
+				color: white;
+				text-decoration: none;
+			}
+			.home:hover {
+				opacity: 0.85;
+			}
+			@media (max-width: 720px) {
+				main {
+					padding: 2.5em 1em;
+				}
+				.code {
+					font-size: 3em;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<p class="code">404</p>
+			<h1 data-404-title>{t("error.404.title")}</h1>
+			<p data-404-body>{t("error.404.body")}</p>
+			<a class="home" href="/" data-404-home>{t("error.404.home")}</a>
+		</main>
+		<Footer />
+		<script is:inline define:vars={{ messages }}>
+			// The URL that 404'd is still in the address bar, so its first
+			// segment tells us which language the reader was browsing in.
+			const [, prefix] = window.location.pathname.split("/");
+			const strings = messages[prefix];
+
+			if (strings) {
+				document.documentElement.lang = prefix;
+				document.querySelector("[data-404-title]").textContent =
+					strings.title;
+				document.querySelector("[data-404-body]").textContent =
+					strings.body;
+
+				const home = document.querySelector("[data-404-home]");
+				home.textContent = strings.home;
+				home.href = strings.homeHref;
+			}
+		</script>
+	</body>
+</html>

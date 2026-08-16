@@ -58,6 +58,30 @@ export function useTranslations(lang: Locale) {
             'nav.foodie': { ko: '맛집러', en: 'Foodie', zh: '觅食者', th: 'นักหาของอร่อย', vi: 'Kẻ săn quán ngon' },
             'nav.about': { ko: '소개', en: 'About', zh: '关于', th: 'เกี่ยวกับ', vi: 'Giới thiệu' },
 
+            // 404. One static page serves every locale, so these are handed to
+            // the browser and picked by the prefix of the URL that 404'd.
+            'error.404.title': {
+                ko: '페이지를 찾을 수 없습니다',
+                en: 'Page not found',
+                zh: '找不到页面',
+                th: 'ไม่พบหน้านี้',
+                vi: 'Không tìm thấy trang',
+            },
+            'error.404.body': {
+                ko: '주소가 바뀌었거나, 처음부터 없던 페이지입니다.',
+                en: 'This page has moved, or it never existed.',
+                zh: '该页面可能已移动，或从未存在过。',
+                th: 'หน้านี้อาจถูกย้ายไปแล้ว หรือไม่เคยมีอยู่',
+                vi: 'Trang này đã được chuyển đi, hoặc chưa từng tồn tại.',
+            },
+            'error.404.home': {
+                ko: '홈으로 돌아가기',
+                en: 'Back to home',
+                zh: '返回首页',
+                th: 'กลับไปหน้าแรก',
+                vi: 'Quay về trang chủ',
+            },
+
             // Category listing pages. Without these every listing page shares
             // one title, which search engines read as duplicate pages.
             'desc.developer': {
