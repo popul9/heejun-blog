@@ -1,0 +1,67 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+type CarouselImage = {
+	src: ImageMetadata;
+	alt: string;
+};
+
+type Props = {
+	images: CarouselImage[];
+	label: string;
+};
+
+const { images, label } = Astro.props;
+---
+
+<div class="image-carousel" role="region" aria-label={label} tabindex="0">
+	{
+		images.map((image) => (
+			<figure>
+				<Image
+					src={image.src}
+					alt={image.alt}
+					loading="lazy"
+					decoding="async"
+				/>
+			</figure>
+		))
+	}
+</div>
+
+<style>
+	.image-carousel {
+		display: flex;
+		gap: 0.75rem;
+		overflow-x: auto;
+		margin: 1.5rem 0 2rem;
+		padding: 0 0 0.75rem;
+		scroll-snap-type: x mandatory;
+		overscroll-behavior-inline: contain;
+	}
+
+	.image-carousel:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 4px;
+	}
+
+	figure {
+		flex: 0 0 auto;
+		margin: 0;
+		scroll-snap-align: start;
+	}
+
+	img {
+		display: block;
+		width: auto;
+		height: min(62vw, 390px);
+		max-width: none;
+	}
+
+	@media (max-width: 520px) {
+		img {
+			height: min(88vw, 390px);
+		}
+	}
+</style>

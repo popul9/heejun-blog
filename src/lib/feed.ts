@@ -4,6 +4,7 @@ import {
     filterPostsByLocale,
     getPostSlug,
     type Locale,
+    useTranslations,
 } from '../i18n/utils';
 
 /**
@@ -11,11 +12,14 @@ import {
  * `pathPrefix` is '' for the default locale and '/ko', '/zh', ... otherwise.
  */
 export async function getFeedItems(locale: Locale, pathPrefix: string) {
+    const t = useTranslations(locale);
     const groups = await Promise.all(
         CATEGORIES.map(async (category) => {
             const entries = filterPostsByLocale(await getCollection(category), locale);
             return entries.map((entry) => ({
-                title: entry.data.title,
+                title: entry.data.inProgress
+                    ? `${entry.data.title} (${t('post.inProgress.label')})`
+                    : entry.data.title,
                 description: entry.data.description,
                 pubDate: entry.data.pubDate,
                 link: `${pathPrefix}/${category}/${getPostSlug(entry.id, locale)}/`,

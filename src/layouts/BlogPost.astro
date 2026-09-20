@@ -6,7 +6,7 @@ import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SOCIAL_LINKS } from '../consts';
-import { getLangFromUrl, getLocalizedPathname, type Locale } from '../i18n/utils';
+import { getLangFromUrl, getLocalizedPathname, useTranslations, type Locale } from '../i18n/utils';
 
 // Every post collection shares the same schema, so any one of them types this.
 // Standing pages (About) reuse the layout but have no publication date.
@@ -27,12 +27,14 @@ const {
 	pubDate,
 	updatedDate,
 	heroImage,
+	inProgress,
 	availableLocales,
 	schemaType = 'BlogPosting',
 	heading = Astro.props.title,
 } = Astro.props;
 // Without this every translated post would declare itself as English.
 const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 // The About page is this person's canonical page, so point `url` at it in the
@@ -124,6 +126,13 @@ const structuredData =
 			.last-updated-on {
 				font-style: italic;
 			}
+			.in-progress-notice {
+				margin: 0 0 2rem;
+				padding: 0.85rem 1rem;
+				border-left: 4px solid rgb(var(--accent));
+				background: rgb(var(--gray-light));
+				border-radius: 0 8px 8px 0;
+			}
 		</style>
 	</head>
 
@@ -161,6 +170,7 @@ const structuredData =
 						<h1>{heading}</h1>
 						<hr />
 					</div>
+					{inProgress && <p class="in-progress-notice"><strong>{t('post.inProgress.label')}</strong> — {t('post.inProgress.notice')}</p>}
 					<slot />
 				</div>
 			</article>

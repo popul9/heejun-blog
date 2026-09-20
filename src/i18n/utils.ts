@@ -58,6 +58,17 @@ export function useTranslations(lang: Locale) {
             'nav.foodie': { ko: '맛집러', en: 'Foodie', zh: '觅食者', th: 'นักหาของอร่อย', vi: 'Kẻ săn quán ngon' },
             'nav.about': { ko: '소개', en: 'About', zh: '关于', th: 'เกี่ยวกับ', vi: 'Giới thiệu' },
 
+            'post.inProgress.label': {
+                ko: '작성 중', en: 'In progress', zh: '撰写中', th: 'กำลังเขียน', vi: 'Đang viết',
+            },
+            'post.inProgress.notice': {
+                ko: '아직 작성 중인 글입니다. 내용과 사진이 계속 추가되거나 수정될 수 있어요.',
+                en: 'This one is still being written. I’ll keep adding and tweaking the words and photos.',
+                zh: '这篇还在慢慢写。之后会继续补充、修改文字和照片。',
+                th: 'บทความนี้ยังเขียนอยู่ เดี๋ยวจะค่อยๆ เติมและปรับทั้งเนื้อหากับรูปภาพอีก',
+                vi: 'Bài này vẫn đang được viết. Mình sẽ tiếp tục thêm và chỉnh sửa cả nội dung lẫn hình ảnh.',
+            },
+
             // 404. One static page serves every locale, so these are handed to
             // the browser and picked by the prefix of the URL that 404'd.
             'error.404.title': {
@@ -147,8 +158,14 @@ export function getLocalizedPathname(pathname: string, locale: Locale) {
  * Posts are stored as <post-folder>/<locale>.mdx. Keep the entries for this
  * locale, plus any flat single-file post that has no per-language variants.
  */
-export function filterPostsByLocale<T extends { id: string }>(posts: T[], locale: string) {
-    return posts.filter((post) => post.id.endsWith(`/${locale}`) || !post.id.includes('/'));
+export function filterPublishedPosts<T extends { data: { inProgress?: boolean } }>(posts: T[]) {
+    return posts.filter((post) => !post.data.inProgress);
+}
+
+export function filterPostsByLocale<T extends { id: string; data: { inProgress?: boolean } }>(posts: T[], locale: string) {
+    return filterPublishedPosts(posts).filter(
+        (post) => post.id.endsWith(`/${locale}`) || !post.id.includes('/'),
+    );
 }
 
 /** "dantes-deli-glenelg-sa/en" -> "dantes-deli-glenelg-sa" */

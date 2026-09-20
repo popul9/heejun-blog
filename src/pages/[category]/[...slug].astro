@@ -5,6 +5,7 @@ import BlogPost from "../../layouts/BlogPost.astro";
 import {
     CATEGORIES,
     DEFAULT_LOCALE,
+    filterPublishedPosts,
     filterPostsByLocale,
     getLocalesBySlug,
     getPostSlug,
@@ -13,7 +14,7 @@ import {
 export async function getStaticPaths() {
     const paths = await Promise.all(
         CATEGORIES.map(async (category) => {
-            const all = await getCollection(category);
+            const all = filterPublishedPosts(await getCollection(category));
             const localesBySlug = getLocalesBySlug(all);
 
             return filterPostsByLocale(all, DEFAULT_LOCALE).map((entry) => {

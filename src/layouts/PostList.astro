@@ -14,6 +14,7 @@ interface PostCard {
     title: string;
     pubDate: Date;
     heroImage?: ImageMetadata;
+    inProgress?: boolean;
 }
 
 interface Props {
@@ -84,6 +85,17 @@ const title = `${t(`nav.${category}`)} | ${t("site.title")}`;
                 color: rgb(var(--black));
                 line-height: 1;
             }
+            .status {
+                display: inline-block;
+                margin-left: 0.45rem;
+                padding: 0.2em 0.55em;
+                border-radius: 999px;
+                background: rgb(var(--gray-light));
+                color: rgb(var(--gray-dark));
+                font-size: 0.72rem;
+                font-weight: 700;
+                vertical-align: middle;
+            }
             .date {
                 margin: 0;
                 color: rgb(var(--gray));
@@ -129,7 +141,10 @@ const title = `${t(`nav.${category}`)} | ${t("site.title")}`;
                                             alt={post.title}
                                         />
                                     )}
-                                    <h4 class="title">{post.title}</h4>
+                                    <h4 class="title">
+                                        {post.title}
+                                        {post.inProgress && <span class="status">{t("post.inProgress.label")}</span>}
+                                    </h4>
                                     <p class="date">
                                         <FormattedDate date={post.pubDate} />
                                     </p>

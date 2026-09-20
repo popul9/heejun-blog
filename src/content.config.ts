@@ -10,6 +10,7 @@ const roamer = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: image().optional(),
+			inProgress: z.boolean().default(false),
 		}),
 });
 
@@ -22,6 +23,7 @@ const foodie = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: image().optional(),
+			inProgress: z.boolean().default(false),
 		}),
 });
 
@@ -34,6 +36,7 @@ const developer = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: image().optional(),
+			inProgress: z.boolean().default(false),
 		}),
 });
 
@@ -46,6 +49,7 @@ const melophile = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: image().optional(),
+			inProgress: z.boolean().default(false),
 		}),
 });
 
