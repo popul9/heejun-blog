@@ -1,6 +1,7 @@
 ---
 // Category listing for the default locale, served unprefixed: /developer/, /foodie/, ...
 import { getCollection } from "astro:content";
+import { getTopLevelPosts } from "../../lib/post-groups";
 import PostList from "../../layouts/PostList.astro";
 import {
     CATEGORIES,
@@ -21,7 +22,7 @@ export async function getStaticPaths() {
             return {
                 params: { category },
                 props: {
-                    posts: entries.map((entry) => ({
+                    posts: getTopLevelPosts(entries, DEFAULT_LOCALE).map((entry) => ({
                         href: `/${category}/${getPostSlug(entry.id, DEFAULT_LOCALE)}/`,
                         title: entry.data.title,
                         pubDate: entry.data.pubDate,

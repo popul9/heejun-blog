@@ -11,6 +11,8 @@ const roamer = defineCollection({
 			updatedDate: z.coerce.date().optional(),
 			heroImage: image().optional(),
 			inProgress: z.boolean().default(false),
+			// Ordered post slugs for a travel collection; keep individual URLs unchanged.
+			children: z.array(z.string()).optional(),
 		}),
 });
 

@@ -1,6 +1,8 @@
 ---
 // Post pages for the default locale: /developer/end-of-job/, /foodie/osoi-brunswick-vic/, ...
 import { getCollection, render } from "astro:content";
+import ChildPosts from "../../components/ChildPosts.astro";
+import { getChildPosts } from "../../lib/post-groups";
 import BlogPost from "../../layouts/BlogPost.astro";
 import {
     CATEGORIES,
@@ -17,12 +19,14 @@ export async function getStaticPaths() {
             const all = filterPublishedPosts(await getCollection(category));
             const localesBySlug = getLocalesBySlug(all);
 
-            return filterPostsByLocale(all, DEFAULT_LOCALE).map((entry) => {
+            const localized = filterPostsByLocale(all, DEFAULT_LOCALE);
+            return localized.map((entry) => {
                 const slug = getPostSlug(entry.id, DEFAULT_LOCALE);
                 return {
                     params: { category, slug },
                     props: {
                         entry,
+                        children: getChildPosts(entry, localized, DEFAULT_LOCALE),
                         availableLocales: localesBySlug.get(slug) ?? [DEFAULT_LOCALE],
                     },
                 };
@@ -32,10 +36,11 @@ export async function getStaticPaths() {
     return paths.flat();
 }
 
-const { entry, availableLocales } = Astro.props;
+const { entry, availableLocales, children } = Astro.props;
 const { Content } = await render(entry);
 ---
 
 <BlogPost {...entry.data} availableLocales={availableLocales}>
     <Content />
+    <ChildPosts posts={children} />
 </BlogPost>

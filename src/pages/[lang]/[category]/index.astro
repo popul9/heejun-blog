@@ -1,6 +1,7 @@
 ---
 // Category listing for prefixed locales: /ko/developer/, /zh/foodie/, ...
 import { getCollection } from "astro:content";
+import { getTopLevelPosts } from "../../../lib/post-groups";
 import PostList from "../../../layouts/PostList.astro";
 import {
     CATEGORIES,
@@ -24,7 +25,7 @@ export async function getStaticPaths() {
                     params: { lang, category },
                     props: {
                         lang,
-                        posts: entries.map((entry) => ({
+                        posts: getTopLevelPosts(entries, lang).map((entry) => ({
                             href: `/${lang}/${category}/${getPostSlug(entry.id, lang)}/`,
                             title: entry.data.title,
                             pubDate: entry.data.pubDate,
