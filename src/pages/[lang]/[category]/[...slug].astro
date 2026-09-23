@@ -17,7 +17,8 @@ export async function getStaticPaths() {
     const paths = await Promise.all(
         SECONDARY_LOCALES.flatMap((lang) =>
             CATEGORIES.map(async (category) => {
-                const all = filterPublishedPosts(await getCollection(category));
+                const entries = await getCollection(category);
+                const all = filterPublishedPosts(entries);
                 const localesBySlug = getLocalesBySlug(all);
 
                 const localized = filterPostsByLocale(all, lang);
@@ -27,7 +28,7 @@ export async function getStaticPaths() {
                         params: { lang, category, slug },
                         props: {
                             entry,
-                            children: getChildPosts(entry, localized, lang),
+                            children: getChildPosts(entry, filterPostsByLocale(entries, lang, true), lang),
                             availableLocales: localesBySlug.get(slug) ?? [lang],
                         },
                     };

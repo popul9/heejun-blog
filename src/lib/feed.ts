@@ -20,7 +20,7 @@ export async function getFeedItems(locale: Locale, pathPrefix: string) {
                 title: entry.data.inProgress
                     ? `${entry.data.title} (${t('post.inProgress.label')})`
                     : entry.data.title,
-                description: entry.data.description,
+                description: entry.data.description.replace(/~~([^~]+)~~/g, '$1'),
                 pubDate: entry.data.pubDate,
                 link: `${pathPrefix}/${category}/${getPostSlug(entry.id, locale)}/`,
             }));

@@ -159,11 +159,12 @@ export function getLocalizedPathname(pathname: string, locale: Locale) {
  * locale, plus any flat single-file post that has no per-language variants.
  */
 export function filterPublishedPosts<T extends { data: { inProgress?: boolean } }>(posts: T[]) {
+    if (import.meta.env.DEV) return posts;
     return posts.filter((post) => !post.data.inProgress);
 }
 
-export function filterPostsByLocale<T extends { id: string; data: { inProgress?: boolean } }>(posts: T[], locale: string) {
-    return filterPublishedPosts(posts).filter(
+export function filterPostsByLocale<T extends { id: string; data: { inProgress?: boolean } }>(posts: T[], locale: string, includeInProgress = false) {
+    return (includeInProgress ? posts : filterPublishedPosts(posts)).filter(
         (post) => post.id.endsWith(`/${locale}`) || !post.id.includes('/'),
     );
 }
