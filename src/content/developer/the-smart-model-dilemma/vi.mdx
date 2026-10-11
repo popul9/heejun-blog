@@ -16,7 +16,7 @@ Tôi xây một hệ thống quản lý dựa trên cleaning roster, điều ki�
 Thế là tôi mang con model tốt nhất mà mình có quyền dùng, Opus 5, ra giải thích luồng suy nghĩ của mình, và nó giải thích từng vấn đề cần giải quyết một cách trôi chảy, tự tin đến mức chẳng có lý do gì để không tin.<br/>
 Vậy là tôi mất trọn ba ngày chỉ để hiểu bài giảng học thuật này 😓. Nói chính xác hơn, trong ba ngày đó tôi vừa làm vừa va vấp trực tiếp, hiểu được kiến trúc nó đề xuất và hoàn thành việc implement.<br/>
 Nhưng hiểu xong rồi thì tôi lại ghét cái overhead phải accommodate quá nhiều kiến trúc vào hệ thống của mình, chỉ để làm một tính năng gọi request đến AI API.<br/>
-Thế là tôi lại dành thêm ba ngày nữa để strip hết những gì không cần thiết. Kết quả là tốn một đống token để sinh code, rồi lại tốn một đống token để xóa nó đi (và quan trọng nhất là thời gian — quý hơn cả vàng!!).
+Thế là tôi lại dành thêm ba ngày nữa để strip hết những gì không cần thiết. Kết quả là tốn một đống token để sinh code, rồi lại tốn một đống token để xóa nó đi (và quan trọng nhất là thời gian, quý hơn cả vàng!!).
 
 Dù vậy, model tôi chọn dùng vẫn cứ là Opus. Có budget rồi thì việc gì phải dùng Sonnet?
 
@@ -26,7 +26,7 @@ Không, đôi khi tôi còn nói thẳng là đừng có ra vẻ thông minh mà
 
 ## Đây có thực sự là thứ tôi muốn không?
 Trên đời tồn tại những vấn đề phức tạp, đúng vậy. Nhưng việc có cần kiến trúc phức tạp hay không lại là chuyện khác.<br/>
-Tôi là người đơn giản. Nếu viết code phức tạp, sau này tôi vẫn có thể quay lại sửa cho đơn giản hơn — nhưng kiến trúc thì khác. Một khi đã nhồi cấu trúc phức tạp vào từ tầng kiến trúc, mọi thứ implement dựa trên đó về sau đều trở nên phức tạp theo.
+Tôi là người đơn giản. Nếu viết code phức tạp, sau này tôi vẫn có thể quay lại sửa cho đơn giản hơn. Nhưng kiến trúc thì khác. Một khi đã nhồi cấu trúc phức tạp vào từ tầng kiến trúc, mọi thứ implement dựa trên đó về sau đều trở nên phức tạp theo.
 
 Nói cụ thể hơn, đây là tính năng gửi API call đến AI từ backend .NET, rồi để user xác nhận kết quả, nhưng lại phải accommodate đủ thứ cơ chế kỹ thuật vào đó.<br/>
 Server fail thì recover thế nào, state lưu trong DB ra sao, hoàn tất thì tự động trigger event thế nào.. vân vân. Nói ngắn gọn là đang cố xây một tính năng mà chỉ cần bấm một cái là mọi thứ tự lo hết, kiểu quá đà.<br/>
@@ -113,7 +113,7 @@ Và tôi cũng định hướng là sẽ implement kiểu xử lý bất đồng
 </svg>
 </div>
 
-*Bên trái là đề xuất của Opus — dàn dựng backend tự xử lý mọi thứ mà người dùng không hề hay biết. Bên phải là cái tôi thực sự chọn — xử lý đồng bộ minh bạch dựa trên frontend hook — worse is better.*
+*Bên trái là đề xuất của Opus: dàn dựng backend tự xử lý mọi thứ mà người dùng không hề hay biết. Bên phải là cái tôi thực sự chọn: xử lý đồng bộ minh bạch dựa trên frontend hook. Worse is better.*
 
 Vậy nên, bất cứ khi nào review code, tôi cũng muốn mình có thể nhanh chóng chẩn đoán chỗ bị lỗi và nắm bắt được ngay khi cần.<br/>
 Nói ngắn gọn là dùng Sonnet để thiết kế kiến trúc. Còn debug thì vẫn dùng Opus (con ngựa hoang này khi đào sâu vào edge case thì có khả năng suy luận điên rồ. Đáng sợ thật 😬).
