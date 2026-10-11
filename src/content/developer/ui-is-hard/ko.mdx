@@ -1,0 +1,42 @@
+---
+title: "UI Is Hard"
+description: "House Stories에 커버플로우를 넣어본 일요일. 멋진 UI가 텍스트를 읽기에도 잘 맞는 건 아니었다."
+pubDate: "Oct 11 2026"
+heroImage: "./iphone-4s-cover-flow.avif"
+---
+
+import Video from '../../../components/Video.astro';
+
+**UI는 어렵다.**
+
+**페이스북에서 여느 날과 같이 둠스크롤링하던 도중 UI 관련한 비디오를 발견했다.**
+
+[https://www.facebook.com/reel/2200209323859340](https://www.facebook.com/reel/2200209323859340)
+
+호오 꽤 멋지다.
+
+<Video src="/videos/cover-flow-ui-inspiration.mp4" />
+
+그래서 지금 추가하고 있는 house stories 기능에 이를 넣어볼까 했다. 테넌트들끼리 간단하게 서로 알림 등을 보낼 수 있는 커뮤니티 보드 느낌이다.
+
+일단 iOS의 커버플로우를 좋아하고 이제 스큐어모픽 시대에 재미로 구현해볼까 싶었다.
+
+![House Stories에 구현해본 커버플로우 UI](./house-stories-cover-flow.avif)
+
+<Video src="/videos/house-stories-cover-flow.mp4" />
+
+근데 웬걸 별로다.
+아주 나쁜 건 아닌데 일단 아이폰 13 프로 맥스 기준으로는 느리다. 최적화해볼 수도 있겠지만, 이게 커버플로우처럼 이미지를 빠르게 후루룩 훑어보는 용도로만 쓸 만하지, 이렇게 텍스트 등 자세히 볼 내용을 넣는 건 잘 안 맞는 듯?
+
+마우스 커서를 이용한 재밌는 애니메이션 등은 많은데 모바일에선 보통 위아래 스크롤이 사실상 컴포넌트 UI랑 interactive할 수 있는 유일한 방법이다 보니 쉽지 않은 듯하다.
+
+기술이 가능하다고 해서 바로 적용하는 우(?)를 범하는 개발자라는 죄책감이 들지만서도 오늘은 괜찮다. 왜냐면 일요일임.
+
+마무리로 내가 아끼는 iOS 5.0.1을 구동하는 아이폰 4s 커버플로우를 자랑해본다. 덕분에 오랜만에 서랍에서 꺼냈다. 나름 알찬? 주말을 보냈다.
+배포할 기능이 산더미여도 이런 건 주말 아님 못 하니까 😀.
+
+![iOS 5.0.1을 구동하는 아이폰 4s의 커버플로우](./iphone-4s-cover-flow.avif)
+
+<Video src="/videos/iphone-4s-cover-flow.mp4" />
+
+Codex 덕분에 진짜 미친 듯이 기능 업그레이드 쏟아낸다.
