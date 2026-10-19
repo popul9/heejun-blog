@@ -4,3 +4,15 @@
 # Astro starter demo posts, removed 2026-08.
 /blog/*  /  301
 /blog  /  301
+
+# Meetup post URL updated for fresh social previews; preserve shared links.
+/developer/dotnet-meetup-future  /developer/dotnet-meetup-future-2026/  301
+/developer/dotnet-meetup-future/  /developer/dotnet-meetup-future-2026/  301
+/ko/developer/dotnet-meetup-future  /ko/developer/dotnet-meetup-future-2026/  301
+/ko/developer/dotnet-meetup-future/  /ko/developer/dotnet-meetup-future-2026/  301
+/zh/developer/dotnet-meetup-future  /zh/developer/dotnet-meetup-future-2026/  301
+/zh/developer/dotnet-meetup-future/  /zh/developer/dotnet-meetup-future-2026/  301
+/th/developer/dotnet-meetup-future  /th/developer/dotnet-meetup-future-2026/  301
+/th/developer/dotnet-meetup-future/  /th/developer/dotnet-meetup-future-2026/  301
+/vi/developer/dotnet-meetup-future  /vi/developer/dotnet-meetup-future-2026/  301
+/vi/developer/dotnet-meetup-future/  /vi/developer/dotnet-meetup-future-2026/  301
