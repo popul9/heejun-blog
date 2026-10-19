@@ -28,6 +28,7 @@ if (isLocale(hrefParts[0])) {
 const normalizedHref = "/" + hrefParts.join("/");
 
 const isActive =
+	(normalizedHref === "/wonderer" && activePathname === "/") ||
 	normalizedHref === activePathname ||
 	normalizedHref === activePathname + "/" ||
 	normalizedHref === "/" + subpath;

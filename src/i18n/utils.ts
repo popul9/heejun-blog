@@ -61,6 +61,12 @@ export function useTranslations(lang: Locale) {
             'post.inProgress.label': {
                 ko: '작성 중', en: 'In progress', zh: '撰写中', th: 'กำลังเขียน', vi: 'Đang viết',
             },
+            'post.permalink': {
+                ko: '이 글의 고정 주소', en: 'Permalink', zh: '文章固定链接', th: 'ลิงก์ถาวรของบทความ', vi: 'Liên kết cố định',
+            },
+            'post.moreWonderer': {
+                ko: 'Wonderer의 다른 글 보기', en: 'More from Wonderer', zh: '更多好奇者文章', th: 'อ่านบทความนักสงสัยเพิ่มเติม', vi: 'Đọc thêm từ Kẻ tò mò',
+            },
             'post.inProgress.notice': {
                 ko: '아직 작성 중인 글입니다. 내용과 사진이 계속 추가되거나 수정될 수 있어요.',
                 en: 'This one is still being written. I’ll keep adding and tweaking the words and photos.',

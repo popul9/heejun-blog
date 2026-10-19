@@ -1,0 +1,31 @@
+---
+import { Image } from 'astro:assets';
+import closeup from '../assets/dialogue1.webp';
+import exhibition from '../assets/dialogue2.webp';
+---
+
+<div class="gallery">
+    <Image src={closeup} alt="Lee Ufan — Dialogue, close-up" />
+    <Image src={exhibition} alt="Lee Ufan — Dialogue, National Gallery of Victoria" />
+</div>
+
+<style>
+    .gallery {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+    }
+    .gallery img {
+        width: calc(50% - 0.5rem);
+        flex-shrink: 0;
+        object-fit: cover;
+        scroll-snap-align: center;
+    }
+    @media (max-width: 720px) {
+        .gallery img {
+            width: 85%;
+        }
+    }
+</style>

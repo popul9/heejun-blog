@@ -1,0 +1,53 @@
+---
+import { getCollection, render } from 'astro:content';
+import BlogPost from './BlogPost.astro';
+import {
+    LOCALES,
+    filterPostsByLocale,
+    getLocalizedPathname,
+    getPostSlug,
+    useTranslations,
+    type Locale,
+} from '../i18n/utils';
+
+interface Props {
+    lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const posts = filterPostsByLocale(await getCollection('wonderer'), lang)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const latest = posts[0];
+const rendered = latest ? await render(latest) : undefined;
+const Content = rendered?.Content;
+const postPath = latest
+    ? getLocalizedPathname(`/wonderer/${getPostSlug(latest.id, lang)}/`, lang)
+    : undefined;
+---
+
+<BlogPost
+    {...latest?.data}
+    title={latest?.data.title ?? t('nav.wonderer')}
+    description={latest?.data.description ?? t('desc.wonderer')}
+    availableLocales={LOCALES}
+>
+    {Content && <Content />}
+    <nav class="post-links" aria-label={t('nav.wonderer')}>
+        {postPath && <a href={postPath}>{t('post.permalink')}</a>}
+        <a href={getLocalizedPathname('/wonderer/', lang)}>{t('post.moreWonderer')} →</a>
+    </nav>
+</BlogPost>
+
+<style>
+    .post-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 3rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgb(var(--gray-light));
+        font-size: 0.9em;
+    }
+</style>
