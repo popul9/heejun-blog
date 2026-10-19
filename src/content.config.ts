@@ -55,4 +55,17 @@ const melophile = defineCollection({
 		}),
 });
 
-export const collections = { roamer, foodie, developer, melophile };
+const wonderer = defineCollection({
+	loader: glob({ base: './src/content/wonderer', pattern: '**/*.{md,mdx}' }),
+	schema: ({ image }) =>
+		z.object({
+			title: z.string(),
+			description: z.string(),
+			pubDate: z.coerce.date(),
+			updatedDate: z.coerce.date().optional(),
+			heroImage: image().optional(),
+			inProgress: z.boolean().default(false),
+		}),
+});
+
+export const collections = { wonderer, roamer, foodie, developer, melophile };

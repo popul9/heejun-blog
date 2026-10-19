@@ -25,7 +25,7 @@ export const LOCALE_LABELS: Record<Locale, string> = {
 export const SECONDARY_LOCALES = LOCALES.filter((locale) => locale !== DEFAULT_LOCALE);
 
 /** Content collections rendered as blog categories, in nav order. */
-export const CATEGORIES = ['developer', 'roamer', 'melophile', 'foodie'] as const;
+export const CATEGORIES = ['wonderer', 'developer', 'roamer', 'melophile', 'foodie'] as const;
 export type Category = typeof CATEGORIES[number];
 
 export function getLangFromUrl(url: URL): Locale {
@@ -95,6 +95,13 @@ export function useTranslations(lang: Locale) {
 
             // Category listing pages. Without these every listing page shares
             // one title, which search engines read as duplicate pages.
+            'desc.wonderer': {
+                ko: '일상에서 떠오르는 궁금증과 꼬리를 무는 생각들',
+                en: 'Everyday curiosities and thoughts that lead to more thoughts',
+                zh: '日常的好奇，以及一个接一个的念头',
+                th: 'ความสงสัยในชีวิตประจำวัน และความคิดที่ต่อยอดไปเรื่อยๆ',
+                vi: 'Những tò mò thường ngày và suy nghĩ nối tiếp nhau',
+            },
             'desc.developer': {
                 ko: '개발하며 부딪힌 문제와 해결 과정, 그리고 도구에 대한 기록',
                 en: 'Problems I hit while building things, how I solved them, and the tools I use',

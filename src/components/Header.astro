@@ -9,6 +9,7 @@ import HeaderLink from "./HeaderLink.astro";
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const localizedHome = getLocalizedPathname("/", lang);
+const localizedWonderer = getLocalizedPathname("/wonderer", lang);
 const localizedDeveloper = getLocalizedPathname("/developer", lang);
 const localizedroamer = getLocalizedPathname("/roamer", lang);
 const localizedMelophile = getLocalizedPathname("/melophile", lang);
@@ -62,7 +63,7 @@ const localizedAbout = getLocalizedPathname("/about", lang);
 		</div>
 
 		<div class="internal-links">
-			<HeaderLink href={localizedHome}>{t("nav.wonderer")}</HeaderLink>
+			<HeaderLink href={localizedWonderer}>{t("nav.wonderer")}</HeaderLink>
 			<HeaderLink href={localizedDeveloper}
 				>{t("nav.developer")}
 			</HeaderLink>
