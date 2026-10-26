@@ -5,45 +5,50 @@ pubDate: 'Oct 26 2026'
 heroImage: './spike-kick.avif'
 ---
 
-前阵子我发了一篇[《UI is Hard》](/zh/developer/ui-is-hard/)，有个朋友看完之后给我发了这些。
 
-- [r/badUIbattles](https://www.reddit.com/r/badUIbattles/)
-- [Worst UI Challenge](https://worst-ui-challenge.vercel.app/)
+前阵子我发了一篇[《UI is Hard》](/zh/developer/ui-is-hard/)，有个朋友看完之后给我看了这个。
+
+![Worst UI Challenge 的主页面和音量调节 UI 参赛作品](./worst-ui-challenge.avif)
+
+[Worst UI Challenge](https://worst-ui-challenge.vercel.app/)
+
+听说还有一个单独的 [Reddit 频道](https://www.reddit.com/r/badUIbattles/)。
+
+听说这是一个做“最烂音量调节 UI”的挑战。
 
 诶，好玩。我以前只会抱怨 UI 太难，从没想过故意把它做烂（至少最近没想过）。
 
-嗯..我这个脑子一直像条只会往前游的鱼，满脑子都是效率。那这次就让它尽可能慢下来，做一个低效的 UI 试试。
+嗯..我这个一直只追求效率、一路直行的脑子，这次就让它尽可能低效地转起来，像条倒着游的鱼一样，做一个低效的 UI 试试。
 
-所以这篇文章算是上一篇的悖论，也是我对 Richard P. Gabriel 的 [Worse is Better is Worse](https://dreamsongs.com/Files/worse-is-worse.pdf) 的致敬：**UI is Hard is Easy**。哈哈 😆。
+所以这篇文章算是上一篇的悖论，也是对 Richard P. Gabriel 的 [Worse is Better is Worse](https://dreamsongs.com/Files/worse-is-worse.pdf) 的致敬、献礼：**UI is Hard is Easy**。哈哈 😆。
 
-好，我的想法是这样的。
 
-把橄榄球踢进圈里。越接近目标点，音量就越接近 100。
+## 核心想法
 
-我交给 Astra（Codex）去做，大概三十分钟，几轮提示词就搞定了。拖动球来瞄准，松手就会踢出去。祝你踢得准..哈哈。
+![橄榄球和同心圆目标点，中央标有音量 100%](./rugby-volume-target.avif)
 
-先说一下，这个不会改变你设备的音量。你可以用游戏里的 Test sound 听听结果。
+把橄榄球踢出去，让它稳稳落进圈里。越接近目标点，音量就越接近 100。
+
+我交给 Astra（Codex）去做，大概三十分钟，几轮提示词就搞定了。
+拖动球再松手，就会踢出去。祝你踢得准..哈哈。
 
 <iframe
   src="/games/ui-is-hard-is-easy/index.html?embed"
-  title="UI is Hard is Easy:用橄榄球控制音量"
+  title="UI is Hard is Easy — 用橄榄球调节音量"
   loading="lazy"
   allow="autoplay; fullscreen"
   allowfullscreen
   style="display:block;width:100%;height:560px;border:0;border-radius:12px;"
 ></iframe>
 
-[在单独页面中游玩 ↗](/games/ui-is-hard-is-easy/index.html)
-
-今天的主题是把 UI 搞砸？是没错，但我的 UX 价值观照样适用。尽量让用户对操作拥有控制权。不要一次给太多认知负担。一次只用操心一件事。
-
-换个说法：你控制不了的部分又多又复杂，但能控制的，我只给你一个。
+今天的主题是把 UX 搞砸？不过我的 UX 价值观照样适用。让用户对操作拥有控制权。
+换个说法：你控制不了的部分可以有很多，但能控制的，我只给你一个。
 
 ## Inspiration
 
 灵感来自今年年初我在游戏展上看到的 **Pro Jank Footy**。我之前在[这里](/zh/roamer/sage-2026/)分享过。
 
-当时球的运动方式特别奇怪，我就问开发者是怎么做的。他说内部是 3D 引擎，玩家看到的则是蒙了一层 2D 滤镜。这件事在我脑子里转了好一阵，一直想着什么时候能用上，今天总算用上了..哈哈
+当时球的运动方式特别奇怪，我就问开发者是怎么做的。他说内部是 3D 引擎，玩家看到的则是蒙了一层 2D 滤镜。这件事在我脑子里转了好一阵，一直想着什么时候能用上，总算用上了..哈哈
 
 ![Pro Jank Footy 的 Steam 页面和游戏画面](./pro-jank-footy.avif)
 
@@ -55,12 +60,11 @@ heroImage: './spike-kick.avif'
 
 感觉她做了很多有意思的东西。可爱，又很有个性。
 
-总之，这个项目把我今天的 token 额度用完了。
 
 ![Codex 用量和可用的重置提示](./codex-usage.avif)
-
-Codex 重置额度也太疯狂了吧。
-
-对了，想的话也可以把球直接砸下去。
+总之，这个项目把我今天的 token 额度用完了。
+Codex 重置的次数太多了。爱你。Astra 的 token 消耗 rate 就不爱了。
 
 ![瞄准后将球砸下的画面，带有 SPIKE 标识](./spike-kick.avif)
+
+想的话，也可以把球直接砸下去。
