@@ -138,11 +138,11 @@ const title = `${t(`nav.${category}`)} | ${t("site.title")}`;
                                             width={720}
                                             height={360}
                                             src={post.heroImage}
-                                            alt={post.title}
+                                            alt={post.title.replace(/~~([^~]+)~~/g, '$1')}
                                         />
                                     )}
                                     <h4 class="title">
-                                        {post.title}
+                                        {post.title.split(/~~([^~]+)~~/g).map((part, index) => index % 2 === 1 ? <s>{part}</s> : part)}
                                         {post.inProgress && <span class="status">{t("post.inProgress.label")}</span>}
                                     </h4>
                                     <p class="date">

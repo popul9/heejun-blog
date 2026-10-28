@@ -18,8 +18,8 @@ export async function getFeedItems(locale: Locale, pathPrefix: string) {
             const entries = filterPostsByLocale(await getCollection(category), locale);
             return entries.map((entry) => ({
                 title: entry.data.inProgress
-                    ? `${entry.data.title} (${t('post.inProgress.label')})`
-                    : entry.data.title,
+                    ? `${entry.data.title.replace(/~~([^~]+)~~/g, '$1')} (${t('post.inProgress.label')})`
+                    : entry.data.title.replace(/~~([^~]+)~~/g, '$1'),
                 description: entry.data.description.replace(/~~([^~]+)~~/g, '$1'),
                 pubDate: entry.data.pubDate,
                 link: `${pathPrefix}/${category}/${getPostSlug(entry.id, locale)}/`,
