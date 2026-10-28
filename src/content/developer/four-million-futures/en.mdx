@@ -1,6 +1,6 @@
 ---
-title: 'I Saw ~~14 Million~~... No, 4 Million Futures'
-description: 'Brute-forcing 4 million simulations'
+title: 'I Didn’t See ~~14,000,605~~ Futures. I Saw 4 Million.'
+description: 'Brute-forcing 4 million simulations of a ridiculously addictive game'
 pubDate: 'Oct 28 2026'
 heroImage: './shot-lab.avif'
 ---
@@ -9,85 +9,82 @@ import Video from '../../../components/Video.astro';
 
 <iframe
   src="/games/ui-is-hard-is-easy/index.html?embed&v=92c7c2985f14"
-  title="UI is Hard is Easy: control the volume with a footy"
+  title="UI is Hard is Easy: Setting the Volume with a Rugby Ball"
   loading="lazy"
   allow="autoplay; fullscreen"
   allowfullscreen
   style="display:block;width:100%;height:560px;border:0;border-radius:12px;"
 ></iframe>
 
-Since the day before yesterday, I've been playing this absurdly addictive rugby game (footy, if you're in Australia) with friends like a man possessed. My personal best is 95 (solo mode), and my wife hit a whopping 99. (It's a "set the volume you want" kind of game, so technically there's no right answer. Shh, don't tell anyone.)
+For the past couple of days, I've been playing this absurdly addictive footy game (rugby) with friends nonstop. My personal best is 95 in solo mode, and my wife hit a whopping 99. (Fun secret: the whole point is to set the volume you like, so there's technically no right answer.)
 
-Anyway, it's so addictive that I kept replaying it, and no matter what I did in puppy mode, the best I could get was 41. (Okay, that's actually just from smashing the ball clean off the screen. lol)
+Anyway, I kept replaying it, and in puppy mode I could never get past 41. (You can shove the ball clean off the screen and still only max out at 41, lol.)
 
-Then I was talking with my wife and wondered: is 40+ even possible in the first place? Maybe the time before the owner calls the puppy should be cut by a second or so. I convinced myself that was probably right. But wait... can we actually know that without running every possible shot?
+Then, while talking it over with my wife, we wondered: is a score above 40 even possible? Maybe the owner's calling time needs to be a second shorter? I was pretty convinced that was it. But wait, we can't actually know until we try every possible shot, right?
 
-Really? Isn't that way too many? But "too many" is how many, exactly?
+Is that even realistic? Wouldn't there be way too many? Actually, how many is "too many"?
 
-The possibilities are the point where you start the kick, and then where you release after dragging. So roughly start points A times end points B, right? That's not a lot?
+The variables are where the kick starts and where you release after dragging. So it's roughly start points A × end points B... that's not that many, is it?
 
-Me: Codex, doable?  
+Me: Codex, can you do it?  
 Codex: yep  
-Me: Go.
+Me: go for it
 
 ## The Lab Is Open
 
-![Shot Lab, where you can search kick positions, power, and direction, and watch replays](./shot-lab.avif)
+![Shot Lab, where you can explore kick positions, power, and direction, and watch replays](./shot-lab.avif)
 
 [Link](/lab/)
 
-Alright, running it now... Each mode has 2 million possible shots, so I'm running 4 million in total with 10 threads in parallel.
+Time to run it. That's 2 million possibilities per mode, so 4 million shots total, spread across 10 parallel workers.
 
 ## Results
 
-### Best Solo play: 99.954458
+### Best Solo Run: 99.954458
 
 <Video src="/videos/four-million-futures/solo-best.mp4" />
 
-### Best Puppy play (Glitch): 95.811488
+### Best Puppy Run (Glitch): 95.811488
 
 <Video src="/videos/four-million-futures/puppy-glitch.mp4" />
-There's a physics bug where, if the puppy touches the tip of the ball, it can't push it away.
+There's a physics bug: if the puppy touches the pointed tip of the ball, it can't push the ball away.
 
-### Best Puppy play, no glitch: 93
+### Best Puppy Run (No Glitch): 93
 
 <Video src="/videos/four-million-futures/puppy-fourth.mp4" />
 
-Puppy mode's top run exploits a physics engine bug, so it's a bit of a gray area. But the 4th-highest run, which doesn't use the bug, is genuinely impressive. But hey, high scores ARE possible even without the glitch!! lol
+Puppy mode is a bit awkward here, since the top runs exploit a physics engine bug. But the fourth-best run, which doesn't use any glitch, is amazing. So high scores are possible without glitches after all!! lol
 
 ## What I Learned
 
-- Solo mode: Just as I suspected, a play that shows 100 on screen is possible. Precisely, it's 99.954458.
-- Puppy mode: The search turned up a lot of high scores that abuse the physics glitch, but even without it, you can bounce the ball into the air for roughly 90.
+- **Solo mode:** As expected, a run that displays 100 on screen is possible. To be exact, 99.954458.
+- **Puppy mode:** Lots of the top scores come from physics glitches, but you can still hit around 90 legitimately by bouncing the ball into the air.
 
 ## Watch the Replays Yourself
 
 **[→ Open Shot Lab: Solo / Puppy Top 10 Replays](/lab/)**
 
-Hit `Load Solo Top 10` or `Load Puppy Top 10` and you'll instantly load the results from my run and can watch the replays. If you want to search on your own, pick a mode and an interval, then hit `Find high scores`.
+Hit `Load Solo Top 10` or `Load Puppy Top 10` to load my results and watch the replays right away. To run your own search, pick a mode and an interval, then press `Find high scores`.
 
-Saved replays play back the exact frames of the ball and puppy. Nothing is recalculated, so you're watching the very same run. A fresh search, though, depends on more than the seed: input coordinates that vary with screen size, the exact shot values, and the initial state all matter. So even with the same seed, I can't guarantee identical search results across environments.
+Saved replays play back the exact frames of the ball and the puppy. Nothing is recomputed, so you see the same run I did. A new search, though, depends on more than the seed: input coordinates (which vary with screen size), exact shot values, and the initial state all affect it. So the same seed won't guarantee identical results across environments.
 
-![Mobile Shot Lab: picking Solo/Puppy Top 10 and playing a replay](./mobile-replay.avif)
+![Mobile Shot Lab, selecting Solo and Puppy Top 10 and playing a replay](./mobile-replay.avif)
 
-On mobile, you can watch replays right from the two Top 10 tabs. And if you’re curious, you can simulate the 4 million plays yourself on desktop.
+On mobile, you can watch replays straight from the two Top 10 tabs. If you're curious, you can run the full 4 million simulations yourself on desktop.
 
 ![Puppy mode replay screen](./puppy-replay.avif)
 
-If you run the test yourself in the browser, you can also see the score distribution graph like this.
+Run it in your browser and you'll get score distribution graphs like these.
 
-![Search results for Solo mode](./solo-results.avif)
-
-![Search results for Puppy mode](./puppy-results.avif)
-
-![Shots being searched with workers](./search-workers.avif)
-
-For reference, on my MacBook M4 Pro (8 + 4 cores), it takes about 5–6 minutes with 10 workers lol. I never knew my laptop could get this loud.
+![Solo mode search results](./solo-results.avif)
+![Puppy mode search results](./puppy-results.avif)
+![Workers searching for shots in parallel](./search-workers.avif)
+For reference, on my MacBook M4 Pro (8 + 4 cores), it takes about 5–6 minutes with 10 workers. I had no idea my laptop could get this loud, lol.
 
 <figure style="max-width:498px;margin:1.5rem auto;">
   <iframe
     src="https://tenor.com/embed/11789036"
-    title="Doctor Strange peering into possible futures with the Time Stone"
+    title="Doctor Strange looking into the future with the Time Stone"
     loading="lazy"
     allowfullscreen
     style="display:block;width:100%;aspect-ratio:498/325;border:0;border-radius:12px;"
