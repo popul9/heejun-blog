@@ -1,0 +1,410 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+const t = useTranslations(getLangFromUrl(Astro.url));
+
+// Short, staggered drops: distant rain falls more slowly than nearby rain.
+const dropStyle = (i: number) => {
+    const near = i % 3 === 0;
+    return `--x:${(i * 61.8) % 100}%;--delay:${-((i * 0.137) % 2)}s;--duration:${near ? 0.65 + (i % 6) * 0.05 : 1.1 + (i % 7) * 0.06}s;--length:${near ? 15 + (i % 9) : 7 + (i % 7)}px;--opacity:${near ? 0.42 : 0.22}`;
+};
+---
+
+<div class="purple-rain" aria-hidden="true">
+    <div class="rain-ambient">
+        {Array.from({ length: 64 }, (_, i) => <i class:list={{ 'rain-near': i % 3 === 0 }} style={dropStyle(i)} />)}
+    </div>
+    <div class="rain-shower">
+        {Array.from({ length: 108 }, (_, i) => <i class:list={{ 'rain-near': i % 3 === 0 }} style={dropStyle(i)} />)}
+    </div>
+</div>
+<div id="after-hours" class="after-hours">
+    <div class="haunted-stage" aria-hidden="true">
+        <span class="spotlight spotlight-left"></span>
+        <span class="spotlight spotlight-right"></span>
+        <svg class="stage-instruments" viewBox="0 0 520 180" fill="none">
+            <defs>
+                <radialGradient id="stage-floor-light">
+                    <stop stop-color="#a579c8" stop-opacity="0.22" />
+                    <stop offset="0.65" stop-color="#765089" stop-opacity="0.12" />
+                    <stop offset="1" stop-color="#765089" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="stage-floor-fade">
+                    <stop stop-color="white" stop-opacity="0.7" />
+                    <stop offset="1" stop-color="white" stop-opacity="0" />
+                </radialGradient>
+                <mask id="stage-floor-mask">
+                    <ellipse cx="260" cy="142" rx="245" ry="37" fill="url(#stage-floor-fade)" />
+                </mask>
+            </defs>
+            <g class="stage-floor">
+                <ellipse cx="260" cy="142" rx="245" ry="37" fill="url(#stage-floor-light)" />
+                <g mask="url(#stage-floor-mask)" stroke="#ba9bce" stroke-width="0.5" opacity="0.1">
+                    <path d="M25 173L160 113M120 179L205 113M225 180L250 113M335 180L295 113M440 177L340 113M515 168L385 113" />
+                    <path d="M30 137H490M20 151H500M45 170H475" />
+                </g>
+                <ellipse cx="132" cy="113" rx="47" ry="6" fill="#090610" opacity="0.4" />
+                <ellipse cx="398" cy="132" rx="48" ry="7" fill="#090610" opacity="0.4" />
+                <ellipse cx="158" cy="171" rx="26" ry="5" fill="#090610" opacity="0.5" />
+                <ellipse cx="260" cy="145" rx="38" ry="8" fill="#d2a1f4" opacity="0.1" />
+                <path d="M175 167C208 178 221 158 200 154S213 139 241 145" stroke="#b89bc8" stroke-width="1" opacity="0.4" />
+            </g>
+            <g transform="translate(46 -6) scale(.78)" opacity="0.45">
+            <g class="stage-drums" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M81 60V137M66 145L81 130L95 145M145 68V135M132 144L145 131L158 144" stroke="#8e759f" stroke-width="2" />
+                <ellipse cx="81" cy="59" rx="28" ry="5" fill="#d7af68" stroke="#ffdf9c" stroke-width="2" />
+                <ellipse cx="145" cy="67" rx="22" ry="4" fill="#d7af68" stroke="#ffdf9c" stroke-width="2" />
+                <path d="M92 82L88 104M128 82L132 104" stroke="#8e759f" stroke-width="2" />
+                <rect x="81" y="77" width="25" height="20" rx="4" fill="#784584" stroke="#a481b3" stroke-width="2" />
+                <rect x="111" y="77" width="25" height="20" rx="4" fill="#784584" stroke="#a481b3" stroke-width="2" />
+                <circle cx="109" cy="122" r="28" fill="#24182f" stroke="#a481b3" stroke-width="2" />
+                <circle cx="109" cy="122" r="21" stroke="#744a8a" stroke-width="2" />
+                <circle cx="117" cy="131" r="4" fill="#110b1c" />
+                <path d="M88 141L84 151M130 141L134 151" stroke="#8e759f" stroke-width="2" />
+            </g>
+            </g>
+            <g transform="translate(-28 22) rotate(-5 184 134)" opacity="0.6">
+            <g class="stage-amp">
+                <path d="M202 110L209 105V144L202 149Z" fill="#110c1b" stroke="#766185" stroke-width="1" />
+                <path d="M166 110L173 105H209L202 110Z" fill="#44314f" stroke="#766185" stroke-width="1" />
+                <rect x="166" y="110" width="36" height="39" rx="3" fill="#211a2c" stroke="#937ba6" stroke-width="2" />
+                <path d="M177 109V105H191V109" stroke="#937ba6" stroke-width="2" />
+                <path d="M170 120H198" stroke="#937ba6" />
+                <circle cx="173" cy="115" r="1.5" fill="#ffc884" />
+                <circle cx="179" cy="115" r="1.5" fill="#ffc884" />
+                <circle cx="184" cy="134" r="10" stroke="#766185" stroke-width="2" />
+                <circle cx="184" cy="134" r="4" stroke="#766185" />
+            </g>
+            </g>
+            <g transform="translate(50 -30) skewY(4) scale(.88)" opacity="0.5">
+            <g class="stage-keys" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M365 100L424 150M424 100L365 150" stroke="#937ba6" stroke-width="2" />
+                <path d="M357 150H377M415 150H435" stroke="#937ba6" stroke-width="2" />
+                <rect x="346" y="81" width="98" height="25" rx="3" fill="#533061" stroke="#a080b2" stroke-width="2" />
+                <path d="M352 90H438V101H352Z" fill="#f0dfef" />
+                <path d="M362 91V101M373 91V101M384 91V101M395 91V101M406 91V101M417 91V101M428 91V101" stroke="#78647d" />
+                <path d="M359 90V96M370 90V96M392 90V96M403 90V96M414 90V96" stroke="#24182f" stroke-width="4" />
+                <circle cx="354" cy="85" r="1.5" fill="#ffc884" />
+                <path d="M426 85H437" stroke="#cca4ff" stroke-width="2" />
+                <path d="M346 106L352 111H450V87L444 81V106Z" fill="#291b35" stroke="#8c6b9e" stroke-width="1" />
+            </g>
+            </g>
+        </svg>
+    </div>
+    <span class="stage-caption">PURPLE AFTER HOURS <span aria-hidden="true">✦</span></span>
+    <button class="glam-ghost" type="button" aria-label={t('theme.ghost')}>
+        <span class="ghost-drizzle" aria-hidden="true">
+            {Array.from({ length: 12 }, (_, i) => <i style={dropStyle(i)} />)}
+        </span>
+        <span class="ghost-body" aria-hidden="true">
+            <span class="ghost-eyes"></span>
+            <span class="ghost-ruffle"></span>
+            <svg class="ghost-guitar" viewBox="0 0 76 44" fill="none" aria-hidden="true">
+                <!-- Early Prince Mad Cat cues: single cutaway, maple, walnut stripe and leopard guard. -->
+                <defs>
+                    <linearGradient id="madcat-maple" x1="0" y1="0" x2="0" y2="1">
+                        <stop stop-color="#ffe3a0" />
+                        <stop offset="1" stop-color="#cf8d35" />
+                    </linearGradient>
+                    <pattern id="madcat-leopard" width="6" height="5" patternUnits="userSpaceOnUse">
+                        <path d="M0 0H6V5H0Z" fill="#c38c45" />
+                        <path d="M1 1L3 0L4 2L2 3ZM5 4L6 3" fill="#382419" />
+                        <path d="M2 1H3V2H2Z" fill="#e8b868" />
+                    </pattern>
+                </defs>
+                <path d="M29 18C33 13 30 9 26 10C23 11 25 15 21 14C18 13 18 8 13 8C5 8 1 14 1 22C1 31 6 36 14 36C20 36 24 32 27 30C30 28 31 27 29 25Z" fill="url(#madcat-maple)" stroke="#442b20" stroke-width="1.5" />
+                <path d="M5 20H29V24H4Z" fill="#694023" opacity="0.85" />
+                <path d="M6 14L14 12M5 29L15 31M10 10L15 11M10 33L17 32" stroke="#fff0bc" stroke-width="0.6" opacity="0.65" />
+                <path d="M18 12C21 17 25 17 29 17V27L24 30L17 27L20 23Z" fill="url(#madcat-leopard)" stroke="#513620" stroke-width="0.7" />
+                <path d="M29 19H62V25H29Z" fill="#edc377" stroke="#62401f" stroke-width="0.9" />
+                <path d="M61 19L65 16L72 16Q75 17 74 20L70 24L61 25Z" fill="url(#madcat-maple)" stroke="#62401f" stroke-width="1" />
+                <path d="M63 17V14M65 16V13M67 16V13M69 16V13M71 16V13M73 17V14" stroke="#e5dce8" stroke-width="1.3" stroke-linecap="round" />
+                <path d="M12 18H17V26H12Z" fill="#d6cad5" stroke="#695360" stroke-width="0.6" />
+                <path d="M15 19V25M26 19V25" stroke="#26202c" stroke-width="2" />
+                <path d="M20 30L26 27" stroke="#e9dde8" stroke-width="2.8" stroke-linecap="round" />
+                <circle cx="21" cy="30" r="1" fill="#6b5260" />
+                <circle cx="25" cy="28" r="1" fill="#6b5260" />
+                <path d="M34 19V25M39 19V25M44 19V25M49 19V25M54 19V25M59 19V25" stroke="#8c6e42" stroke-width="0.65" />
+                <path d="M36 22H36.2M46 22H46.2M56 22H56.2" stroke="#483522" stroke-width="1.4" stroke-linecap="round" />
+                <path d="M13 19.5H68M13 20.5H68M13 21.5H68M13 22.5H68M13 23.5H68M13 24.5H68" stroke="#fff8df" stroke-width="0.4" />
+            </svg>
+            <span class="ghost-spark">✦</span>
+        </span>
+        <span class="rain-splashes" aria-hidden="true">
+            {Array.from({ length: 5 }, (_, i) => <i style={`--x:${12 + i * 19}%;--delay:${-i * 0.17}s`} />)}
+        </span>
+    </button>
+    <p class="ghost-greeting" aria-live="polite" data-hello={t('theme.hello')} data-encore={t('theme.encore')}>{t('theme.hello')}</p>
+</div>
+
+<script>
+    const ghost = document.querySelector<HTMLButtonElement>('.glam-ghost');
+    const greeting = document.querySelector<HTMLElement>('.ghost-greeting');
+    const rain = document.querySelector<HTMLElement>('.purple-rain');
+    const stage = document.querySelector<HTMLElement>('.after-hours');
+    let encoreTimer: number | undefined;
+    ghost?.addEventListener('click', () => {
+        window.clearTimeout(encoreTimer);
+        // Restart the six-second solo, including the lights, on every click.
+        ghost.classList.remove('is-dancing');
+        stage?.classList.remove('is-performing');
+        rain?.classList.remove('is-encore');
+        void ghost.offsetWidth;
+        ghost.classList.add('is-dancing');
+        stage?.classList.add('is-performing');
+        rain?.classList.add('is-encore');
+        if (greeting) greeting.textContent = greeting.dataset.encore ?? '';
+        encoreTimer = window.setTimeout(() => {
+            ghost.classList.remove('is-dancing');
+            stage?.classList.remove('is-performing');
+            rain?.classList.remove('is-encore');
+            if (greeting) greeting.textContent = greeting.dataset.hello ?? '';
+        }, 6000);
+    });
+</script>
+
+<style>
+    .haunted-stage, .purple-rain, .after-hours { display:none; }
+    :global([data-theme="dark"]) .haunted-stage {
+        display:block;
+        position:absolute;
+        top:-20px;
+        bottom:10px;
+        left:50%;
+        width:min(560px,100%);
+        transform:translateX(-50%);
+        overflow:hidden;
+        pointer-events:none;
+        z-index:0;
+        opacity:0;
+        transition:opacity 0.6s ease;
+    }
+    .is-performing .haunted-stage { opacity:1; }
+    .stage-instruments {
+        position:absolute;
+        bottom:36px;
+        left:0;
+        width:100%;
+        height:auto;
+        max-height:165px;
+        overflow:visible;
+    }
+    .stage-drums, .stage-amp, .stage-keys {
+        opacity:0;
+        transform:translateY(8px);
+        transition:opacity 0.4s ease,transform 0.6s ease;
+    }
+    .is-performing :is(.stage-drums,.stage-amp,.stage-keys) { opacity:1; transform:translateY(0); }
+    .is-performing .stage-drums { transition-delay:0.1s; }
+    .is-performing .stage-amp { transition-delay:0.2s; }
+    .is-performing .stage-keys { transition-delay:0.3s; }
+    .haunted-stage::after {
+        content:'';
+        position:absolute;
+        bottom:24%;
+        left:50%;
+        width:28%;
+        height:12%;
+        transform:translateX(-50%);
+        border-radius:50%;
+        background:radial-gradient(ellipse,#ecd4ff40,#bc75eb20 45%,transparent 72%);
+    }
+    .spotlight {
+        position:absolute;
+        top:0;
+        width:80%;
+        height:78%;
+        transform-origin:15% 0;
+        filter:blur(7px);
+    }
+    .spotlight::before {
+        content:'';
+        position:absolute;
+        inset:0;
+        clip-path:polygon(12% 0,17% 0,87% 100%,48% 100%);
+        background:linear-gradient(180deg,#f4e5ff70,#c58bff30 60%,#dfbbff00);
+        mask-image:linear-gradient(#000 35%,transparent 95%);
+    }
+    .spotlight-left {
+        left:0;
+        --beam-direction:1;
+    }
+    .spotlight-right {
+        right:0;
+        --beam-direction:-1;
+        transform:scaleX(-1);
+        transform-origin:50% 0;
+    }
+    .spotlight-right::before { background:linear-gradient(180deg,#ffe0f566,#e28ac52b 60%,#f2acdb00); }
+    .is-performing .spotlight { animation:spotlight-solo 5s ease-in-out infinite alternate; }
+    :global([data-theme="dark"]) .purple-rain {
+        display:block;
+        position:fixed;
+        inset:0;
+        pointer-events:none;
+        z-index:2;
+        overflow:hidden;
+    }
+    .rain-ambient, .rain-shower { position:absolute; inset:0 -14vh 0 0; }
+    .rain-ambient {
+        mask-image:linear-gradient(90deg,#000,#0009 27%,#0009 73%,#000);
+    }
+    .rain-shower { opacity:0; }
+    .purple-rain i {
+        position:absolute;
+        left:var(--x);
+        top:-32px;
+        width:0.7px;
+        height:var(--length);
+        opacity:var(--opacity);
+        background:#c5afd9;
+        border-radius:1px;
+        animation:purple-rainfall var(--duration) var(--delay) linear infinite;
+    }
+    .purple-rain .rain-near { width:1.2px; }
+    .rain-ambient i { width:0.6px; height:calc(var(--length) * 0.6); opacity:0.16; }
+    .rain-ambient .rain-near { width:0.8px; opacity:0.24; }
+    .rain-shower i { opacity:calc(var(--opacity) * 1.8); }
+    .rain-shower i { animation-play-state:paused; }
+    .purple-rain.is-encore .rain-shower { animation:rain-shower 6s linear both; }
+    .purple-rain.is-encore .rain-shower i { animation-play-state:running; }
+    :global([data-theme="dark"]) .after-hours { position:relative; isolation:isolate; display:flex; flex-direction:column; align-items:center; gap:0.6rem; padding:1rem 0 2rem; }
+    .stage-caption, .ghost-greeting, .glam-ghost { position:relative; z-index:1; }
+    .after-hours::before {
+        content:'';
+        position:absolute;
+        top:0;
+        left:50%;
+        width:min(320px,100%);
+        height:210px;
+        transform:translateX(-50%);
+        background:radial-gradient(ellipse at 50% 76%,#bd78f52b,transparent 64%);
+        pointer-events:none;
+    }
+    .stage-caption { color:var(--accent); font-size:0.6rem; letter-spacing:0.25em; }
+    .stage-caption > span { color:var(--stage-pink); }
+    .glam-ghost { position:relative; display:grid; place-items:center; width:110px; height:115px; padding:0; border:0; border-radius:50%; background:radial-gradient(ellipse,var(--glow),transparent 70%); cursor:pointer; }
+    .ghost-body { position:relative; display:block; width:64px; height:78px; transform:rotate(-8deg); transition:transform 0.3s; animation:ghost-float 4s ease-in-out infinite; }
+    .glam-ghost::after {
+        content:'';
+        position:absolute;
+        bottom:5px;
+        width:52px;
+        height:8px;
+        border-radius:50%;
+        background:#c494ef26;
+        box-shadow:0 0 12px #b46bff26;
+    }
+    /* Clip the ghost silhouette only, so its guitar can extend past the hem. */
+    .ghost-body::before {
+        content:'';
+        position:absolute;
+        inset:0;
+        background:linear-gradient(135deg,#f0ddff,#b884ed 55%,#8050b3);
+        border-radius:46% 46% 14% 14%;
+        clip-path:polygon(0 0,100% 0,100% 100%,80% 90%,60% 100%,40% 90%,20% 100%,0 90%);
+    }
+    .ghost-eyes { position:absolute; left:18px; top:24px; width:7px; height:10px; border-radius:50%; background:#291139; box-shadow:19px 0 #291139; }
+    .ghost-ruffle { position:absolute; top:40px; left:7px; width:50px; height:16px; background:#fbf0ff; clip-path:polygon(0 0,100% 0,88% 100%,72% 40%,54% 100%,35% 40%,18% 100%); }
+    .ghost-guitar {
+        position:absolute;
+        top:36px;
+        left:0;
+        width:68px;
+        height:39px;
+        overflow:visible;
+        transform:rotate(-28deg);
+    }
+    .ghost-spark { position:absolute; right:9px; top:5px; color:#fff1b8; font-size:15px; }
+    .glam-ghost:hover .ghost-body, .glam-ghost:focus-visible .ghost-body { animation:none; transform:translateY(-5px) rotate(8deg); }
+    .glam-ghost.is-dancing .ghost-body { animation:ghost-encore 0.8s ease-in-out infinite; }
+    .glam-ghost.is-dancing .ghost-guitar { animation:guitar-solo 0.8s ease-in-out infinite; }
+    .glam-ghost.is-dancing { background:radial-gradient(ellipse,#c657a355,transparent 70%); }
+    .ghost-body { z-index:1; }
+    .ghost-drizzle {
+        position:absolute;
+        inset:-12px -14px 8px;
+        overflow:hidden;
+        pointer-events:none;
+        mask-image:linear-gradient(transparent,#000 15%,#000 80%,transparent);
+    }
+    .ghost-drizzle i {
+        position:absolute;
+        top:-16px;
+        left:var(--x);
+        width:1.2px;
+        height:10px;
+        opacity:0.55;
+        background:#c5afd9;
+        border-radius:1px;
+        animation:ghost-drizzle 0.8s var(--delay) linear infinite;
+    }
+    .glam-ghost.is-dancing .ghost-drizzle { animation:rain-shower 6s linear both; }
+    .rain-splashes {
+        position:absolute;
+        bottom:9px;
+        left:0;
+        width:100%;
+        height:12px;
+        pointer-events:none;
+        opacity:0;
+    }
+    .rain-splashes i {
+        position:absolute;
+        left:var(--x);
+        bottom:0;
+        width:7px;
+        height:3px;
+        border:1px solid #c5afd980;
+        border-top:0;
+        border-radius:50%;
+    }
+    .rain-splashes i::before, .rain-splashes i::after {
+        content:'';
+        position:absolute;
+        top:-3px;
+        width:2px;
+        height:2px;
+        border-radius:50%;
+        background:#d3b9ea;
+    }
+    .rain-splashes i::before { left:-3px; }
+    .rain-splashes i::after { right:-3px; }
+    .glam-ghost.is-dancing .rain-splashes { animation:rain-shower 6s linear both; }
+    .glam-ghost.is-dancing .rain-splashes i { animation:rain-splash 0.7s var(--delay) ease-out infinite; }
+    .ghost-greeting { margin:0; color:rgb(var(--gray)); font-size:0.7rem; min-height:1.7em; }
+    @keyframes purple-rainfall {
+        from { transform:translate3d(0,0,0) rotate(7deg); }
+        to { transform:translate3d(calc(-12vh - 8px),calc(100vh + 64px),0) rotate(7deg); }
+    }
+    @keyframes rain-shower {
+        0%,100% { opacity:0; }
+        15% { opacity:0.5; }
+        30%,65% { opacity:1; }
+        85% { opacity:0.4; }
+    }
+    @keyframes ghost-drizzle {
+        from { transform:translate3d(0,0,0) rotate(7deg); }
+        to { transform:translate3d(-18px,148px,0) rotate(7deg); }
+    }
+    @keyframes rain-splash {
+        0% { opacity:0; transform:translateY(0) scale(0.4); }
+        20% { opacity:0.7; }
+        100% { opacity:0; transform:translateY(-4px) scale(1.4); }
+    }
+    @keyframes ghost-encore { 0%,100% { transform:translateY(-3px) rotate(-12deg) scale(1.08); } 50% { transform:translateY(-12px) rotate(9deg) scale(1.08); } }
+    @keyframes guitar-solo { 0%,100% { transform:rotate(-28deg); } 50% { transform:rotate(-43deg) translateY(-2px); } }
+    @keyframes spotlight-solo { from { transform:scaleX(var(--beam-direction)) rotate(-4deg); opacity:0.4; } to { transform:scaleX(var(--beam-direction)) rotate(4deg); opacity:0.7; } }
+    @keyframes ghost-float { 0%,100% { transform:translateY(0) rotate(-8deg); } 50% { transform:translateY(-6px) rotate(-3deg); } }
+    @media(max-width:720px) {
+        .rain-ambient { mask-image:none; }
+        .rain-shower i:nth-child(3n) { display:none; }
+    }
+    @media(prefers-reduced-motion:reduce) {
+        :global([data-theme="dark"]) .purple-rain, .rain-splashes, .ghost-drizzle { display:none; }
+        .ghost-body, .glam-ghost.is-dancing .ghost-guitar, .is-performing .spotlight { animation:none !important; transition:none; }
+        .haunted-stage { transition:none; }
+        .stage-drums, .stage-amp, .stage-keys { transition:none; transform:none; }
+        .spotlight { opacity:0.6; }
+    }
+    @media print { :global([data-theme="dark"]) .haunted-stage, .purple-rain, :global([data-theme="dark"]) .after-hours { display:none; } }
+</style>

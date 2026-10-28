@@ -40,6 +40,9 @@ export function useTranslations(lang: Locale) {
             'theme.label': { ko: '화면 모드', en: 'Appearance', zh: '外观', th: 'รูปแบบหน้าจอ', vi: 'Giao diện' },
             'theme.light': { ko: '라이트', en: 'Light', zh: '浅色', th: 'สว่าง', vi: 'Sáng' },
             'theme.dark': { ko: '다크 (할로윈)', en: 'Dark (Halloween)', zh: '深色（万圣节）', th: 'มืด (ฮาโลวีน)', vi: 'Tối (Halloween)' },
+            'theme.ghost': { ko: '글램 유령에게 앙코르 보내기', en: 'Give the glam ghost an encore', zh: '为华丽小幽灵安可', th: 'ขออังกอร์จากผีน้อย', vi: 'Cổ vũ hồn ma biểu diễn tiếp' },
+            'theme.hello': { ko: '보랏빛 밤에 오신 걸 환영해요.', en: 'Welcome to the purple after hours.', zh: '欢迎来到紫色之夜。', th: 'ยินดีต้อนรับสู่ค่ำคืนสีม่วง', vi: 'Chào mừng đến với đêm tím.' },
+            'theme.encore': { ko: 'Boo! 오늘 밤의 앙코르는 당신에게. ✦', en: 'Boo! Tonight’s encore is for you. ✦', zh: 'Boo！今晚的安可献给你。✦', th: 'บู! อังกอร์คืนนี้เพื่อคุณ ✦', vi: 'Boo! Màn diễn thêm đêm nay dành cho bạn. ✦' },
             'site.title': {
                 ko: "희준의 넷",
                 en: "Heejun's Net",
