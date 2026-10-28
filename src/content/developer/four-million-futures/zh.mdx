@@ -1,0 +1,100 @@
+---
+title: '我看到了~~1400万~~……不，是400万种未来'
+description: '把400万次模拟全跑一遍'
+pubDate: 'Oct 28 2026'
+heroImage: './shot-lab.avif'
+---
+
+import Video from '../../../components/Video.astro';
+
+<iframe
+  src="/games/ui-is-hard-is-easy/index.html?embed&v=92c7c2985f14"
+  title="UI is Hard is Easy: 用橄榄球调节音量"
+  loading="lazy"
+  allow="autoplay; fullscreen"
+  allowfullscreen
+  style="display:block;width:100%;height:560px;border:0;border-radius:12px;"
+></iframe>
+
+前天开始，我就跟朋友们一起疯狂玩一款上瘾到离谱的橄榄球游戏（澳洲人管它叫 footy）。我个人最高分是 95（单人模式），我老婆居然打出了 99。（其实这游戏是"调出你想要的音量"那种玩法，本来就没有标准答案，这个别告诉别人哈哈。）
+
+反正它上瘾得不行，我就一直重复玩，结果 Puppy 模式下不管怎么打，最高分都卡在 41。（其实是把球直接推出屏幕外才能拿到 41 哈哈。）
+
+后来跟老婆聊天的时候突然想到：这个模式到底有没有可能超过 40 分啊？是不是得把主人喊狗的时间缩短一秒左右？我还觉得自己说得挺对。等等，可是不把所有可能的情况全跑一遍，根本没法确定吧？
+
+真的假的？那得多少种啊？不过话说回来，"太多"到底是多少？
+
+情况数无非就是起脚的起点，再加上拖动后松手的终点。大概就是起点数 A 乘以终点数 B 对吧？那也没多少啊？
+
+我：Codex，能行吗？  
+Codex：嗯嗯  
+我：开搞。
+
+## 实验室开张了
+
+![可以搜索踢球位置、力度和方向，还能回放的 Shot Lab](./shot-lab.avif)
+
+[链接](/lab/)
+
+现在开跑了……每个模式各有 200 万种可能，总共 400 万种，所以我开 10 个线程并行跑。
+
+## 结果
+
+### 最强 Solo 打法：99.954458
+
+<Video src="/videos/four-million-futures/solo-best.mp4" />
+
+### 最强 Puppy 打法（Glitch）：95.811488 分
+
+<Video src="/videos/four-million-futures/puppy-glitch.mp4" />
+有个物理 bug：球的尖角一旦碰到小狗，小狗就推不开它。
+
+### 最强 Puppy 打法（无 glitch）：93 分
+
+<Video src="/videos/four-million-futures/puppy-fourth.mp4" />
+
+Puppy 模式的最高分用了物理引擎的 bug，有点不好说。但不靠 bug 的第 4 名打法，分数真的很惊人。 不过不靠 glitch 也真的能拿到高分啊！！哈哈哈
+
+## 我学到了什么
+
+- Solo 模式：果然如我所料，屏幕上显示 100 分的打法是存在的。准确说是 99.954458 分。
+- Puppy 模式：搜下来发现大量高分都是靠物理引擎 glitch 刷出来的，不过就算不靠它，把球弹到空中也能拿到大约 90 分。
+
+## 亲自看回放
+
+**[→ 打开 Shot Lab: Solo / Puppy Top 10 回放](/lab/)**
+
+点击 `Load Solo Top 10` 或 `Load Puppy Top 10`，就能直接载入我跑出来的结果，观看回放。想自己搜索的话，选好模式和间隔，点 `Find high scores` 就行。
+
+保存下来的回放是原样播放球和小狗的每一帧，不会重新计算物理，所以你看到的就是同一局。不过重新搜索的话，结果不只取决于随机种子，还会受屏幕尺寸带来的输入坐标差异、精确的击球数值以及初始状态影响。所以光是种子相同，我也没法保证不同环境下搜出来的结果一模一样。
+
+![在手机版 Shot Lab 中选择 Solo·Puppy Top 10 并播放回放的画面](./mobile-replay.avif)
+
+手机上可以直接在两个 Top 10 标签页里看回放。如果你好奇的话，也可以在桌面电脑上自己亲手模拟一遍这 400 万次游玩。
+
+![Puppy 模式回放画面](./puppy-replay.avif)
+
+自己在浏览器里跑测试的话，还能看到这样的分数分布图。
+
+![Solo 模式的搜索结果](./solo-results.avif)
+
+![Puppy 模式的搜索结果](./puppy-results.avif)
+
+![用 worker 搜索击球方案的画面](./search-workers.avif)
+
+顺带一提，在我的 MacBook M4 Pro（8 + 4 核）上，开 10 个 worker 大概要跑 5–6 分钟哈哈哈。我第一次知道我的笔记本能吵成这样。
+
+<figure style="max-width:498px;margin:1.5rem auto;">
+  <iframe
+    src="https://tenor.com/embed/11789036"
+    title="奇异博士用时间宝石窥探未来的场景"
+    loading="lazy"
+    allowfullscreen
+    style="display:block;width:100%;aspect-ratio:498/325;border:0;border-radius:12px;"
+  ></iframe>
+  <figcaption style="margin-top:0.5rem;font-size:0.8em;text-align:center;">
+    奇异博士搜寻未来的场景 · <a href="https://tenor.com/view/timeline-doctor-strange-benedict-cumberbatch-future-infinity-war-gif-11789036" target="_blank" rel="noopener noreferrer">原文</a>
+  </figcaption>
+</figure>
+
+这就是一个开发者享受游戏的另一种方式 :) 谜题解开。

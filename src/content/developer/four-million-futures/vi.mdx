@@ -1,0 +1,100 @@
+---
+title: 'Tôi đã thấy ~~14 triệu~~... à không, 4 triệu tương lai'
+description: 'Chạy thử hết 4 triệu mô phỏng'
+pubDate: 'Oct 28 2026'
+heroImage: './shot-lab.avif'
+---
+
+import Video from '../../../components/Video.astro';
+
+<iframe
+  src="/games/ui-is-hard-is-easy/index.html?embed&v=92c7c2985f14"
+  title="UI is Hard is Easy: chỉnh âm lượng bằng quả bóng bầu dục"
+  loading="lazy"
+  allow="autoplay; fullscreen"
+  allowfullscreen
+  style="display:block;width:100%;height:560px;border:0;border-radius:12px;"
+></iframe>
+
+Từ hôm kia đến giờ, tôi chơi như điên một game bóng bầu dục (ở Úc người ta gọi là footy) nghiện không tưởng cùng mấy người quen. Điểm cao nhất của tôi là 95 (chế độ Solo), còn vợ tôi đạt tới tận 99. (Thật ra game này kiểu "chỉnh âm lượng theo ý mình" nên vốn chẳng có đáp án đúng nào cả, bí mật nhé haha.)
+
+Mà nó nghiện quá nên tôi cứ chơi đi chơi lại, và ở chế độ Puppy thì dù cố cỡ nào điểm cao nhất cũng chỉ dừng ở 41. (Thật ra phải đẩy hẳn quả bóng ra khỏi màn hình mới được 41, haha.)
+
+Rồi đang nói chuyện với vợ thì tôi chợt nghĩ: liệu có khi nào vượt được 40 điểm không nhỉ? Hay là phải rút ngắn thời gian chủ gọi chó khoảng một giây? Tôi còn thấy mình nói đúng nữa chứ. Khoan, mà nếu chưa chạy thử hết mọi trường hợp thì làm sao biết chắc được?
+
+Thật á? Chẳng phải nhiều quá sao? Mà "nhiều quá" là bao nhiêu?
+
+Số trường hợp chính là điểm bắt đầu đá, rồi điểm thả tay sau khi kéo. Nói sơ thì là số điểm đầu A nhân số điểm cuối B đúng không? Vậy cũng đâu có nhiều?
+
+Tôi: Codex, làm được không?  
+Codex: Được  
+Tôi: Chạy đi
+
+## Phòng thí nghiệm đã mở
+
+![Shot Lab, nơi bạn có thể tìm vị trí đá, lực và hướng, rồi xem lại bản replay](./shot-lab.avif)
+
+[Liên kết](/lab/)
+
+Giờ chạy thôi... Mỗi chế độ có 2 triệu trường hợp, tổng cộng 4 triệu, nên tôi chạy song song 10 luồng.
+
+## Kết quả
+
+### Lượt chơi Solo xuất sắc nhất: 99.954458
+
+<Video src="/videos/four-million-futures/solo-best.mp4" />
+
+### Lượt chơi Puppy xuất sắc nhất (Glitch): 95.811488 điểm
+
+<Video src="/videos/four-million-futures/puppy-glitch.mp4" />
+Có một lỗi vật lý: nếu bóng chạm vào đỉnh nhọn của nó thì chú chó không thể đẩy bóng ra được.
+
+### Lượt chơi Puppy xuất sắc nhất không dùng glitch: 93 điểm
+
+<Video src="/videos/four-million-futures/puppy-fourth.mp4" />
+
+Lượt cao nhất của chế độ Puppy lợi dụng lỗi của engine vật lý nên hơi khó nói. Nhưng lượt hạng 4, không dùng lỗi, thì thật sự đáng kinh ngạc. Nhưng mà không dùng glitch vẫn có thể đạt điểm cao thật!! haha
+
+## Những điều tôi học được
+
+- Chế độ Solo: Đúng như dự đoán, có lượt chơi hiện 100 điểm trên màn hình. Chính xác là 99.954458 điểm.
+- Chế độ Puppy: Tìm thử mới thấy rất nhiều điểm cao đến từ việc lợi dụng glitch của engine vật lý, nhưng dù không dùng nó, tung bóng lên không trung vẫn được khoảng 90 điểm.
+
+## Tự xem replay
+
+**[→ Mở Shot Lab: Replay Top 10 của Solo / Puppy](/lab/)**
+
+Bấm `Load Solo Top 10` hoặc `Load Puppy Top 10` là có thể tải ngay kết quả tôi đã chạy và xem replay. Nếu muốn tự tìm kiếm, hãy chọn chế độ và khoảng cách, rồi bấm `Find high scores`.
+
+Replay đã lưu sẽ phát lại nguyên từng khung hình của bóng và chú chó. Vật lý không được tính lại, nên bạn xem đúng lượt chơi y hệt. Tuy nhiên, với một lần tìm kiếm mới, kết quả không chỉ phụ thuộc vào seed mà còn bị ảnh hưởng bởi tọa độ đầu vào thay đổi theo kích thước màn hình, giá trị cú đá chính xác và trạng thái ban đầu. Vì vậy, dù dùng cùng seed, tôi cũng không thể đảm bảo kết quả tìm kiếm giống hệt nhau ở mọi môi trường.
+
+![Màn hình Shot Lab trên di động: chọn Top 10 của Solo·Puppy và phát replay](./mobile-replay.avif)
+
+Trên di động, bạn có thể xem replay ngay ở hai tab Top 10. Còn nếu tò mò, bạn cũng có thể tự mô phỏng 4 triệu lượt chơi trên máy tính.
+
+![Màn hình replay chế độ Puppy](./puppy-replay.avif)
+
+Nếu tự chạy thử trong trình duyệt, bạn cũng sẽ thấy biểu đồ phân bố điểm như thế này.
+
+![Kết quả tìm kiếm của chế độ Solo](./solo-results.avif)
+
+![Kết quả tìm kiếm của chế độ Puppy](./puppy-results.avif)
+
+![Cảnh tìm kiếm cú đá bằng worker](./search-workers.avif)
+
+Nói thêm, trên MacBook M4 Pro (8 + 4 lõi) của tôi, chạy 10 worker mất khoảng 5–6 phút haha. Lần đầu tôi biết cái laptop của mình có thể ồn đến vậy.
+
+<figure style="max-width:498px;margin:1.5rem auto;">
+  <iframe
+    src="https://tenor.com/embed/11789036"
+    title="Cảnh Doctor Strange dùng Viên đá Thời gian để nhìn thấy tương lai"
+    loading="lazy"
+    allowfullscreen
+    style="display:block;width:100%;aspect-ratio:498/325;border:0;border-radius:12px;"
+  ></iframe>
+  <figcaption style="margin-top:0.5rem;font-size:0.8em;text-align:center;">
+    Cảnh Doctor Strange dò tìm các tương lai · <a href="https://tenor.com/view/timeline-doctor-strange-benedict-cumberbatch-future-infinity-war-gif-11789036" target="_blank" rel="noopener noreferrer">Nguồn</a>
+  </figcaption>
+</figure>
+
+Một cách khác để một lập trình viên tận hưởng game :) Bí ẩn đã được giải.

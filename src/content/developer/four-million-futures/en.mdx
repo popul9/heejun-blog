@@ -1,0 +1,100 @@
+---
+title: 'I Saw ~~14 Million~~... No, 4 Million Futures'
+description: 'Brute-forcing 4 million simulations'
+pubDate: 'Oct 28 2026'
+heroImage: './shot-lab.avif'
+---
+
+import Video from '../../../components/Video.astro';
+
+<iframe
+  src="/games/ui-is-hard-is-easy/index.html?embed&v=92c7c2985f14"
+  title="UI is Hard is Easy: control the volume with a footy"
+  loading="lazy"
+  allow="autoplay; fullscreen"
+  allowfullscreen
+  style="display:block;width:100%;height:560px;border:0;border-radius:12px;"
+></iframe>
+
+Since the day before yesterday, I've been playing this absurdly addictive rugby game (footy, if you're in Australia) with friends like a man possessed. My personal best is 95 (solo mode), and my wife hit a whopping 99. (It's a "set the volume you want" kind of game, so technically there's no right answer. Shh, don't tell anyone.)
+
+Anyway, it's so addictive that I kept replaying it, and no matter what I did in puppy mode, the best I could get was 41. (Okay, that's actually just from smashing the ball clean off the screen. lol)
+
+Then I was talking with my wife and wondered: is 40+ even possible in the first place? Maybe the time before the owner calls the puppy should be cut by a second or so. I convinced myself that was probably right. But wait... can we actually know that without running every possible shot?
+
+Really? Isn't that way too many? But "too many" is how many, exactly?
+
+The possibilities are the point where you start the kick, and then where you release after dragging. So roughly start points A times end points B, right? That's not a lot?
+
+Me: Codex, doable?  
+Codex: yep  
+Me: Go.
+
+## The Lab Is Open
+
+![Shot Lab, where you can search kick positions, power, and direction, and watch replays](./shot-lab.avif)
+
+[Link](/lab/)
+
+Alright, running it now... Each mode has 2 million possible shots, so I'm running 4 million in total with 10 threads in parallel.
+
+## Results
+
+### Best Solo play: 99.954458
+
+<Video src="/videos/four-million-futures/solo-best.mp4" />
+
+### Best Puppy play (Glitch): 95.811488
+
+<Video src="/videos/four-million-futures/puppy-glitch.mp4" />
+There's a physics bug where, if the puppy touches the tip of the ball, it can't push it away.
+
+### Best Puppy play, no glitch: 93
+
+<Video src="/videos/four-million-futures/puppy-fourth.mp4" />
+
+Puppy mode's top run exploits a physics engine bug, so it's a bit of a gray area. But the 4th-highest run, which doesn't use the bug, is genuinely impressive. But hey, high scores ARE possible even without the glitch!! lol
+
+## What I Learned
+
+- Solo mode: Just as I suspected, a play that shows 100 on screen is possible. Precisely, it's 99.954458.
+- Puppy mode: The search turned up a lot of high scores that abuse the physics glitch, but even without it, you can bounce the ball into the air for roughly 90.
+
+## Watch the Replays Yourself
+
+**[→ Open Shot Lab: Solo / Puppy Top 10 Replays](/lab/)**
+
+Hit `Load Solo Top 10` or `Load Puppy Top 10` and you'll instantly load the results from my run and can watch the replays. If you want to search on your own, pick a mode and an interval, then hit `Find high scores`.
+
+Saved replays play back the exact frames of the ball and puppy. Nothing is recalculated, so you're watching the very same run. A fresh search, though, depends on more than the seed: input coordinates that vary with screen size, the exact shot values, and the initial state all matter. So even with the same seed, I can't guarantee identical search results across environments.
+
+![Mobile Shot Lab: picking Solo/Puppy Top 10 and playing a replay](./mobile-replay.avif)
+
+On mobile, you can watch replays right from the two Top 10 tabs. And if you’re curious, you can simulate the 4 million plays yourself on desktop.
+
+![Puppy mode replay screen](./puppy-replay.avif)
+
+If you run the test yourself in the browser, you can also see the score distribution graph like this.
+
+![Search results for Solo mode](./solo-results.avif)
+
+![Search results for Puppy mode](./puppy-results.avif)
+
+![Shots being searched with workers](./search-workers.avif)
+
+For reference, on my MacBook M4 Pro (8 + 4 cores), it takes about 5–6 minutes with 10 workers lol. I never knew my laptop could get this loud.
+
+<figure style="max-width:498px;margin:1.5rem auto;">
+  <iframe
+    src="https://tenor.com/embed/11789036"
+    title="Doctor Strange peering into possible futures with the Time Stone"
+    loading="lazy"
+    allowfullscreen
+    style="display:block;width:100%;aspect-ratio:498/325;border:0;border-radius:12px;"
+  ></iframe>
+  <figcaption style="margin-top:0.5rem;font-size:0.8em;text-align:center;">
+    Doctor Strange scanning the futures · <a href="https://tenor.com/view/timeline-doctor-strange-benedict-cumberbatch-future-infinity-war-gif-11789036" target="_blank" rel="noopener noreferrer">Source</a>
+  </figcaption>
+</figure>
+
+Just another developer's way of enjoying a game :) Mystery solved.
