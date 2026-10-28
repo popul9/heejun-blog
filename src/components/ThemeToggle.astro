@@ -3,101 +3,227 @@ import { getLangFromUrl, useTranslations } from '../i18n/utils';
 const t = useTranslations(getLangFromUrl(Astro.url));
 ---
 
-<button class="theme-toggle" type="button" aria-label={t('theme.label')} aria-pressed="false">
-    <svg class="light-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+<button class="theme-toggle" type="button" role="switch" aria-label={t('theme.dark')} aria-checked="false" title={t('theme.label')}>
+    <span class="theme-track" aria-hidden="true"></span>
+    <span class="theme-thumb" aria-hidden="true"></span>
+    <svg class="light-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round">
         <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none" />
         <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" />
     </svg>
-    <svg class="dark-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 6c-1-2 0-3 2-4" stroke="currentColor" stroke-width="2" />
-        <path fill="currentColor" fill-rule="evenodd" d="M12 6C4 3 1 9 3 16c1 4 5 6 9 4 4 2 8 0 9-4 2-7-1-13-9-10ZM6 12l3-2 1 3Zm12 0-3-2-1 3ZM7 15l3 1 2-1 2 1 3-1-2 3H9Z" />
+    <svg class="dark-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 14.2A8.5 8.5 0 0 1 9.8 4a8.5 8.5 0 1 0 10.2 10.2Z" />
     </svg>
 </button>
 
 <script>
     const root = document.documentElement;
     const buttons = document.querySelectorAll<HTMLButtonElement>('.theme-toggle');
+    const clamp = (value: number) => Math.max(0, Math.min(1, value));
+
+    const controls = Array.from(buttons, button => {
+        const thumb = button.querySelector<HTMLElement>('.theme-thumb')!;
+        let destination = root.dataset.theme === 'dark' ? 1 : 0;
+        let pointerId: number | undefined;
+        let startX = 0;
+        let startPosition = 0;
+        let dragged = false;
+
+        function draw() {
+            button.style.setProperty('--thumb-progress', String(destination));
+        }
+        function sync() {
+            destination = root.dataset.theme === 'dark' ? 1 : 0;
+            draw();
+        }
+        button.addEventListener('pointerdown', event => {
+            if (!event.isPrimary || event.button !== 0) return;
+            pointerId = event.pointerId;
+            startX = event.clientX;
+            startPosition = destination;
+            dragged = false;
+            button.dataset.held = 'true';
+            button.setPointerCapture(pointerId);
+        });
+        button.addEventListener('pointermove', event => {
+            if (event.pointerId !== pointerId) return;
+            const distance = event.clientX - startX;
+            if (Math.abs(distance) > 4) dragged = true;
+            if (dragged) {
+                button.dataset.dragging = 'true';
+                destination = clamp(startPosition + distance / Math.max(button.clientWidth - thumb.clientWidth - thumb.offsetLeft * 2, 1));
+                draw();
+            }
+        });
+        button.addEventListener('pointerup', event => {
+            if (event.pointerId !== pointerId) return;
+            pointerId = undefined;
+            delete button.dataset.held;
+            delete button.dataset.dragging;
+            if (dragged) commitTheme(destination >= 0.5 ? 'dark' : 'light');
+        });
+        const release = () => {
+            if (pointerId === undefined) return;
+            pointerId = undefined;
+            delete button.dataset.held;
+            delete button.dataset.dragging;
+            sync();
+        };
+        button.addEventListener('pointercancel', release);
+        button.addEventListener('lostpointercapture', release);
+        button.addEventListener('click', event => {
+            if (event.detail > 0 && dragged) { dragged = false; return; }
+            commitTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
+        return sync;
+    });
 
     function applyTheme(theme: string, animate = false) {
         root.dataset.theme = theme;
         document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#140f1e' : '#ffffff');
-        buttons.forEach(button => button.setAttribute('aria-pressed', String(theme === 'dark')));
+        buttons.forEach(button => button.setAttribute('aria-checked', String(theme === 'dark')));
+        controls.forEach(sync => sync());
         root.classList.remove('theme-entrance');
         if (animate && theme === 'dark') {
-            // Restart the one-shot entrance, even after switching back quickly.
             void root.offsetWidth;
             root.classList.add('theme-entrance');
         }
     }
-
-    applyTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
-    buttons.forEach(button => button.addEventListener('click', () => {
-        const theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    function commitTheme(theme: string) {
         try { localStorage.setItem('theme', theme); } catch {}
         applyTheme(theme, true);
-    }));
+    }
+    applyTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
     window.addEventListener('storage', event => {
-        if (event.storageArea !== localStorage) return;
         if (event.key !== 'theme' && event.key !== null) return;
+        try { if (event.storageArea !== localStorage) return; } catch { return; }
         applyTheme(event.key === 'theme' && event.newValue === 'dark' ? 'dark' : 'light');
     });
 </script>
 
 <style>
     .theme-toggle {
-        display: grid;
-        place-items: center;
+        --switch-width: 72px;
+        --track-height: 34px;
+        --thumb-inset: 3px;
+        --thumb-size: calc(var(--track-height) - var(--thumb-inset) * 2);
+        --thumb-travel: calc(var(--switch-width) - var(--thumb-size) - var(--thumb-inset) * 2);
+        --icon-center: calc(var(--thumb-inset) + var(--thumb-size) / 2);
+        --thumb-progress: 0;
+        position: relative;
+        isolation: isolate;
+        display: block;
         box-sizing: border-box;
-        flex: 0 0 36px;
-        width: 36px;
-        height: 36px;
+        flex: 0 0 var(--switch-width);
+        width: var(--switch-width);
+        height: 44px;
         padding: 0;
-        border: 1px solid rgba(var(--black), 0.18);
-        border-radius: 50%;
+        border: 0;
+        border-radius: 999px;
         background: transparent;
-        color: rgb(var(--black));
+        color: #736d7b;
         font: inherit;
         cursor: pointer;
-        transition: background-color 180ms ease, border-color 180ms ease;
+        touch-action: pan-y;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
     }
-    .theme-toggle[aria-pressed="true"] { color: #fff; }
-    @media (hover: hover) {
-        .theme-toggle:hover { background: rgba(var(--black), 0.08); border-color: rgba(var(--black), 0.18); }
-    }
-    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-    .theme-toggle svg {
-        grid-area: 1 / 1;
-        width: 22px;
-        height: 22px;
+    .theme-track {
+        position: absolute;
+        inset: 50% 0 auto;
+        height: var(--track-height);
+        box-sizing: border-box;
+        transform: translateY(-50%);
+        border: 1px solid rgba(173, 166, 184, 0.28);
+        border-radius: inherit;
+        background: rgba(255, 255, 255, 0.52);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        transition: background-color 320ms ease, border-color 320ms ease;
         pointer-events: none;
-        transform-origin: center;
-        transition: opacity 250ms ease, transform 380ms ease-in-out;
     }
-    .light-icon { opacity: 1; transform: rotate(0) scale(1); }
-    .dark-icon { opacity: 0; transform: rotate(30deg) scale(0.5); }
-    .theme-toggle[aria-pressed="true"] .light-icon { opacity: 0; transform: rotate(-45deg) scale(0.5); }
-    .theme-toggle[aria-pressed="true"] .dark-icon { opacity: 1; transform: rotate(0) scale(1); }
-    @media (pointer: coarse) { .theme-toggle { flex-basis: 44px; width: 44px; height: 44px; border-color: rgba(var(--black), 0.18); } }
+    .theme-thumb {
+        position: absolute;
+        box-sizing: border-box;
+        top: calc(50% - var(--thumb-size) / 2);
+        left: var(--thumb-inset);
+        width: var(--thumb-size);
+        height: var(--thumb-size);
+        border: 0;
+        border-radius: 999px;
+        background: rgba(240, 237, 245, 0.72);
+        box-shadow: 0 1px 3px #21182e29;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        transform: translateX(calc(var(--thumb-progress) * var(--thumb-travel)));
+        transition: transform 220ms cubic-bezier(0.2, 0, 0.2, 1), box-shadow 160ms ease, background-color 320ms ease;
+        pointer-events: none;
+    }
+    .theme-toggle svg {
+        position: absolute;
+        top: 50%;
+        width: 16px;
+        height: 16px;
+        pointer-events: none;
+        transition: color 250ms ease, opacity 250ms ease;
+    }
+    .light-icon {
+        left: var(--icon-center);
+        transform: translate(-50%, -50%);
+        color: #4e455b;
+    }
+    .dark-icon {
+        right: var(--icon-center);
+        transform: translate(50%, -50%);
+        color: #342940;
+        fill: currentColor;
+        stroke-width: 1.2;
+        opacity: 0.88;
+    }
+    :global([data-theme="dark"]) .theme-toggle { --thumb-progress: 1; color: #f5efff; }
+    :global([data-theme="dark"]) .theme-track {
+        border-color: rgba(196, 185, 211, 0.22);
+        background-color: rgba(130, 111, 151, 0.4);
+    }
+    :global([data-theme="dark"]) .theme-thumb {
+        background-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 1px 3px #21182e26;
+    }
+    :global([data-theme="dark"]) .light-icon {
+        color: #fff;
+        opacity: 0.96;
+    }
+    :global([data-theme="dark"]) .light-icon circle {
+        fill-opacity: 0.72;
+        stroke: currentColor;
+    }
+    :global([data-theme="dark"]) .dark-icon {
+        color: inherit;
+        fill: none;
+        stroke-width: 1.65;
+        opacity: 1;
+    }
+    @media (hover: hover) {
+        :global([data-theme="dark"]) .theme-toggle:hover .light-icon,
+        :global([data-theme="light"]) .theme-toggle:hover .dark-icon { opacity: 1; }
+    }
+    .theme-toggle:active .theme-thumb,
+    .theme-toggle[data-held] .theme-thumb {
+        box-shadow: 0 1px 2px #21182e1a;
+    }
+    .theme-toggle[data-dragging] .theme-thumb { transition: none; }
+    .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     @media (max-width: 720px) {
-        :global(header .theme-control) .theme-toggle {
-            position: relative;
-            flex-basis: 30px;
-            width: 30px;
-            height: 30px;
-            border-color: rgba(var(--black), 0.12);
-        }
-        :global(header .theme-control) .theme-toggle::before {
-            content: '';
-            position: absolute;
-            inset: -7px;
-            border-radius: 50%;
-        }
-        :global(header .theme-control) .theme-toggle svg {
-            width: 18px;
-            height: 18px;
+        .theme-toggle {
+            --switch-width: 66px;
+            --track-height: 32px;
         }
     }
     @media (prefers-reduced-motion: reduce) {
-        .theme-toggle, .theme-toggle svg { transition: none; }
+        .theme-track, .theme-thumb, .theme-toggle svg { transition: none; }
+    }
+    @media (forced-colors: active) {
+        .theme-toggle .theme-track { border: 1px solid ButtonText; background: Canvas; }
+        .theme-toggle .theme-thumb { border: 2px solid Highlight; background: Canvas; }
+        .theme-toggle svg { color: ButtonText; opacity: 1; }
     }
 </style>
