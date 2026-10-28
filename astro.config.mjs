@@ -8,6 +8,11 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
 	site: 'https://heejun.net',
 	integrations: [mdx(), sitemap()],
+	markdown: {
+		shikiConfig: {
+			themes: { light: 'github-light', dark: 'dracula' },
+		},
+	},
 	i18n: {
 		defaultLocale: 'en',
 		// Keep in sync with LOCALES in src/i18n/utils.ts

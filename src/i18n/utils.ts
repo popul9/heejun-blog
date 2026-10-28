@@ -37,6 +37,9 @@ export function getLangFromUrl(url: URL): Locale {
 export function useTranslations(lang: Locale) {
     return function t(key: string) {
         const dict: Record<string, Partial<Record<Locale, string>>> = {
+            'theme.label': { ko: '화면 모드', en: 'Appearance', zh: '外观', th: 'รูปแบบหน้าจอ', vi: 'Giao diện' },
+            'theme.light': { ko: '라이트', en: 'Light', zh: '浅色', th: 'สว่าง', vi: 'Sáng' },
+            'theme.dark': { ko: '다크 (할로윈)', en: 'Dark (Halloween)', zh: '深色（万圣节）', th: 'มืด (ฮาโลวีน)', vi: 'Tối (Halloween)' },
             'site.title': {
                 ko: "희준의 넷",
                 en: "Heejun's Net",

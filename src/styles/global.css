@@ -5,16 +5,43 @@
  */
 
 :root {
-	--accent: #2337ff;
-	--accent-dark: #000d8a;
+	color-scheme: light;
+	--accent: #7141ad;
+	--accent-dark: #51267e;
+	--on-accent: #fff;
+	--page-background: #fff;
+	--surface: #fff;
+	--header-background: #fff;
+	--border: #e5e9f0;
+	--glow: transparent;
+	--stage-pink: #ad306f;
 	--black: 15, 18, 25;
 	--gray: 96, 115, 159;
 	--gray-light: 229, 233, 240;
 	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
+	--gray-gradient: rgba(var(--gray-light), 50%), var(--page-background);
 	--box-shadow:
 		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px
 		rgba(var(--gray), 33%);
+}
+
+:root[data-theme="dark"] {
+	color-scheme: dark;
+	--accent: #cca4ff;
+	--accent-dark: #e4cfff;
+	--on-accent: #241335;
+	--page-background: #140f1e;
+	--surface: #21182e;
+	--header-background: #191222;
+	--border: #433153;
+	--glow: #b46bff33;
+	--stage-pink: #f39bcc;
+	--black: 246, 236, 255;
+	--gray: 184, 166, 203;
+	--gray-light: 48, 35, 64;
+	--gray-dark: 231, 220, 239;
+	--gray-gradient: #2b193c99, var(--page-background);
+	--box-shadow: 0 6px 24px #0005, 0 0 25px var(--glow);
 }
 @font-face {
 	font-family: "Atkinson";
@@ -37,11 +64,30 @@ body {
 	text-align: left;
 	background: linear-gradient(var(--gray-gradient)) no-repeat;
 	background-size: 100% 600px;
+	isolation: isolate;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 	color: rgb(var(--gray-dark));
 	font-size: 20px;
 	line-height: 1.7;
+}
+[data-theme="dark"] body {
+	background: var(--page-background);
+	background-image: radial-gradient(ellipse at 50% 0, var(--glow), transparent 650px);
+}
+body > header,
+body > main,
+body > footer {
+	position: relative;
+	z-index: 1;
+}
+::selection {
+	background: var(--accent);
+	color: var(--on-accent);
+}
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 4px;
 }
 main {
 	width: 720px;
@@ -82,7 +128,7 @@ a {
 	color: var(--accent);
 }
 a:hover {
-	color: var(--accent);
+	color: var(--accent-dark);
 }
 p {
 	margin-bottom: 1em;
@@ -113,6 +159,7 @@ code {
 pre {
 	padding: 1.5em;
 	border-radius: 8px;
+	overflow-x: auto;
 }
 pre > code {
 	all: unset;
@@ -126,6 +173,96 @@ blockquote {
 hr {
 	border: none;
 	border-top: 1px solid rgb(var(--gray-light));
+}
+
+/* The reading surface stays quiet; the stage lights live around it. */
+[data-theme="dark"] .prose {
+	background: var(--page-background);
+	border-radius: 16px;
+}
+[data-theme="dark"] .site-logo a {
+	color: #e4c5ff;
+	text-shadow: 0 0 8px #c68aff88, 0 0 24px #a749ed66;
+}
+.site-logo a::after {
+	content: '✦';
+	color: var(--stage-pink);
+	font-size: 0.7em;
+	margin-left: 0.5em;
+	visibility: hidden;
+}
+[data-theme="dark"] .site-logo a::after {
+	visibility: visible;
+}
+[data-theme="dark"] .internal-links a:hover,
+[data-theme="dark"] .internal-links a:focus-visible {
+	text-shadow: 0 0 15px var(--accent);
+}
+[data-theme="dark"] .title h1 {
+	text-shadow: 0 0 35px var(--glow);
+}
+[data-theme="dark"] a:has(> .title) {
+	border-radius: 12px;
+}
+[data-theme="dark"] a > .title {
+	position: relative;
+	isolation: isolate;
+}
+[data-theme="dark"] a > .title::before {
+	content: '';
+	position: absolute;
+	inset: -1rem 0 -2rem;
+	z-index: -1;
+	pointer-events: none;
+	background: radial-gradient(ellipse at 50% 45%, var(--glow), transparent 70%);
+	opacity: 0.65;
+	transition: opacity 0.2s ease;
+}
+[data-theme="dark"] a:is(:hover, :focus-visible) > .title::before {
+	opacity: 1;
+}
+[data-theme="dark"] a:has(> .title):is(:hover, :focus-visible) .title {
+	color: var(--accent);
+	text-shadow: 0 0 20px var(--glow);
+}
+[data-theme="dark"] .prose :is(h2, h3) {
+	color: #dfc4f6;
+}
+[data-theme="dark"] .prose a {
+	text-decoration-color: var(--stage-pink);
+	text-underline-offset: 4px;
+}
+[data-theme="dark"] .astro-code,
+[data-theme="dark"] .astro-code span {
+	color: var(--shiki-dark, #eadcf5) !important;
+	background-color: var(--shiki-dark-bg, #21182e) !important;
+}
+.theme-entrance .site-logo a {
+	animation: neon-entrance 0.8s ease-out both;
+}
+@keyframes neon-entrance {
+	0%, 20% { opacity: 0.4; text-shadow: none; }
+	12%, 35%, 100% { opacity: 1; text-shadow: 0 0 8px #c68aff88, 0 0 24px #a749ed66; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.theme-entrance .site-logo a { animation: none; }
+	[data-theme="dark"] a > .title::before { transition: none; }
+}
+@media print {
+	:root[data-theme] {
+		color-scheme: light;
+		--page-background: #fff;
+		--black: 15, 18, 25;
+		--gray: 80, 80, 80;
+		--gray-dark: 34, 34, 34;
+		--gray-light: 235, 235, 235;
+		--accent: #51267e;
+		--glow: transparent;
+	}
+	body { background: #fff; }
+	.theme-toggle, .floating-lang-toggle { display: none !important; }
+	[data-theme="dark"] .site-logo a,
+	[data-theme="dark"] .prose :is(h2, h3) { color: #241335; text-shadow: none; }
 }
 @media (max-width: 720px) {
 	body {

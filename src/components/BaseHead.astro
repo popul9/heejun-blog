@@ -40,6 +40,17 @@ const defaultAlternate = alternates.find((alt) => alt.locale === DEFAULT_LOCALE)
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#ffffff" />
+<script is:inline>
+	// Apply the saved preference before paint, defaulting to light.
+	(() => {
+		let theme;
+		try { theme = localStorage.getItem('theme'); } catch {}
+		const dark = theme === 'dark';
+		document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+		document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#140f1e' : '#ffffff');
+	})();
+</script>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" href="/favicon.ico" />
 <link rel="sitemap" href="/sitemap-index.xml" />
