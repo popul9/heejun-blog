@@ -1,5 +1,8 @@
+import { seededRandom } from './random.js?v=20261028-puppy-shot-seed-1';
+
 // Puppy behavior kept separate from the imported game bundle.
 export function createDog(scene, canvas, THREE, RigidBodyType) {
+    let random = seededRandom(1);
     const PLAY_TIME = 4;
     const DOG_SCALE = 1.1;
     const CONTACT_RADIUS = .45 + .6 * DOG_SCALE;
@@ -89,13 +92,13 @@ export function createDog(scene, canvas, THREE, RigidBodyType) {
         enabled = false;
         active = false;
         sitting = false;
-        fetchAfterBounce = Math.random() < .5;
+        fetchAfterBounce = random() < .5;
         bounced = false;
         contactCooldown = 0;
         heading = Math.PI / 2;
         jumpHeight = 0;
         jumpVelocity = 0;
-        nextJump = REACTION_TIME + .2 + Math.random() * .4;
+        nextJump = REACTION_TIME + .2 + random() * .4;
         pup.position.y = 0;
         pup.rotation.set(0, heading, 0);
         pup.scale.setScalar(DOG_SCALE);
@@ -108,7 +111,7 @@ export function createDog(scene, canvas, THREE, RigidBodyType) {
         countdown.hidden = true;
         call.hidden = true;
     }
-    function start() { reset(); enabled = true; active = true; root.visible = true; owner.visible = true; }
+    function start(seed = 1) { random = seededRandom(seed); reset(); enabled = true; active = true; root.visible = true; owner.visible = true; }
     function update(dt, ball, flying) {
         if (sitting) {
             time += dt;
@@ -156,8 +159,8 @@ export function createDog(scene, canvas, THREE, RigidBodyType) {
         const lookingUp = chasing && p.y > 1.3;
         // Schedule jumps rather than sampling randomness every animation frame.
         if (lookingUp && jumpHeight === 0 && time >= nextJump) {
-            jumpVelocity = (2.2 + Math.random() * 1.6) * 1.12;
-            nextJump = time + .65 + Math.random() * .8;
+            jumpVelocity = (2.2 + random() * 1.6) * 1.12;
+            nextJump = time + .65 + random() * .8;
         }
         if (jumpVelocity !== 0 || jumpHeight > 0) {
             jumpVelocity -= 15 * dt;
