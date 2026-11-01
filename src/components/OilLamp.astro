@@ -1,0 +1,72 @@
+---
+interface Props {
+    size?: number;
+}
+const { size = 16 } = Astro.props;
+---
+
+<span class="oil-lamp" style={`--lamp-size: ${size}px`} aria-hidden="true">
+    <svg viewBox="0 0 16 16" width={size} height={size} fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round">
+        <path class="lamp-flame" d="M8 2C8 2 6 4.2 6 5.5a2 2 0 0 0 4 0C10 4.2 8 2 8 2Z" />
+        <path class="lamp-bowl" d="M1 10h14a7 5 0 0 1-14 0Z" />
+    </svg>
+</span>
+
+<style>
+    .oil-lamp {
+        position: relative;
+        isolation: isolate;
+        display: inline-block;
+        flex: none;
+        width: var(--lamp-size);
+        height: var(--lamp-size);
+        vertical-align: middle;
+        color: #98652d;
+    }
+    .oil-lamp::before {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        pointer-events: none;
+        left: 50%;
+        top: 40%;
+        width: 300%;
+        height: 260%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: radial-gradient(ellipse, #edb45c24, #e8a2470c 42%, transparent 72%);
+        animation: lamp-glow 7.3s ease-in-out infinite;
+    }
+    svg { display: block; overflow: visible; }
+    .lamp-flame {
+        stroke: #b67c30;
+        transform-box: fill-box;
+        transform-origin: 50% 100%;
+        filter: drop-shadow(0 0 2px #edb45c55);
+        animation: lamp-flicker 5.7s ease-in-out infinite;
+    }
+    :global([data-theme="dark"]) .oil-lamp { color: #e5be83; }
+    :global([data-theme="dark"]) .lamp-flame {
+        stroke: #e9b76c;
+        filter: drop-shadow(0 0 2px #eab26380);
+    }
+    @keyframes lamp-flicker {
+        0%, 100% { transform: rotate(-9deg) scale(1); opacity: 0.93; }
+        23% { transform: rotate(-3deg) scale(0.96, 1.04); opacity: 1; }
+        49% { transform: rotate(-12deg) scale(1.03, 0.97); opacity: 0.88; }
+        72% { transform: rotate(-5deg) scale(0.98, 1.02); opacity: 0.97; }
+    }
+    @keyframes lamp-glow {
+        0%, 100% { opacity: 0.7; }
+        36% { opacity: 0.95; }
+        68% { opacity: 0.62; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .oil-lamp::before, .lamp-flame { animation: none; }
+    }
+    @media (forced-colors: active) {
+        .oil-lamp { color: ButtonText; }
+        .lamp-flame { stroke: ButtonText; filter: none; }
+        .oil-lamp::before { display: none; }
+    }
+</style>

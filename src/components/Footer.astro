@@ -1,6 +1,6 @@
 ---
 import FloatingLanguagePicker from "./FloatingLanguagePicker.astro";
-import PurpleAfterHours from "./PurpleAfterHours.astro";
+import FestivalGreeting from "./FestivalGreeting.astro";
 import {
 	getLangFromUrl,
 	getLocalizedPathname,
@@ -15,7 +15,7 @@ const localizedAbout = getLocalizedPathname("/about", lang);
 
 <FloatingLanguagePicker />
 <footer>
-	<PurpleAfterHours />
+	<FestivalGreeting />
 	&copy; {today.getFullYear()} Heejun Moon. All rights reserved. ·{" "}
 	<a href={localizedAbout} class="about-link">{t("nav.about")}</a>
 	<div class="social-links">
