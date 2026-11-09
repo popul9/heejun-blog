@@ -21,88 +21,98 @@ const t = useTranslations(getLangFromUrl(Astro.url));
 </button>
 
 <script>
-    const root = document.documentElement;
-    const buttons = document.querySelectorAll<HTMLButtonElement>('.theme-toggle');
-    const clamp = (value: number) => Math.max(0, Math.min(1, value));
+    let cleanup = () => {};
 
-    const controls = Array.from(buttons, button => {
-        const thumb = button.querySelector<HTMLElement>('.theme-thumb')!;
-        let destination = root.dataset.theme === 'dark' ? 1 : 0;
-        let pointerId: number | undefined;
-        let startX = 0;
-        let startPosition = 0;
-        let dragged = false;
+    function setupThemeToggle() {
+        cleanup();
+        const listeners = new AbortController();
+        cleanup = () => listeners.abort();
+        const root = document.documentElement;
+        const buttons = document.querySelectorAll<HTMLButtonElement>('.theme-toggle');
+        const clamp = (value: number) => Math.max(0, Math.min(1, value));
 
-        function draw() {
-            button.style.setProperty('--thumb-progress', String(destination));
-        }
-        function sync() {
-            destination = root.dataset.theme === 'dark' ? 1 : 0;
-            draw();
-        }
-        button.addEventListener('pointerdown', event => {
-            if (!event.isPrimary || event.button !== 0) return;
-            pointerId = event.pointerId;
-            startX = event.clientX;
-            startPosition = destination;
-            dragged = false;
-            button.dataset.held = 'true';
-            button.setPointerCapture(pointerId);
-        });
-        button.addEventListener('pointermove', event => {
-            if (event.pointerId !== pointerId) return;
-            const distance = event.clientX - startX;
-            if (Math.abs(distance) > 4) dragged = true;
-            if (dragged) {
-                button.dataset.dragging = 'true';
-                destination = clamp(startPosition + distance / Math.max(button.clientWidth - thumb.clientWidth - thumb.offsetLeft * 2, 1));
+        const controls = Array.from(buttons, button => {
+            const thumb = button.querySelector<HTMLElement>('.theme-thumb')!;
+            let destination = root.dataset.theme === 'dark' ? 1 : 0;
+            let pointerId: number | undefined;
+            let startX = 0;
+            let startPosition = 0;
+            let dragged = false;
+
+            function draw() {
+                button.style.setProperty('--thumb-progress', String(destination));
+            }
+            function sync() {
+                destination = root.dataset.theme === 'dark' ? 1 : 0;
                 draw();
             }
+            button.addEventListener('pointerdown', event => {
+                if (!event.isPrimary || event.button !== 0) return;
+                pointerId = event.pointerId;
+                startX = event.clientX;
+                startPosition = destination;
+                dragged = false;
+                button.dataset.held = 'true';
+                button.setPointerCapture(pointerId);
+            });
+            button.addEventListener('pointermove', event => {
+                if (event.pointerId !== pointerId) return;
+                const distance = event.clientX - startX;
+                if (Math.abs(distance) > 4) dragged = true;
+                if (dragged) {
+                    button.dataset.dragging = 'true';
+                    destination = clamp(startPosition + distance / Math.max(button.clientWidth - thumb.clientWidth - thumb.offsetLeft * 2, 1));
+                    draw();
+                }
+            });
+            button.addEventListener('pointerup', event => {
+                if (event.pointerId !== pointerId) return;
+                pointerId = undefined;
+                delete button.dataset.held;
+                delete button.dataset.dragging;
+                if (dragged) commitTheme(destination >= 0.5 ? 'dark' : 'light');
+            });
+            const release = () => {
+                if (pointerId === undefined) return;
+                pointerId = undefined;
+                delete button.dataset.held;
+                delete button.dataset.dragging;
+                sync();
+            };
+            button.addEventListener('pointercancel', release);
+            button.addEventListener('lostpointercapture', release);
+            button.addEventListener('click', event => {
+                if (event.detail > 0 && dragged) { dragged = false; return; }
+                commitTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+            });
+            return sync;
         });
-        button.addEventListener('pointerup', event => {
-            if (event.pointerId !== pointerId) return;
-            pointerId = undefined;
-            delete button.dataset.held;
-            delete button.dataset.dragging;
-            if (dragged) commitTheme(destination >= 0.5 ? 'dark' : 'light');
-        });
-        const release = () => {
-            if (pointerId === undefined) return;
-            pointerId = undefined;
-            delete button.dataset.held;
-            delete button.dataset.dragging;
-            sync();
-        };
-        button.addEventListener('pointercancel', release);
-        button.addEventListener('lostpointercapture', release);
-        button.addEventListener('click', event => {
-            if (event.detail > 0 && dragged) { dragged = false; return; }
-            commitTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
-        });
-        return sync;
-    });
 
-    function applyTheme(theme: string, animate = false) {
-        root.dataset.theme = theme;
-        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#140f1e' : '#ffffff');
-        buttons.forEach(button => button.setAttribute('aria-checked', String(theme === 'dark')));
-        controls.forEach(sync => sync());
-        root.classList.remove('theme-entrance');
-        if (animate && theme === 'dark') {
-            void root.offsetWidth;
-            root.classList.add('theme-entrance');
+        function applyTheme(theme: string, animate = false) {
+            root.dataset.theme = theme;
+            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#140f1e' : '#ffffff');
+            buttons.forEach(button => button.setAttribute('aria-checked', String(theme === 'dark')));
+            controls.forEach(sync => sync());
+            root.classList.remove('theme-entrance');
+            if (animate && theme === 'dark') {
+                void root.offsetWidth;
+                root.classList.add('theme-entrance');
+            }
         }
+        function commitTheme(theme: string) {
+            try { localStorage.setItem('theme', theme); } catch {}
+            applyTheme(theme, true);
+        }
+        applyTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
+        window.addEventListener('storage', event => {
+            if (event.key !== 'theme' && event.key !== null) return;
+            try { if (event.storageArea !== localStorage) return; } catch { return; }
+            applyTheme(event.key === 'theme' && event.newValue === 'dark' ? 'dark' : 'light');
+        }, { signal: listeners.signal });
     }
-    function commitTheme(theme: string) {
-        try { localStorage.setItem('theme', theme); } catch {}
-        applyTheme(theme, true);
-    }
-    applyTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
-    window.addEventListener('storage', event => {
-        if (event.key !== 'theme' && event.key !== null) return;
-        try { if (event.storageArea !== localStorage) return; } catch { return; }
-        applyTheme(event.key === 'theme' && event.newValue === 'dark' ? 'dark' : 'light');
-    });
+
+    document.addEventListener('astro:before-swap', () => cleanup());
+    document.addEventListener('astro:page-load', setupThemeToggle);
 </script>
 
 <style>

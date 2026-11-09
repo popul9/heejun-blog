@@ -26,6 +26,13 @@
 		rgba(var(--gray), 33%);
 }
 
+/* Keep navigation immediate, including the persistent snow overlay. */
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation: none;
+	mix-blend-mode: normal;
+}
+
 :root[data-theme="dark"] {
 	color-scheme: dark;
 	--accent: #cca4ff;

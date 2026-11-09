@@ -431,11 +431,6 @@ const currentLangLabel = LOCALE_LABELS[lang] || "Language";
 
 <script>
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    if (isSafari) {
-        document.querySelectorAll(".floating-lang-toggle").forEach((el) =>
-            el.classList.add("safari-fallback")
-        );
-    }
 
     function smoothStep(a: number, b: number, t: number): number {
         t = Math.max(0, Math.min(1, (t - a) / (b - a)));
@@ -579,101 +574,114 @@ const currentLangLabel = LOCALE_LABELS[lang] || "Language";
     }
 
     // ─── Init ─────────────────────────────────────────────────────────────────
-    document.querySelectorAll<HTMLElement>(".floating-lang-toggle").forEach((container) => {
-    let cachedW = 0;
-    let cachedH = 0;
-
-    function applyLiquidGlass() {
-        const el = container;
-
-        const rect = el.getBoundingClientRect();
-        const w = Math.round(rect.width);
-        const h = Math.round(rect.height);
-        if (!w || !h) return;
-
-        if (w === cachedW && h === cachedH) return;
-        cachedW = w;
-        cachedH = h;
-
-        const dispImg = el.querySelector<SVGImageElement>(".lg-disp-img");
-        const specImg = el.querySelector<SVGImageElement>(".lg-spec-img");
-        const filter = el.querySelector<SVGFilterElement>("filter");
-        if (!dispImg || !specImg || !filter) return;
-
-        filter.setAttribute("width", String(w));
-        filter.setAttribute("height", String(h));
-
-        for (const img of [dispImg, specImg]) {
-            img.setAttribute("x", "0");
-            img.setAttribute("y", "0");
-            img.setAttribute("width", String(w));
-            img.setAttribute("height", String(h));
-        }
-
-        dispImg.setAttribute("href", buildDisplacementMap(w, h));
-        specImg.setAttribute("href", buildSpecularMap(w, h));
+    const cleanups: (() => void)[] = [];
+    function cleanupLanguagePicker() {
+        cleanups.splice(0).forEach(cleanup => cleanup());
     }
 
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", () =>
-            requestAnimationFrame(applyLiquidGlass)
-        );
-    } else {
-        requestAnimationFrame(applyLiquidGlass);
-    }
+    function setupLanguagePicker() {
+        cleanupLanguagePicker();
+        const listeners = new AbortController();
+        cleanups.push(() => listeners.abort());
+        document.querySelectorAll<HTMLElement>(".floating-lang-toggle").forEach((container) => {
+            if (isSafari) container.classList.add("safari-fallback");
+            let cachedW = 0;
+            let cachedH = 0;
 
-    const btn = container.querySelector<HTMLButtonElement>(".lang-toggle-btn");
-    const menu = container.querySelector<HTMLElement>(".lang-menu");
+            function applyLiquidGlass() {
+                const el = container;
 
-    if (btn && container) {
-        btn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const isExpanding = !container.classList.contains("is-expanded");
-            container.classList.toggle("is-expanded");
-            btn.setAttribute("aria-expanded", String(isExpanding));
-            if (menu) menu.inert = !isExpanding;
+                const rect = el.getBoundingClientRect();
+                const w = Math.round(rect.width);
+                const h = Math.round(rect.height);
+                if (!w || !h) return;
 
-            const options =
-                container.querySelectorAll<HTMLElement>(".lang-option");
-            options.forEach((opt, i) => {
-                opt.style.transition = isExpanding
-                    ? `opacity 0.3s ease ${
-                          0.1 + i * 0.06
-                      }s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${
-                          0.1 + i * 0.06
-                      }s`
-                    : `opacity 0.15s ease, transform 0.15s ease`;
-                opt.style.opacity = isExpanding ? "1" : "0";
-                opt.style.transform = isExpanding
-                    ? "translateX(0)"
-                    : "translateX(-6px)";
-            });
-        });
+                if (w === cachedW && h === cachedH) return;
+                cachedW = w;
+                cachedH = h;
 
-        document.addEventListener("click", (e) => {
-            if (
-                container.classList.contains("is-expanded") &&
-                !container.contains(e.target as Node)
-            ) {
-                container.classList.remove("is-expanded");
-                btn.setAttribute("aria-expanded", "false");
-                if (menu) menu.inert = true;
+                const dispImg = el.querySelector<SVGImageElement>(".lg-disp-img");
+                const specImg = el.querySelector<SVGImageElement>(".lg-spec-img");
+                const filter = el.querySelector<SVGFilterElement>("filter");
+                if (!dispImg || !specImg || !filter) return;
+
+                filter.setAttribute("width", String(w));
+                filter.setAttribute("height", String(h));
+
+                for (const img of [dispImg, specImg]) {
+                    img.setAttribute("x", "0");
+                    img.setAttribute("y", "0");
+                    img.setAttribute("width", String(w));
+                    img.setAttribute("height", String(h));
+                }
+
+                dispImg.setAttribute("href", buildDisplacementMap(w, h));
+                specImg.setAttribute("href", buildSpecularMap(w, h));
+            }
+
+            function scheduleGlass() {
+                cancelAnimationFrame(frame);
+                frame = requestAnimationFrame(applyLiquidGlass);
+            }
+            let frame = 0;
+            scheduleGlass();
+            cleanups.push(() => cancelAnimationFrame(frame));
+
+            const btn = container.querySelector<HTMLButtonElement>(".lang-toggle-btn");
+            const menu = container.querySelector<HTMLElement>(".lang-menu");
+
+            if (btn && container) {
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const isExpanding = !container.classList.contains("is-expanded");
+                    container.classList.toggle("is-expanded");
+                    btn.setAttribute("aria-expanded", String(isExpanding));
+                    if (menu) menu.inert = !isExpanding;
+
+                    const options =
+                        container.querySelectorAll<HTMLElement>(".lang-option");
+                    options.forEach((opt, i) => {
+                        opt.style.transition = isExpanding
+                            ? `opacity 0.3s ease ${
+                                  0.1 + i * 0.06
+                              }s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${
+                                  0.1 + i * 0.06
+                              }s`
+                            : `opacity 0.15s ease, transform 0.15s ease`;
+                        opt.style.opacity = isExpanding ? "1" : "0";
+                        opt.style.transform = isExpanding
+                            ? "translateX(0)"
+                            : "translateX(-6px)";
+                    });
+                });
+
+                document.addEventListener("click", (e) => {
+                    if (
+                        container.classList.contains("is-expanded") &&
+                        !container.contains(e.target as Node)
+                    ) {
+                        container.classList.remove("is-expanded");
+                        btn.setAttribute("aria-expanded", "false");
+                        if (menu) menu.inert = true;
+                    }
+                }, { signal: listeners.signal });
+            }
+
+            const ResizeObserver = window.ResizeObserver;
+            if (ResizeObserver && container) {
+                const ro = new ResizeObserver(scheduleGlass);
+                ro.observe(container);
+                cleanups.push(() => ro.disconnect());
+            } else {
+                window.addEventListener(
+                    "resize",
+                    scheduleGlass,
+                    { passive: true, signal: listeners.signal }
+                );
             }
         });
     }
 
-    const ResizeObserver = window.ResizeObserver;
-    if (ResizeObserver && container) {
-        const ro = new ResizeObserver(() => {
-            requestAnimationFrame(applyLiquidGlass);
-        });
-        ro.observe(container);
-    } else {
-        window.addEventListener(
-            "resize",
-            () => requestAnimationFrame(applyLiquidGlass),
-            { passive: true }
-        );
-    }
-    });
+    document.addEventListener('astro:before-swap', cleanupLanguagePicker);
+    document.addEventListener('astro:page-load', setupLanguagePicker);
 </script>
