@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Default Breaker</title>
+  <rect width="64" height="64" rx="12" fill="#000" />
+  <g fill="#fff">
+    <path id="brace" d="M24 13h-3c-6 0-9 4-9 10v3c0 3-1 4-4 5v5c3 1 4 2 4 5v1c0 6 3 9 9 9v-6c-3 0-3-2-3-5v-1c0-3-1-5-4-6 3-1 4-3 4-6v-4c0-3 1-4 4-4h2Z" />
+    <path d="M36 12h6L28 52h-6Z" />
+    <use href="#brace" transform="rotate(180 32 32)" />
+  </g>
+</svg>
