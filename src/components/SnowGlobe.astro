@@ -10,37 +10,81 @@ const t = useTranslations(getLangFromUrl(Astro.url));
         class="snow-globe-button"
         type="button"
         aria-label={t('christmas.snowStart')}
-        aria-pressed="false"
         aria-describedby="snow-globe-hint"
         data-start-label={t('christmas.snowStart')}
-        data-stop-label={t('christmas.snowStop')}
         data-idle-hint={t('christmas.snowHint')}
         data-snowing-hint={t('christmas.snowing')}
     >
         <span class="globe" aria-hidden="true">
             <span class="shine"></span>
             <span class="tiny-snow">·　·<br />　·　·</span>
-            <span class="star">✦</span>
-            <span class="tree tree-top"></span>
-            <span class="tree tree-bottom"></span>
+            <svg class="tree" viewBox="0 0 80 88" fill="none">
+                <path d="M37 70h6v13h-6z" fill="#8c6145" />
+                <path d="M40 13C37 24 32 29 27 34Q29 36 33 35C28 44 22 49 17 51Q21 54 26 52C21 62 14 67 10 69C19 75 30 77 40 76C50 77 61 75 70 69C64 66 58 60 54 52Q59 54 63 51C56 47 51 41 47 35Q51 36 53 34C47 29 43 22 40 13Z" fill="#426b55" />
+                <path d="M40 13C37 24 32 29 27 34Q34 38 44 34M33 35C28 44 22 49 17 51Q29 57 46 50M26 52C21 62 14 67 10 69Q25 75 41 70" stroke="#85a88a" stroke-opacity=".55" stroke-width="2" stroke-linecap="round" />
+                <path d="M34 36Q41 41 50 42M26 51Q37 58 57 59M20 66Q36 73 60 68" stroke="#d4b575" stroke-opacity=".65" stroke-width="1" stroke-linecap="round" />
+                <g class="tree-lights">
+                    <path d="m40 4 1.8 4.5 4.7 1.5-4.7 1.6L40 16l-1.8-4.4-4.7-1.6 4.7-1.5Z" fill="#ffe2a0" />
+                    <g fill="#ffdf9a">
+                        <circle cx="35" cy="36" r="1.6" />
+                        <circle cx="49" cy="43" r="1.5" />
+                        <circle cx="28" cy="53" r="1.7" />
+                        <circle cx="44" cy="57" r="1.5" />
+                        <circle cx="59" cy="66" r="1.7" />
+                        <circle cx="22" cy="67" r="1.6" />
+                    </g>
+                    <g fill="#f4a88e">
+                        <circle cx="42" cy="40" r="1.3" />
+                        <circle cx="55" cy="59" r="1.4" />
+                        <circle cx="37" cy="70" r="1.4" />
+                    </g>
+                </g>
+            </svg>
             <span class="ground"></span>
         </span>
         <span class="stand" aria-hidden="true"></span>
     </button>
     <span id="snow-globe-hint" class="hint" aria-live="polite">{t('christmas.snowHint')}</span>
 </div>
-<div class="christmas-snow" aria-hidden="true" hidden></div>
+<div class="christmas-snow" transition:persist="christmas-snow" aria-hidden="true" hidden></div>
 
 <script>
-    const button = document.querySelector<HTMLButtonElement>('.snow-globe-button');
-    const hint = document.getElementById('snow-globe-hint');
+    let button = document.querySelector<HTMLButtonElement>('.snow-globe-button');
+    let hint = document.getElementById('snow-globe-hint');
     const snow = document.querySelector<HTMLElement>('.christmas-snow');
 
     if (button && hint && snow) {
         let snowing = false;
         let nextFlakeTimer: number | undefined;
         let hideTimer: number | undefined;
-        let startedAt = 0;
+        let stormFrame: number | undefined;
+        let storming = false;
+        let stormStrength = 0;
+        let stormInitialStrength = 0;
+        let stormStartedAt = 0;
+        let previousFrameAt = 0;
+        let stormTempo = 1;
+        let stormIntensity = 1;
+        const stormPhases = [
+            { at: 0, strength: 0 },
+            { at: 0.28, strength: 1 },
+            { at: 0.95, strength: 0.85 },
+            { at: 1.6, strength: 0.25 },
+            { at: 2, strength: 1.15 },
+            { at: 2.8, strength: 0.9 },
+            { at: 4, strength: 0.4 },
+            { at: 5.8, strength: 0 },
+        ];
+        const flakes = new Map<HTMLElement, {
+            x: number;
+            y: number;
+            depth: number;
+            phase: number;
+            fallSpeed: number;
+            velocityX: number;
+            velocityY: number;
+            hasTrail: boolean;
+        }>();
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
         function finishSnow() {
@@ -52,39 +96,124 @@ const t = useTranslations(getLangFromUrl(Astro.url));
             }, reducedMotion.matches ? 0 : 1200);
         }
 
+        function createSnowflake(scattered = false) {
+            if (!snow || snow.childElementCount >= (storming ? 180 : 30)) return;
+            const flake = document.createElement('span');
+            const depth = Math.random();
+            const foreground = storming && Math.random() < 0.08;
+            const duration = foreground ? 7 + Math.random() * 2 : 14 - depth * 6 + Math.random() * 2;
+            const fromSide = storming && !scattered && Math.random() < 0.45;
+            const hasTrail = storming && Math.random() < 0.14;
+            flake.className = hasTrail ? 'snowflake has-trail' : 'snowflake';
+            flake.style.left = fromSide ? '-12px' : `${Math.random() * 100}%`;
+            // Keep falling and wind movement separate so existing snow catches the gust
+            // without restarting its fall or jumping to a new position.
+            // Storm snow also enters from the upwind edge; existing flakes scroll with the page.
+            const spawnY = scattered || fromSide ? Math.random() * window.innerHeight : -14;
+            flake.style.setProperty('--spawn-top', `${window.scrollY + spawnY}px`);
+            flake.style.setProperty('--size', `${foreground ? 4 + depth * 2 : storming ? 1 + depth * 2.2 : 1.5 + depth * 3.5}px`);
+            flake.style.setProperty('--duration', `${duration}s`);
+            flake.style.setProperty('--fall-distance', `${window.innerHeight + 28}px`);
+            flake.style.setProperty('--drift', `${Math.random() * 80 - 40}px`);
+            flake.style.setProperty('--opacity', String((storming ? 0.23 : 0.14) + depth * 0.32));
+            flake.style.setProperty('--softness', foreground ? '0.7px' : !storming && depth > 0.85 ? '0.7px' : '0px');
+            flake.style.setProperty('--still-top', `${window.scrollY + Math.random() * window.innerHeight}px`);
+            flakes.set(flake, {
+                x: 0,
+                y: 0,
+                depth: foreground ? 1.6 + depth * 0.4 : 0.35 + depth * 0.85,
+                phase: Math.random() * Math.PI * 2,
+                fallSpeed: (window.innerHeight + 28) / duration,
+                velocityX: 0,
+                velocityY: 0,
+                hasTrail,
+            });
+            snow.append(flake);
+        }
+
         function dropSnowflake() {
-            if (!snow || !snowing) return;
-            if (snow.childElementCount < 42) {
-                const flake = document.createElement('span');
-                flake.className = 'snowflake';
-                flake.style.left = `${Math.random() * 100}%`;
-                // Spawn above the visible area, then keep each flake in document coordinates.
-                flake.style.setProperty('--spawn-top', `${window.scrollY - 14}px`);
-                flake.style.setProperty('--size', `${2 + Math.random() * 3}px`);
-                flake.style.setProperty('--duration', `${8 + Math.random() * 6}s`);
-                flake.style.setProperty('--fall-distance', `${window.innerHeight + 28}px`);
-                flake.style.setProperty('--drift', `${Math.random() * 100 - 50}px`);
-                flake.style.setProperty('--opacity', String(0.24 + Math.random() * 0.48));
-                flake.style.setProperty('--still-top', `${window.scrollY + Math.random() * window.innerHeight}px`);
-                snow.append(flake);
+            if (!snowing) return;
+            createSnowflake();
+            nextFlakeTimer = window.setTimeout(dropSnowflake, 400 / (1 + stormStrength * 20));
+        }
+
+        function animateStorm(now: number) {
+            if (!snow || !storming) return;
+            const elapsed = (now - stormStartedAt) / 1000 * stormTempo;
+            const delta = Math.min((now - previousFrameAt) / 1000, 0.05);
+            previousFrameAt = now;
+            // Two sharp gusts, separated by a brief lull, then a gradual release.
+            stormStrength = 0;
+            for (let index = 1; index < stormPhases.length; index++) {
+                const end = stormPhases[index];
+                if (elapsed > end.at) continue;
+                const start = stormPhases[index - 1];
+                const progress = Math.max(0, (elapsed - start.at) / (end.at - start.at));
+                const eased = progress * progress * (3 - 2 * progress);
+                const from = index === 1 ? stormInitialStrength : start.strength;
+                stormStrength = from + (end.strength - from) * eased;
+                break;
             }
-            // Start sparsely and build up over six seconds.
-            const progress = Math.min((performance.now() - startedAt) / 6000, 1);
-            nextFlakeTimer = window.setTimeout(dropSnowflake, 700 - progress * 470);
+            const wind = (460 + Math.sin(elapsed * 2.8) * 65 + Math.sin(elapsed * 6.1) * 30)
+                * stormStrength * stormIntensity;
+            const response = 1 - Math.exp(-delta * 5);
+            for (const [flake, motion] of flakes) {
+                // Drag lets flakes catch the same breeze at slightly different speeds.
+                const targetX = (wind + Math.sin(elapsed * 2.7 + motion.phase) * 55 * stormStrength)
+                    * motion.depth;
+                const targetY = (motion.fallSpeed * 1.5 + 55 * motion.depth
+                    + Math.sin(elapsed * 3.5 + motion.phase) * 30 * motion.depth)
+                    * stormStrength * stormIntensity;
+                motion.velocityX += (targetX - motion.velocityX) * response;
+                motion.velocityY += (targetY - motion.velocityY) * response;
+                motion.x += motion.velocityX * delta;
+                motion.y += motion.velocityY * delta;
+                flake.style.translate = `${motion.x}px ${motion.y}px`;
+                if (motion.hasTrail) {
+                    const speed = Math.hypot(motion.velocityX, motion.velocityY);
+                    flake.style.setProperty('--trail-length', `${Math.min(speed * 0.012, 8)}px`);
+                    flake.style.setProperty('--trail-opacity', String(Math.min(speed / 500, 0.55)));
+                    flake.style.setProperty('--trail-angle', `${Math.atan2(motion.fallSpeed + motion.velocityY, motion.velocityX)}rad`);
+                }
+            }
+            if (elapsed < 7.8) {
+                stormFrame = window.requestAnimationFrame(animateStorm);
+            } else {
+                stopStorm();
+            }
+        }
+
+        function stopStorm() {
+            if (stormFrame !== undefined) window.cancelAnimationFrame(stormFrame);
+            stormFrame = undefined;
+            storming = false;
+            stormStrength = 0;
+            button?.classList.remove('is-shaking');
+            syncButton();
+            // Retain each flake's wind offset: it settles from its current position.
+        }
+
+        function syncButton() {
+            if (!button || !hint) return;
+            button.setAttribute('aria-label', button.dataset.startLabel ?? '');
+            hint.textContent = (storming ? button.dataset.snowingHint : button.dataset.idleHint) ?? '';
         }
 
         function setSnowing(active: boolean, immediate = false) {
-            if (!button || !hint || !snow) return;
+            if (!snow) return;
             window.clearTimeout(nextFlakeTimer);
             window.clearTimeout(hideTimer);
             snowing = active;
-            button.setAttribute('aria-pressed', String(active));
-            button.setAttribute('aria-label', (active ? button.dataset.stopLabel : button.dataset.startLabel) ?? '');
-            hint.textContent = (active ? button.dataset.snowingHint : button.dataset.idleHint) ?? '';
-            button.classList.toggle('is-shaking', active);
+            if (!active) {
+                stopStorm();
+            }
+            syncButton();
 
             if (!active) {
-                if (immediate || reducedMotion.matches) snow.replaceChildren();
+                if (immediate || reducedMotion.matches) {
+                    snow.replaceChildren();
+                    flakes.clear();
+                }
                 if (immediate) {
                     snow.hidden = true;
                     snow.classList.remove('is-melting');
@@ -94,32 +223,108 @@ const t = useTranslations(getLangFromUrl(Astro.url));
                 return;
             }
 
-            // Let the globe finish shaking before the first snowflake appears.
-            nextFlakeTimer = window.setTimeout(() => {
-                snow.hidden = false;
-                snow.classList.remove('is-melting');
-                startedAt = performance.now();
-                dropSnowflake();
-            }, reducedMotion.matches ? 0 : 650);
+            snow.hidden = false;
+            snow.classList.remove('is-melting');
+            dropSnowflake();
         }
+
+        function startStorm() {
+            if (!snowing || !button || reducedMotion.matches) return;
+            const alreadyStorming = storming;
+            if (stormFrame !== undefined) window.cancelAnimationFrame(stormFrame);
+            stormInitialStrength = stormStrength;
+            stormTempo = 0.9 + Math.random() * 0.2;
+            stormIntensity = 0.9 + Math.random() * 0.2;
+            stormStartedAt = performance.now();
+            previousFrameAt = stormStartedAt;
+            storming = true;
+            // Let nearby snow catch the shake immediately; fresh snow also blows in from the side.
+            for (let index = 0; index < (alreadyStorming ? 10 : 32); index++) createSnowflake(true);
+            window.clearTimeout(nextFlakeTimer);
+            dropSnowflake();
+            button.classList.remove('is-shaking');
+            void button.offsetWidth;
+            button.classList.add('is-shaking');
+            syncButton();
+            stormFrame = window.requestAnimationFrame(animateStorm);
+        }
+
+        reducedMotion.addEventListener('change', () => {
+            if (reducedMotion.matches) stopStorm();
+        });
 
         snow.addEventListener('animationend', event => {
             const flake = event.target;
             if (!(flake instanceof HTMLElement) || !flake.classList.contains('snowflake')) return;
+            flakes.delete(flake);
             flake.remove();
             if (!snowing && !snow.childElementCount) finishSnow();
         });
 
-        button.addEventListener('click', () => {
-            setSnowing(document.documentElement.dataset.theme === 'dark' && !snowing);
+        function connectButton() {
+            button = document.querySelector<HTMLButtonElement>('.snow-globe-button');
+            hint = document.getElementById('snow-globe-hint');
+            syncTheme();
+            syncButton();
+        }
+        // Delegate clicks so newly translated controls work without retaining old buttons.
+        document.addEventListener('click', event => {
+            if (event.target instanceof Element && event.target.closest('.snow-globe-button')) {
+                startStorm();
+            }
+        });
+        document.addEventListener('astro:after-swap', connectButton);
+
+        // DOM persistence alone restarts CSS animations. Restore their timelines,
+        // including the settled snow pseudo-element, before the next paint.
+        let previousScrollY = 0;
+        let capturedAt = 0;
+        let animations: {
+            target: Element | null;
+            pseudoElement: string | null;
+            name: string;
+            time: number;
+        }[] = [];
+        document.addEventListener('astro:before-swap', () => {
+            previousScrollY = window.scrollY;
+            capturedAt = performance.now();
+            animations = snow.getAnimations({ subtree: true }).flatMap(animation => {
+                const effect = animation.effect;
+                if (!(animation instanceof CSSAnimation) || !(effect instanceof KeyframeEffect)
+                    || typeof animation.currentTime !== 'number') return [];
+                return [{ target: effect.target, pseudoElement: effect.pseudoElement,
+                    name: animation.animationName, time: animation.currentTime }];
+            });
+        });
+        document.addEventListener('astro:after-swap', () => {
+            // Preserve screen positions when navigation resets or restores scrolling.
+            const offset = window.scrollY - previousScrollY;
+            for (const flake of snow.querySelectorAll<HTMLElement>('.snowflake')) {
+                for (const property of ['--spawn-top', '--still-top']) {
+                    const top = Number.parseFloat(flake.style.getPropertyValue(property));
+                    flake.style.setProperty(property, `${top + offset}px`);
+                }
+            }
+            for (const animation of snow.getAnimations({ subtree: true })) {
+                const effect = animation.effect;
+                if (!(animation instanceof CSSAnimation) || !(effect instanceof KeyframeEffect)) continue;
+                const previous = animations.find(saved => saved.target === effect.target
+                    && saved.pseudoElement === effect.pseudoElement && saved.name === animation.animationName);
+                if (previous) animation.currentTime = previous.time + performance.now() - capturedAt;
+            }
+            animations = [];
         });
 
-        // Stop immediately when leaving night mode or navigating away.
-        const observer = new MutationObserver(() => {
-            if (document.documentElement.dataset.theme !== 'dark') setSnowing(false, true);
-        });
+        // Stop immediately when leaving night mode or leaving the document.
+        function syncTheme() {
+            const active = document.documentElement.dataset.theme === 'dark';
+            if (active !== snowing) setSnowing(active, true);
+        }
+        const observer = new MutationObserver(syncTheme);
         observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
         window.addEventListener('pagehide', () => setSnowing(false, true));
+        window.addEventListener('pageshow', syncTheme);
+        syncTheme();
     }
 </script>
 
@@ -187,30 +392,18 @@ const t = useTranslations(getLangFromUrl(Astro.url));
         font-size: 17px;
         line-height: 1.2;
     }
-    .star {
-        position: absolute;
-        left: 31px;
-        top: 10px;
-        font-size: 13px;
-        line-height: 1.2;
-        color: var(--christmas-gold);
-    }
     .tree {
         position: absolute;
-        left: 22px;
-        width: 0;
-        height: 0;
-        border-left: 15px solid transparent;
-        border-right: 15px solid transparent;
-        border-bottom: 23px solid #719379;
+        left: 10px;
+        top: 8px;
+        width: 55px;
+        height: 61px;
     }
-    .tree-top { top: 25px; }
-    .tree-bottom {
-        top: 36px;
-        left: 17px;
-        border-left-width: 20px;
-        border-right-width: 20px;
-        border-bottom: 27px solid #4c7559;
+    .tree-lights {
+        filter: drop-shadow(0 0 2px #ffd78acc) drop-shadow(0 0 4px #ffcb6866);
+    }
+    .is-shaking .tree-lights {
+        animation: tree-light-glow 1.8s ease-out;
     }
     .ground {
         position: absolute;
@@ -240,7 +433,8 @@ const t = useTranslations(getLangFromUrl(Astro.url));
     .christmas-snow {
         position: absolute;
         inset: 0;
-        z-index: 20;
+        /* Keep snow above the page background, behind the reading surfaces. */
+        z-index: 0;
         overflow: hidden;
         pointer-events: none;
         opacity: 1;
@@ -266,8 +460,22 @@ const t = useTranslations(getLangFromUrl(Astro.url));
         height: var(--size);
         border-radius: 50%;
         background: #fff8f2;
+        filter: blur(var(--softness, 0px));
         opacity: 0;
         animation: christmas-snowfall var(--duration) linear both;
+    }
+    .christmas-snow :global(.snowflake.has-trail)::before {
+        content: '';
+        position: absolute;
+        right: 50%;
+        top: 50%;
+        width: var(--trail-length, 0px);
+        height: calc(var(--size) * 0.6);
+        border-radius: 50%;
+        background: linear-gradient(to right, transparent, #fff8f2);
+        opacity: var(--trail-opacity, 0);
+        transform: rotate(var(--trail-angle, 0rad));
+        transform-origin: right center;
     }
     @keyframes christmas-snowfall {
         0% { transform: translate3d(0, 0, 0); opacity: 0; }
@@ -281,18 +489,24 @@ const t = useTranslations(getLangFromUrl(Astro.url));
         35%, 75% { transform: rotate(12deg); }
         100% { transform: rotate(0); }
     }
+    @keyframes tree-light-glow {
+        0%, 100% { opacity: 1; }
+        25% { opacity: 0.65; }
+        45%, 70% { opacity: 1; filter: drop-shadow(0 0 3px #ffe4ad) drop-shadow(0 0 6px #ffd078aa); }
+    }
     @keyframes snow-settle {
         from { transform: translateY(12px); opacity: 0; }
         to { transform: translateY(0); opacity: 0.85; }
     }
     @media (prefers-reduced-motion: reduce) {
         .globe, .christmas-snow { transition: none; }
-        .is-shaking, .christmas-snow::after { animation: none; }
+        .is-shaking, .is-shaking .tree-lights, .christmas-snow::after { animation: none; }
         .christmas-snow :global(.snowflake) {
             animation: none;
             top: var(--still-top);
             opacity: var(--opacity);
         }
+        .christmas-snow :global(.snowflake.has-trail)::before { display: none; }
     }
     @media print, (forced-colors: active) {
         :global([data-theme="dark"]) .snow-globe-secret, .christmas-snow { display: none; }

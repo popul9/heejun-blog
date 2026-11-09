@@ -45,19 +45,12 @@ export function useTranslations(lang: Locale) {
                 th: 'ลองเขย่าเบาๆ ไหม?', vi: 'Lắc nhẹ một chút nhé?',
             },
             'christmas.snowStart': {
-                ko: '스노우볼을 흔들어 눈 내리기', en: 'Shake the snow globe to let it snow', zh: '摇动水晶球，让雪花飘落',
-                th: 'เขย่าลูกแก้วให้หิมะตก', vi: 'Lắc quả cầu tuyết để tuyết rơi',
-            },
-            'christmas.snowStop': {
-                ko: '눈 멈추기', en: 'Stop the snow', zh: '停止下雪',
-                th: 'หยุดหิมะ', vi: 'Dừng tuyết rơi',
+                ko: '스노우볼을 흔들어 6초간 눈보라 일으키기', en: 'Shake the snow globe for a 6-second blizzard', zh: '摇动水晶球，唤起6秒暴风雪',
+                th: 'เขย่าลูกแก้วให้เกิดพายุหิมะ 6 วินาที', vi: 'Lắc quả cầu để tạo bão tuyết trong 6 giây',
             },
             'christmas.snowing': {
-                ko: 'Merry Christmas · 한 번 더 누르면 눈이 멈춰요',
-                en: 'Merry Christmas · Tap again to stop the snow',
-                zh: 'Merry Christmas · 再点一次停止下雪',
-                th: 'Merry Christmas · แตะอีกครั้งเพื่อหยุดหิมะ',
-                vi: 'Merry Christmas · Nhấn lần nữa để dừng tuyết',
+                ko: 'Merry Christmas', en: 'Merry Christmas', zh: 'Merry Christmas',
+                th: 'Merry Christmas', vi: 'Merry Christmas',
             },
             'site.title': {
                 ko: "희준의 넷",
