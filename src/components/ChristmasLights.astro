@@ -1,0 +1,68 @@
+<div class="christmas-lights" aria-hidden="true">
+    {Array.from({ length: 19 }, () => <span class="bulb" />)}
+</div>
+
+<style>
+    .christmas-lights {
+        position: relative;
+        display: flex;
+        justify-content: space-around;
+        height: 24px;
+        margin: -0.5em -1em 0.5em;
+        padding: 0 12px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 200ms ease;
+    }
+    :global([data-theme="dark"]) .christmas-lights {
+        opacity: 1;
+    }
+    .christmas-lights::before {
+        content: '';
+        position: absolute;
+        inset: 0 0 auto;
+        height: 9px;
+        border-bottom: 1px solid #76647d;
+        border-radius: 0 0 50% 50%;
+    }
+    .bulb {
+        position: relative;
+        top: 13px;
+        width: 6px;
+        height: 10px;
+        border-radius: 40% 40% 55% 55%;
+        background: #f3ce85;
+        box-shadow: 0 0 9px #ffd47a88, 0 0 22px #f4c06c44;
+    }
+    .bulb::before {
+        content: '';
+        position: absolute;
+        left: 2px;
+        top: -5px;
+        width: 2px;
+        height: 5px;
+        background: #76647d;
+    }
+    .bulb:nth-child(3n) {
+        background: #cf7568;
+        box-shadow: 0 0 10px #cf756877;
+    }
+    .bulb:nth-child(4n) {
+        background: #91b17a;
+        box-shadow: 0 0 10px #91b17a66;
+    }
+    .bulb:nth-child(-n+4), .bulb:nth-last-child(-n+4) { top: 10px; }
+    .bulb:first-child, .bulb:last-child { top: 7px; }
+    @media (max-width: 480px) {
+        .bulb:nth-child(even) { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .christmas-lights { transition: none; }
+    }
+    @media (forced-colors: active) {
+        :global([data-theme="dark"]) .christmas-lights { opacity: 0; }
+    }
+    @media print {
+        .christmas-lights { display: none; }
+    }
+</style>

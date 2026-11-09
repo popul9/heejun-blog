@@ -10,9 +10,13 @@ const t = useTranslations(getLangFromUrl(Astro.url));
         <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none" />
         <path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" />
     </svg>
-    <svg class="dark-icon" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
-        <path class="toggle-flame" d="M12 2c-1.3 1.7-3 3.7-3 5.5a3 3 0 0 0 6 0C15 5.7 13.3 3.7 12 2Z" />
-        <path d="M2 15h20c-.7 4-4.7 7-10 7S2.7 19 2 15Z" />
+    <svg class="dark-icon" aria-hidden="true" viewBox="0 0 24 24" stroke="none">
+        <path d="M10.5 20h3v2h-3Z" fill="var(--tree-trunk, currentColor)" />
+        <path d="m12 5-4.5 5H10l-4 5h3l-5 5h16l-5-5h3l-4-5h2.5Z" fill="currentColor" />
+        <path d="M10 9q1 2 4 2M8 13q3 3 8 2M6.5 17q4 3 11 1" fill="none" stroke="var(--tree-ribbon, currentColor)" stroke-width="1.5" stroke-linecap="round" />
+        <circle cx="9" cy="17" r="1" fill="var(--tree-ornament, currentColor)" />
+        <circle cx="14" cy="13" r="1" fill="var(--tree-ornament, currentColor)" />
+        <path d="m12 1 .8 1.7 1.9.3-1.4 1.3.3 1.9L12 5.3l-1.6.9.3-1.9L9.3 3l1.9-.3Z" fill="var(--tree-star, currentColor)" />
     </svg>
 </button>
 
@@ -162,8 +166,8 @@ const t = useTranslations(getLangFromUrl(Astro.url));
     .theme-toggle > svg {
         position: absolute;
         top: 50%;
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
         pointer-events: none;
         transition: color 250ms ease, opacity 250ms ease;
     }
@@ -175,10 +179,27 @@ const t = useTranslations(getLangFromUrl(Astro.url));
     .dark-icon {
         right: var(--icon-center);
         transform: translate(50%, -50%);
-        color: #98652d;
-        fill: currentColor;
-        filter: drop-shadow(0 0 4px #edb45c38);
-        opacity: 0.88;
+        color: #736d7b;
+        fill: none;
+        filter: drop-shadow(0 1px 1px #21182e18);
+        opacity: 0.65;
+    }
+    .dark-icon > * { transition: fill 250ms ease, stroke 250ms ease; }
+    :global(:root:not([data-theme="dark"])) .dark-icon {
+        filter: none;
+    }
+    :global(:root:not([data-theme="dark"])) .dark-icon > path {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.2;
+        stroke-linejoin: round;
+    }
+    :global(:root:not([data-theme="dark"])) .dark-icon > path:nth-child(3) {
+        stroke-width: 0.8;
+        opacity: 0.65;
+    }
+    :global(:root:not([data-theme="dark"])) .dark-icon > circle {
+        opacity: 0.8;
     }
     :global([data-theme="dark"]) .theme-toggle { --thumb-progress: 1; color: #f5efff; }
     :global([data-theme="dark"]) .theme-track {
@@ -198,20 +219,13 @@ const t = useTranslations(getLangFromUrl(Astro.url));
         stroke: currentColor;
     }
     :global([data-theme="dark"]) .dark-icon {
-        color: #e5be83;
+        --tree-trunk: #a67c52;
+        --tree-ribbon: #efc76d;
+        --tree-ornament: #e36d69;
+        --tree-star: #d4a44c;
+        color: #8ccba0;
         fill: none;
         opacity: 1;
-    }
-    .toggle-flame {
-        transform-box: fill-box;
-        transform-origin: 50% 100%;
-        animation: toggle-flicker 5.7s ease-in-out infinite;
-    }
-    @keyframes toggle-flicker {
-        0%, 100% { transform: rotate(-4deg) scale(1); opacity: 0.93; }
-        23% { transform: rotate(2deg) scale(0.96, 1.04); opacity: 1; }
-        49% { transform: rotate(-7deg) scale(1.03, 0.97); opacity: 0.88; }
-        72% { transform: rotate(0deg) scale(0.98, 1.02); opacity: 0.97; }
     }
     @media (hover: hover) {
         :global([data-theme="dark"]) .theme-toggle:hover .light-icon,
@@ -230,8 +244,7 @@ const t = useTranslations(getLangFromUrl(Astro.url));
         }
     }
     @media (prefers-reduced-motion: reduce) {
-        .theme-track, .theme-thumb, .theme-toggle > svg { transition: none; }
-        .toggle-flame { animation: none; }
+        .theme-track, .theme-thumb, .theme-toggle > svg, .dark-icon > * { transition: none; }
     }
     @media (forced-colors: active) {
         .theme-toggle .theme-track { border: 1px solid ButtonText; background: Canvas; }

@@ -1,0 +1,300 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const t = useTranslations(getLangFromUrl(Astro.url));
+---
+
+<div class="snow-globe-secret">
+    <span class="endmark" aria-hidden="true">· · ·</span>
+    <button
+        class="snow-globe-button"
+        type="button"
+        aria-label={t('christmas.snowStart')}
+        aria-pressed="false"
+        aria-describedby="snow-globe-hint"
+        data-start-label={t('christmas.snowStart')}
+        data-stop-label={t('christmas.snowStop')}
+        data-idle-hint={t('christmas.snowHint')}
+        data-snowing-hint={t('christmas.snowing')}
+    >
+        <span class="globe" aria-hidden="true">
+            <span class="shine"></span>
+            <span class="tiny-snow">·　·<br />　·　·</span>
+            <span class="star">✦</span>
+            <span class="tree tree-top"></span>
+            <span class="tree tree-bottom"></span>
+            <span class="ground"></span>
+        </span>
+        <span class="stand" aria-hidden="true"></span>
+    </button>
+    <span id="snow-globe-hint" class="hint" aria-live="polite">{t('christmas.snowHint')}</span>
+</div>
+<div class="christmas-snow" aria-hidden="true" hidden></div>
+
+<script>
+    const button = document.querySelector<HTMLButtonElement>('.snow-globe-button');
+    const hint = document.getElementById('snow-globe-hint');
+    const snow = document.querySelector<HTMLElement>('.christmas-snow');
+
+    if (button && hint && snow) {
+        let snowing = false;
+        let nextFlakeTimer: number | undefined;
+        let hideTimer: number | undefined;
+        let startedAt = 0;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+        function finishSnow() {
+            if (!snow || snowing) return;
+            snow.classList.add('is-melting');
+            hideTimer = window.setTimeout(() => {
+                snow.hidden = true;
+                snow.classList.remove('is-melting');
+            }, reducedMotion.matches ? 0 : 1200);
+        }
+
+        function dropSnowflake() {
+            if (!snow || !snowing) return;
+            if (snow.childElementCount < 42) {
+                const flake = document.createElement('span');
+                flake.className = 'snowflake';
+                flake.style.left = `${Math.random() * 100}%`;
+                // Spawn above the visible area, then keep each flake in document coordinates.
+                flake.style.setProperty('--spawn-top', `${window.scrollY - 14}px`);
+                flake.style.setProperty('--size', `${2 + Math.random() * 3}px`);
+                flake.style.setProperty('--duration', `${8 + Math.random() * 6}s`);
+                flake.style.setProperty('--fall-distance', `${window.innerHeight + 28}px`);
+                flake.style.setProperty('--drift', `${Math.random() * 100 - 50}px`);
+                flake.style.setProperty('--opacity', String(0.24 + Math.random() * 0.48));
+                flake.style.setProperty('--still-top', `${window.scrollY + Math.random() * window.innerHeight}px`);
+                snow.append(flake);
+            }
+            // Start sparsely and build up over six seconds.
+            const progress = Math.min((performance.now() - startedAt) / 6000, 1);
+            nextFlakeTimer = window.setTimeout(dropSnowflake, 700 - progress * 470);
+        }
+
+        function setSnowing(active: boolean, immediate = false) {
+            if (!button || !hint || !snow) return;
+            window.clearTimeout(nextFlakeTimer);
+            window.clearTimeout(hideTimer);
+            snowing = active;
+            button.setAttribute('aria-pressed', String(active));
+            button.setAttribute('aria-label', (active ? button.dataset.stopLabel : button.dataset.startLabel) ?? '');
+            hint.textContent = (active ? button.dataset.snowingHint : button.dataset.idleHint) ?? '';
+            button.classList.toggle('is-shaking', active);
+
+            if (!active) {
+                if (immediate || reducedMotion.matches) snow.replaceChildren();
+                if (immediate) {
+                    snow.hidden = true;
+                    snow.classList.remove('is-melting');
+                } else if (!snow.childElementCount) {
+                    finishSnow();
+                }
+                return;
+            }
+
+            // Let the globe finish shaking before the first snowflake appears.
+            nextFlakeTimer = window.setTimeout(() => {
+                snow.hidden = false;
+                snow.classList.remove('is-melting');
+                startedAt = performance.now();
+                dropSnowflake();
+            }, reducedMotion.matches ? 0 : 650);
+        }
+
+        snow.addEventListener('animationend', event => {
+            const flake = event.target;
+            if (!(flake instanceof HTMLElement) || !flake.classList.contains('snowflake')) return;
+            flake.remove();
+            if (!snowing && !snow.childElementCount) finishSnow();
+        });
+
+        button.addEventListener('click', () => {
+            setSnowing(document.documentElement.dataset.theme === 'dark' && !snowing);
+        });
+
+        // Stop immediately when leaving night mode or navigating away.
+        const observer = new MutationObserver(() => {
+            if (document.documentElement.dataset.theme !== 'dark') setSnowing(false, true);
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        window.addEventListener('pagehide', () => setSnowing(false, true));
+    }
+</script>
+
+<style>
+    .snow-globe-secret { display: none; }
+    :global([data-theme="dark"]) .snow-globe-secret {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0 1rem 1rem;
+        text-align: center;
+    }
+    .endmark {
+        color: #a98abb;
+        font-size: 0.75rem;
+        letter-spacing: 0.35em;
+        margin-bottom: 0.5rem;
+    }
+    .snow-globe-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 14px;
+        border: 0;
+        border-radius: 12px;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .globe {
+        position: relative;
+        display: block;
+        box-sizing: border-box;
+        overflow: hidden;
+        width: 77px;
+        height: 77px;
+        border: 1px solid #e0d6ed6b;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 20%, #e4d5f024, #b99dce0a 65%);
+        box-shadow: inset -4px -4px 14px #c6a9de17, 0 0 28px #dcc17a0c;
+        transition: box-shadow 0.3s ease;
+    }
+    .snow-globe-button:is(:hover, :focus-visible) .globe {
+        box-shadow: inset -4px -4px 14px #c6a9de22, 0 0 30px #dcc17a33;
+    }
+    .shine {
+        position: absolute;
+        left: 11px;
+        top: 13px;
+        width: 12px;
+        height: 24px;
+        border-left: 3px solid #f1e7f57a;
+        border-radius: 50%;
+        transform: rotate(25deg);
+    }
+    .tiny-snow {
+        position: absolute;
+        top: 9px;
+        left: 17px;
+        color: #fff8f2;
+        font-size: 17px;
+        line-height: 1.2;
+    }
+    .star {
+        position: absolute;
+        left: 31px;
+        top: 10px;
+        font-size: 13px;
+        line-height: 1.2;
+        color: var(--christmas-gold);
+    }
+    .tree {
+        position: absolute;
+        left: 22px;
+        width: 0;
+        height: 0;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-bottom: 23px solid #719379;
+    }
+    .tree-top { top: 25px; }
+    .tree-bottom {
+        top: 36px;
+        left: 17px;
+        border-left-width: 20px;
+        border-right-width: 20px;
+        border-bottom: 27px solid #4c7559;
+    }
+    .ground {
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 18px;
+        border-radius: 50%;
+        background: #f0e9df;
+    }
+    .stand {
+        position: relative;
+        display: block;
+        box-sizing: border-box;
+        width: 60px;
+        height: 13px;
+        margin-top: -4px;
+        border-top: 2px solid #c2975b;
+        border-radius: 3px 3px 5px 5px;
+        background: linear-gradient(#ad7650, #6e4430);
+    }
+    .hint {
+        color: rgb(var(--gray));
+        font-size: 0.75rem;
+    }
+    .is-shaking { animation: globe-shake 0.65s ease-in-out; }
+    .christmas-snow {
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+        overflow: hidden;
+        pointer-events: none;
+        opacity: 1;
+        transition: opacity 1.2s ease;
+    }
+    .christmas-snow.is-melting { opacity: 0; }
+    .christmas-snow::after {
+        content: '';
+        position: absolute;
+        left: -5%;
+        bottom: -9px;
+        width: 110%;
+        height: 18px;
+        border-radius: 50% 70% 0 0;
+        background: #f0e9df;
+        opacity: 0.85;
+        animation: snow-settle 8s ease-out 8s both;
+    }
+    .christmas-snow :global(.snowflake) {
+        position: absolute;
+        top: var(--spawn-top);
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        background: #fff8f2;
+        opacity: 0;
+        animation: christmas-snowfall var(--duration) linear both;
+    }
+    @keyframes christmas-snowfall {
+        0% { transform: translate3d(0, 0, 0); opacity: 0; }
+        5% { opacity: var(--opacity); }
+        50% { transform: translate3d(calc(var(--drift) * -0.4), calc(var(--fall-distance) * 0.5), 0); opacity: var(--opacity); }
+        90% { opacity: var(--opacity); }
+        100% { transform: translate3d(var(--drift), var(--fall-distance), 0); opacity: 0; }
+    }
+    @keyframes globe-shake {
+        15%, 55% { transform: rotate(-12deg); }
+        35%, 75% { transform: rotate(12deg); }
+        100% { transform: rotate(0); }
+    }
+    @keyframes snow-settle {
+        from { transform: translateY(12px); opacity: 0; }
+        to { transform: translateY(0); opacity: 0.85; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .globe, .christmas-snow { transition: none; }
+        .is-shaking, .christmas-snow::after { animation: none; }
+        .christmas-snow :global(.snowflake) {
+            animation: none;
+            top: var(--still-top);
+            opacity: var(--opacity);
+        }
+    }
+    @media print, (forced-colors: active) {
+        :global([data-theme="dark"]) .snow-globe-secret, .christmas-snow { display: none; }
+    }
+</style>

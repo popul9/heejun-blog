@@ -15,6 +15,7 @@
 	--border: #e5e9f0;
 	--glow: transparent;
 	--stage-pink: #ad306f;
+	--christmas-gold: #8a6025;
 	--black: 15, 18, 25;
 	--gray: 96, 115, 159;
 	--gray-light: 229, 233, 240;
@@ -36,10 +37,11 @@
 	--border: #433153;
 	--glow: #b46bff33;
 	--stage-pink: #f39bcc;
-	--black: 246, 236, 255;
+	--christmas-gold: #d9b974;
+	--black: 244, 236, 223;
 	--gray: 184, 166, 203;
 	--gray-light: 48, 35, 64;
-	--gray-dark: 231, 220, 239;
+	--gray-dark: 241, 234, 224;
 	--gray-gradient: #2b193c99, var(--page-background);
 	--box-shadow: 0 6px 24px #0005, 0 0 25px var(--glow);
 }
@@ -58,6 +60,7 @@
 	font-display: swap;
 }
 body {
+	position: relative;
 	font-family: "Atkinson", sans-serif;
 	margin: 0;
 	padding: 0;
@@ -186,7 +189,7 @@ hr {
 }
 .site-logo a::after {
 	content: '✦';
-	color: var(--stage-pink);
+	color: var(--christmas-gold);
 	font-size: 0.7em;
 	margin-left: 0.5em;
 	visibility: hidden;
@@ -229,7 +232,7 @@ hr {
 	color: #dfc4f6;
 }
 [data-theme="dark"] .prose a {
-	text-decoration-color: var(--stage-pink);
+	text-decoration-color: var(--christmas-gold);
 	text-underline-offset: 4px;
 }
 [data-theme="dark"] .astro-code,

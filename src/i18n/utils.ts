@@ -40,6 +40,25 @@ export function useTranslations(lang: Locale) {
             'theme.label': { ko: '화면 모드', en: 'Appearance', zh: '外观', th: 'รูปแบบหน้าจอ', vi: 'Giao diện' },
             'theme.light': { ko: '라이트', en: 'Light', zh: '浅色', th: 'สว่าง', vi: 'Sáng' },
             'theme.dark': { ko: '다크', en: 'Dark', zh: '深色', th: 'มืด', vi: 'Tối' },
+            'christmas.snowHint': {
+                ko: '조금 흔들어볼까요?', en: 'Give it a little shake?', zh: '轻轻摇一摇？',
+                th: 'ลองเขย่าเบาๆ ไหม?', vi: 'Lắc nhẹ một chút nhé?',
+            },
+            'christmas.snowStart': {
+                ko: '스노우볼을 흔들어 눈 내리기', en: 'Shake the snow globe to let it snow', zh: '摇动水晶球，让雪花飘落',
+                th: 'เขย่าลูกแก้วให้หิมะตก', vi: 'Lắc quả cầu tuyết để tuyết rơi',
+            },
+            'christmas.snowStop': {
+                ko: '눈 멈추기', en: 'Stop the snow', zh: '停止下雪',
+                th: 'หยุดหิมะ', vi: 'Dừng tuyết rơi',
+            },
+            'christmas.snowing': {
+                ko: 'Merry Christmas · 한 번 더 누르면 눈이 멈춰요',
+                en: 'Merry Christmas · Tap again to stop the snow',
+                zh: 'Merry Christmas · 再点一次停止下雪',
+                th: 'Merry Christmas · แตะอีกครั้งเพื่อหยุดหิมะ',
+                vi: 'Merry Christmas · Nhấn lần nữa để dừng tuyết',
+            },
             'site.title': {
                 ko: "희준의 넷",
                 en: "Heejun's Net",

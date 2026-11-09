@@ -1,6 +1,7 @@
 ---
 import FloatingLanguagePicker from "./FloatingLanguagePicker.astro";
 import FestivalGreeting from "./FestivalGreeting.astro";
+import SnowGlobe from "./SnowGlobe.astro";
 import {
 	getLangFromUrl,
 	getLocalizedPathname,
@@ -14,6 +15,7 @@ const localizedAbout = getLocalizedPathname("/about", lang);
 ---
 
 <FloatingLanguagePicker />
+<SnowGlobe />
 <footer>
 	<FestivalGreeting />
 	&copy; {today.getFullYear()} Heejun Moon. All rights reserved. ·{" "}

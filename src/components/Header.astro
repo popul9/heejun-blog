@@ -6,6 +6,7 @@ import {
 } from "../i18n/utils";
 import HeaderLink from "./HeaderLink.astro";
 import ThemeToggle from "./ThemeToggle.astro";
+import ChristmasLights from "./ChristmasLights.astro";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -19,6 +20,7 @@ const localizedAbout = getLocalizedPathname("/about", lang);
 ---
 
 <header>
+	<ChristmasLights />
 	<nav>
 		<div class="top-row">
 			<div class="brand-group">
