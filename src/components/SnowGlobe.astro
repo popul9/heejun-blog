@@ -97,7 +97,7 @@ const t = useTranslations(getLangFromUrl(Astro.url));
         }
 
         function createSnowflake(scattered = false) {
-            if (!snow || snow.childElementCount >= (storming ? 180 : 30)) return;
+            if (!snow || snow.childElementCount >= (storming ? 225 : 38)) return;
             const flake = document.createElement('span');
             const depth = Math.random();
             const foreground = storming && Math.random() < 0.08;
@@ -134,7 +134,7 @@ const t = useTranslations(getLangFromUrl(Astro.url));
         function dropSnowflake() {
             if (!snowing) return;
             createSnowflake();
-            nextFlakeTimer = window.setTimeout(dropSnowflake, 400 / (1 + stormStrength * 20));
+            nextFlakeTimer = window.setTimeout(dropSnowflake, 320 / (1 + stormStrength * 20));
         }
 
         function animateStorm(now: number) {
@@ -239,7 +239,7 @@ const t = useTranslations(getLangFromUrl(Astro.url));
             previousFrameAt = stormStartedAt;
             storming = true;
             // Let nearby snow catch the shake immediately; fresh snow also blows in from the side.
-            for (let index = 0; index < (alreadyStorming ? 10 : 32); index++) createSnowflake(true);
+            for (let index = 0; index < (alreadyStorming ? 12 : 40); index++) createSnowflake(true);
             window.clearTimeout(nextFlakeTimer);
             dropSnowflake();
             button.classList.remove('is-shaking');
@@ -433,8 +433,8 @@ const t = useTranslations(getLangFromUrl(Astro.url));
     .christmas-snow {
         position: absolute;
         inset: 0;
-        /* Keep snow above the page background, behind the reading surfaces. */
-        z-index: 0;
+        /* Above navigation and hero images; reading surfaces sit at layer 2. */
+        z-index: 1;
         overflow: hidden;
         pointer-events: none;
         opacity: 1;

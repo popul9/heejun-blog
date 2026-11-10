@@ -38,17 +38,17 @@
 	--accent: #cca4ff;
 	--accent-dark: #e4cfff;
 	--on-accent: #241335;
-	--page-background: #140f1e;
-	--surface: #21182e;
+	--page-background: #211c29;
+	--surface: #2b2533;
 	--header-background: #191222;
 	--border: #433153;
 	--glow: #b46bff33;
 	--stage-pink: #f39bcc;
 	--christmas-gold: #d9b974;
-	--black: 244, 236, 223;
+	--black: 232, 226, 238;
 	--gray: 184, 166, 203;
 	--gray-light: 48, 35, 64;
-	--gray-dark: 241, 234, 224;
+	--gray-dark: 214, 209, 218;
 	--gray-gradient: #2b193c99, var(--page-background);
 	--box-shadow: 0 6px 24px #0005, 0 0 25px var(--glow);
 }
@@ -83,13 +83,22 @@ body {
 }
 [data-theme="dark"] body {
 	background: var(--page-background);
-	background-image: radial-gradient(ellipse at 50% 0, var(--glow), transparent 650px);
+	background-image: radial-gradient(ellipse at 50% 0, #b46bff0c, transparent 650px);
 }
 body > header,
 body > main,
 body > footer {
 	position: relative;
-	z-index: 1;
+	z-index: 2;
+}
+/* Snow crosses the navigation and post hero, while reading surfaces cover it. */
+body > header,
+body > main.post-main {
+	z-index: auto;
+}
+.post-main .prose {
+	position: relative;
+	z-index: 2;
 }
 [data-theme="dark"] body > main > section {
 	background: var(--page-background);
@@ -190,8 +199,11 @@ hr {
 
 /* The reading surface stays quiet; the stage lights live around it. */
 [data-theme="dark"] .prose {
-	background: var(--page-background);
+	background: var(--surface);
+	box-shadow: inset 0 0 0 1px #ffffff12;
 	border-radius: 16px;
+	font-weight: 400;
+	line-height: 1.75;
 }
 [data-theme="dark"] .site-logo a {
 	color: #e4c5ff;
@@ -239,7 +251,7 @@ hr {
 	text-shadow: 0 0 20px var(--glow);
 }
 [data-theme="dark"] .prose :is(h2, h3) {
-	color: #dfc4f6;
+	color: rgb(var(--black));
 }
 [data-theme="dark"] .prose a {
 	text-decoration-color: var(--christmas-gold);

@@ -90,7 +90,7 @@ const t = useTranslations(getLangFromUrl(Astro.url));
 
         function applyTheme(theme: string, animate = false) {
             root.dataset.theme = theme;
-            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#140f1e' : '#ffffff');
+            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#1b1820' : '#ffffff');
             buttons.forEach(button => button.setAttribute('aria-checked', String(theme === 'dark')));
             controls.forEach(sync => sync());
             root.classList.remove('theme-entrance');

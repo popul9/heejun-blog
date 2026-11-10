@@ -51,12 +51,12 @@ const defaultAlternate = alternates.find((alt) => alt.locale === DEFAULT_LOCALE)
 		try { theme = localStorage.getItem('theme'); } catch {}
 		const dark = theme === 'dark';
 		document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-		document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#140f1e' : '#ffffff');
+		document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#1b1820' : '#ffffff');
 		// Keep the theme during the swap, before observers and the next paint.
 		document.addEventListener('astro:before-swap', (event) => {
 			const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
 			event.newDocument.documentElement.dataset.theme = theme;
-			event.newDocument.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#140f1e' : '#ffffff');
+			event.newDocument.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#1b1820' : '#ffffff');
 		});
 	})();
 </script>
